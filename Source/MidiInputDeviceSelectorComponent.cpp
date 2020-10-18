@@ -43,7 +43,7 @@ MidiInputDeviceSelectorComponent::MidiInputDeviceSelectorComponent ()
 
 
     //[Constructor] You can add your own custom stuff here..
-	setSize(300, 20 + (1 + _buttons.size()) * 30);
+	setSize(300, 20 + (1 + (int)_buttons.size()) * 30);
     //[/Constructor]
 }
 
@@ -84,7 +84,7 @@ void MidiInputDeviceSelectorComponent::resized()
 
 	int y = 10;
 
-	setSize(300, 20 + (1 + _buttons.size())*30);
+	setSize(300, 20 + (1 + (int)_buttons.size())*30);
 
 	_label.setBounds(10, y, getWidth() - 20, 20);
 

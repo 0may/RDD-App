@@ -85,7 +85,7 @@ String MidiSequenceManager::getMidiSequenceName(int idx) {
 void MidiSequenceManager::setMidiSequenceName(int idx, String name) {
 
 	if (idx >= 0 && idx < _sequenceArray.size()) {
-		_sequenceNames[idx] = name;
+		_sequenceNames.set(idx, name);
 	}
 }
 
@@ -129,13 +129,13 @@ bool MidiSequenceManager::removeMidiSequence(int idx) {
 bool MidiSequenceManager::moveSelectedMidiSequence(bool toFront) {
 	if (!_recording && _selectedSeqIdx > 0 && toFront) {
 		_sequenceArray.swap(_selectedSeqIdx - 1, _selectedSeqIdx);
-		_sequenceNames.swap(_selectedSeqIdx - 1, _selectedSeqIdx);
+		_sequenceNames.move(_selectedSeqIdx, _selectedSeqIdx - 1);
 		_selectedSeqIdx = _selectedSeqIdx - 1;
 		return true;
 	}
 	else if (!_recording && _selectedSeqIdx >= 0 && _selectedSeqIdx < _sequenceArray.size() - 1 && !toFront) {
 		_sequenceArray.swap(_selectedSeqIdx, _selectedSeqIdx + 1);
-		_sequenceNames.swap(_selectedSeqIdx, _selectedSeqIdx + 1);
+		_sequenceNames.move(_selectedSeqIdx, _selectedSeqIdx + 1);
 		_selectedSeqIdx = _selectedSeqIdx + 1;
 		return true;
 	}
@@ -161,6 +161,7 @@ bool MidiSequenceManager::saveMidiSequence(int idx, File file) const {
 
 		mfile.writeTo(outfile);
 		outfile.flush();
+	
 		return true;
 	}
 	else
@@ -185,6 +186,7 @@ int MidiSequenceManager::loadMidiSequence(File file) {
 		return -1;
 
 	_sequenceArray.add(new MidiMessageSequence(*midiSequence));
+	_sequenceNames.add(file.getFileNameWithoutExtension());
 
 	return _sequenceArray.size() - 1;
 

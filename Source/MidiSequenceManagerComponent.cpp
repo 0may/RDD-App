@@ -287,6 +287,27 @@ void MidiSequenceManagerComponent::buttonClicked (juce::Button* buttonThatWasCli
     else if (buttonThatWasClicked == _buttonImport.get())
     {
         //[UserButtonCode__buttonImport] -- add your button handler code here..
+		FileChooser fc("Choose a file for import...", File::getCurrentWorkingDirectory(), "*.mid;*.midi", true);
+		if (fc.browseForFileToOpen()) {
+			auto result = fc.getURLResult();
+
+
+			if (!result.isEmpty() && result.isLocalFile()) {
+				if (rdd::MainManager::instance().midiSequenceManager().loadMidiSequence(result.getLocalFile()) != -1) {
+					AlertWindow::showMessageBox(AlertWindow::InfoIcon, "MIDI file import",
+						"MIDI sequence successfully imported.",
+						"OK");
+
+					_tableComponent->updateTable();
+				}
+				else {
+					AlertWindow::showMessageBox(AlertWindow::WarningIcon, "MIDI file import",
+						"Failed to import MIDI sequence.",
+						"OK");
+				}
+			}
+		}
+
         //[/UserButtonCode__buttonImport]
     }
     else if (buttonThatWasClicked == _buttonAdd.get())
@@ -353,6 +374,7 @@ void MidiSequenceManagerComponent::buttonClicked (juce::Button* buttonThatWasCli
 		}
 		else {
 			rdd::MainManager::instance().midiSequenceManager().stopRecording();
+			_tableComponent->updateTable();
 		}
 
 		// set toggle state to the actual recording state... just in case if a recording command failed

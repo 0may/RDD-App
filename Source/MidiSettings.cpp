@@ -30,6 +30,10 @@ MidiSettings::MidiSettings()
 	_cc[MOVE_SPEED] = 30;
 	_cc[ROTATE_SPEED] = 31;
 	_cc[SPEAKER_SPEED] = 32;
+	_cc[SPEAKER_POSITION_Q1] = 33;
+	_cc[SPEAKER_POSITION_Q2] = 34;
+	_cc[SPEAKER_POSITION_Q3] = 35;
+	_cc[SPEAKER_POSITION_Q4] = 36;
 }
 
 
@@ -48,7 +52,9 @@ bool MidiSettings::load(const File& file) {
 
 String MidiSettings::toString() {
 	String s = "MidiSettings:\n";
+
 	s += " channel:            " + String(_channel) + "\n";
+
 	s += " note move_forward:  " + String(getNote(MOVE_FORWARD)) + "\n";
 	s += " note move_backward: " + String(getNote(MOVE_BACKWARD)) + "\n";
 	s += " note strafe_left:   " + String(getNote(STRAFE_LEFT)) + "\n";
@@ -57,9 +63,14 @@ String MidiSettings::toString() {
 	s += " note rotate_right:  " + String(getNote(ROTATE_RIGHT)) + "\n";
 	s += " note speaker_up:    " + String(getNote(SPEAKER_UP)) + "\n";
 	s += " note speaker_down:  " + String(getNote(SPEAKER_DOWN)) + "\n";
+
 	s += " cc move_speed:      " + String(getCC(MOVE_SPEED)) + "\n";
 	s += " cc rotate_speed:    " + String(getCC(ROTATE_SPEED)) + "\n";
 	s += " cc speaker_speed:   " + String(getCC(SPEAKER_SPEED)) + "\n";
+	s += " cc speaker_position_q1:  " + String(getCC(SPEAKER_POSITION_Q1)) + "\n";
+	s += " cc speaker_position_q2:  " + String(getCC(SPEAKER_POSITION_Q2)) + "\n";
+	s += " cc speaker_position_q3:  " + String(getCC(SPEAKER_POSITION_Q3)) + "\n";
+	s += " cc speaker_position_q4:  " + String(getCC(SPEAKER_POSITION_Q4)) + "\n";
 
 	return s;
 }
@@ -95,6 +106,10 @@ bool MidiSettings::validateAndRead(var json) {
 			ret &= getIntFromJsonObject(objCC, "move_speed", _cc[MOVE_SPEED]);
 			ret &= getIntFromJsonObject(objCC, "rotate_speed", _cc[ROTATE_SPEED]);
 			ret &= getIntFromJsonObject(objCC, "speaker_speed", _cc[SPEAKER_SPEED]);
+			ret &= getIntFromJsonObject(objCC, "speaker_position_q1", _cc[SPEAKER_POSITION_Q1]);
+			ret &= getIntFromJsonObject(objCC, "speaker_position_q2", _cc[SPEAKER_POSITION_Q2]);
+			ret &= getIntFromJsonObject(objCC, "speaker_position_q3", _cc[SPEAKER_POSITION_Q3]);
+			ret &= getIntFromJsonObject(objCC, "speaker_position_q4", _cc[SPEAKER_POSITION_Q4]);
 		}
 		else
 			ret = false;

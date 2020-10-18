@@ -37,7 +37,8 @@
     Describe your class and how it works here!
                                                                     //[/Comments]
 */
-class ManualControlComponent  : public Component
+class ManualControlComponent  : public Component,
+                                public juce::Slider::Listener
 {
 public:
     //==============================================================================
@@ -50,11 +51,24 @@ public:
 
     void paint (juce::Graphics& g) override;
     void resized() override;
+    void sliderValueChanged (juce::Slider* sliderThatWasMoved) override;
 
 
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
+	int _sep1x, _sep2x;
+
+
+public:
+
+	enum ColourIds {
+		backgroundColourId,
+		separatorColourId
+	};
+
+private:
+
     //[/UserVariables]
 
     //==============================================================================
@@ -67,6 +81,12 @@ private:
     std::unique_ptr<juce::Label> _labelSpkRotation;
     std::unique_ptr<AngleInputComponent> _inputSpkAngle;
     std::unique_ptr<juce::Label> _labelSpkAngle;
+    std::unique_ptr<juce::Slider> _sliderSpkVelocity;
+    std::unique_ptr<juce::Label> _labelSpkVelocity;
+    std::unique_ptr<juce::Slider> _sliderRotationVelocity;
+    std::unique_ptr<juce::Label> _labelRotationVelocity;
+    std::unique_ptr<juce::Slider> _sliderTranslationVelocity;
+    std::unique_ptr<juce::Label> _labelTranslationVelocity;
 
 
     //==============================================================================

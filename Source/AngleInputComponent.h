@@ -33,7 +33,8 @@
     Describe your class and how it works here!
                                                                     //[/Comments]
 */
-class AngleInputComponent  : public juce::Component
+class AngleInputComponent  : public juce::Component,
+                             public ChangeBroadcaster
 {
 public:
     //==============================================================================
@@ -50,6 +51,15 @@ public:
 	float getAngle() const;
 	float getMappedAngle() const;
 
+
+	void mouseDown(const MouseEvent& event) override;
+	void mouseDrag(const MouseEvent& event) override;
+	void mouseUp(const MouseEvent& event) override;
+
+
+	static Point<float> toPoint(float dist, float angle);
+	static float toAngle(float x, float y);
+
     //[/UserMethods]
 
     void paint (juce::Graphics& g) override;
@@ -59,6 +69,7 @@ public:
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
+	bool _mouseDown;
 
 	float _angle;
 	float _min, _max;

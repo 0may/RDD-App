@@ -8,11 +8,15 @@
         "rotate_left": 14,    
         "rotate_right": 15,    
         "speaker_up": 16,    
-        "speaker_down": 17  
+        "speaker_down": 17
     },  
     "controlchange": {    
         "move_speed": 20,    
         "rotate_speed": 21,    
-        "speaker_speed": 22  
+        "speaker_speed": 22,     
+        "speaker_position_q1": 23,     
+        "speaker_position_q2": 24,     
+        "speaker_position_q3": 25,     
+        "speaker_position_q4": 26  
     }
 }

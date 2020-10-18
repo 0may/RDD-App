@@ -7,12 +7,12 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.4.7
+  Created with Projucer version: 6.0.3
 
   ------------------------------------------------------------------------------
 
   The Projucer is part of the JUCE library.
-  Copyright (c) 2017 - ROLI Ltd.
+  Copyright (c) 2020 - Raw Material Software Limited.
 
   ==============================================================================
 */
@@ -42,7 +42,7 @@ MidiOutputDeviceSelectorComponent::MidiOutputDeviceSelectorComponent ()
 
 
     //[Constructor] You can add your own custom stuff here..
-	setSize(300, 20 + (1 + _buttons.size()) * 30);
+	setSize(300, 20 + (1 + (int)_buttons.size()) * 30);
     //[/Constructor]
 }
 
@@ -63,12 +63,12 @@ MidiOutputDeviceSelectorComponent::~MidiOutputDeviceSelectorComponent()
 }
 
 //==============================================================================
-void MidiOutputDeviceSelectorComponent::paint (Graphics& g)
+void MidiOutputDeviceSelectorComponent::paint (juce::Graphics& g)
 {
     //[UserPrePaint] Add your own custom painting code here..
     //[/UserPrePaint]
 
-    g.fillAll (Colour (0xff323e44));
+    g.fillAll (juce::Colour (0xff323e44));
 
     //[UserPaint] Add your own custom painting code here..
 	addAndMakeVisible(_label);
@@ -81,7 +81,7 @@ void MidiOutputDeviceSelectorComponent::resized()
     //[UserPreResize] Add your own custom resize code here..
 	int y = 10;
 
-	setSize(300, 20 + (1 + _buttons.size()) * 30);
+	setSize(300, 20 + (1 + (int)_buttons.size()) * 30);
 
 	_label.setBounds(10, y, getWidth() - 20, 20);
 

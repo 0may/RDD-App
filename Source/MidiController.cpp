@@ -12,6 +12,7 @@
 #include "MidiInputDeviceSelectorComponent.h"
 #include "MidiOutputDeviceSelectorComponent.h"
 #include "XYInputComponent.h"
+#include "AngleInputComponent.h"
 #include "MainManager.h"
 
 using namespace rdd;
@@ -176,7 +177,7 @@ bool MidiController::sendParameter(MidiSettings::BotParameter param, uint8 value
 }
 
 
-void MidiController::handleIncomingMidiMessage(MidiInput* source, const MidiMessage& message) {
+void MidiController::handleIncomingMidiMessage(MidiInput* /*source*/, const MidiMessage& message) {
 	// ....
 
 	if (message.isMidiStart()) {
@@ -366,9 +367,28 @@ void MidiController::changeListenerCallback(ChangeBroadcaster* source) {
 					stopCommand(rdd::MidiSettings::SPEAKER_DOWN);
 			}
 		}
-
 	}
 
+
+
+	auto angleInput = dynamic_cast<AngleInputComponent*>(source);
+
+	if (angleInput) {
+		auto input = angleInput->getMappedAngle();
+
+		if (input < 90.0f) {
+			sendParameter(rdd::MidiSettings::SPEAKER_POSITION_Q1, (uint8)(input / 90.0 * 128.0));
+		}
+		else if (input < 180.0f) {
+			sendParameter(rdd::MidiSettings::SPEAKER_POSITION_Q2, (uint8)((input - 90.0f) / 90.0 * 128.0));
+		}
+		else if (input < 270.0f) {
+			sendParameter(rdd::MidiSettings::SPEAKER_POSITION_Q3, (uint8)((input - 180.0f) / 90.0 * 128.0));
+		}
+		else {
+			sendParameter(rdd::MidiSettings::SPEAKER_POSITION_Q4, (uint8)((input - 270.0f) / 90.0 * 128.0));
+		}
+	}
 
 }
 

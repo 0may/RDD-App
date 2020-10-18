@@ -68,7 +68,7 @@ void AngleInputComponent::paint (juce::Graphics& g)
     //[UserPrePaint] Add your own custom painting code here..
     //[/UserPrePaint]
 
-
+    g.fillAll (juce::Colour (0xff323e44));
 
     //[UserPaint] Add your own custom painting code here..
 
@@ -81,8 +81,14 @@ void AngleInputComponent::paint (juce::Graphics& g)
 	g.setColour(findColour(ColourIds::backgroundColourId));
 	g.drawEllipse(s*0.25f, s*0.25f, s*0.5f, s*0.5f, s*0.4f);
 
-	// draw indicator
 
+	if (_mouseDown) {
+		// draw indicator
+		g.setColour(findColour(ColourIds::indicatorColourId));
+		Point<float> p1 = toPoint(s*0.05f, _angle);
+		Point<float> p2 = toPoint(s*0.45f, _angle);
+		g.drawLine(p1.x + s * 0.5f, s * 0.5f - p1.y, p2.x + s * 0.5f, s * 0.5f - p2.y, 11.0f);
+	}
 
 
 	// draw borders
@@ -124,6 +130,68 @@ float AngleInputComponent::getMappedAngle() const {
 
 
 
+void AngleInputComponent::mouseDown(const MouseEvent& event) {
+
+	_mouseDown = true;
+
+	float angle = toAngle(event.getMouseDownPosition().x - getWidth()*0.5f, getHeight()*0.5f - event.getMouseDownPosition().y);
+
+	if (angle < 0.0f)
+		_angle = 2.0f*float_Pi + angle;
+	else
+		_angle = angle;
+
+	repaint();
+
+	sendChangeMessage();
+}
+
+
+void AngleInputComponent::mouseDrag(const MouseEvent& event) {
+
+	float angle = toAngle(event.getMouseDownPosition().x + event.getOffsetFromDragStart().x - getWidth()*0.5f, getHeight()*0.5f - event.getMouseDownPosition().y - event.getOffsetFromDragStart().y);
+
+	if (angle < 0.0f)
+		_angle = 2.0f*float_Pi + angle;
+	else
+		_angle = angle;
+
+	repaint();
+
+	sendChangeMessage();
+}
+
+
+void AngleInputComponent::mouseUp(const MouseEvent& /*event*/) {
+
+
+	_mouseDown = false;
+
+	//char msg[64];
+	//sprintf(msg, "mouseup");
+	//Logger::writeToLog(msg);
+
+	repaint();
+
+
+	sendChangeMessage();
+}
+
+
+
+
+
+
+Point<float> AngleInputComponent::toPoint(float dist, float angle) {
+	return Point<float>(dist * cos(angle), dist * sin(angle));
+}
+
+
+float AngleInputComponent::toAngle(float x, float y) {
+	return atan2(y, x);
+}
+
+
 //[/MiscUserCode]
 
 
@@ -137,9 +205,10 @@ float AngleInputComponent::getMappedAngle() const {
 BEGIN_JUCER_METADATA
 
 <JUCER_COMPONENT documentType="Component" className="AngleInputComponent" componentName=""
-                 parentClasses="public juce::Component" constructorParams="" variableInitialisers=""
-                 snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
-                 fixedSize="0" initialWidth="600" initialHeight="400">
+                 parentClasses="public juce::Component, public ChangeBroadcaster"
+                 constructorParams="" variableInitialisers="" snapPixels="8" snapActive="1"
+                 snapShown="1" overlayOpacity="0.330" fixedSize="0" initialWidth="600"
+                 initialHeight="400">
   <BACKGROUND backgroundColour="ff323e44"/>
 </JUCER_COMPONENT>
 

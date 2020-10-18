@@ -82,7 +82,7 @@ namespace rdd {
 
 		int _selectedSeqIdx;
 		OwnedArray<MidiMessageSequence> _sequenceArray;
-		Array<String> _sequenceNames;
+		StringArray _sequenceNames;
 
 		bool _recording;
 		bool _playing;
