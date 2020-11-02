@@ -219,14 +219,18 @@ void ManualControlComponent::paint (juce::Graphics& g)
     //[UserPrePaint] Add your own custom painting code here..
     //[/UserPrePaint]
 
-    g.fillAll (findColour(ColourIds::backgroundColourId));
+    g.fillAll (juce::Colour (0xff323e44));
+
+    //[UserPaint] Add your own custom painting code here..
+
+	g.fillAll(findColour(ColourIds::backgroundColourId));
 
 	g.setColour(findColour(ColourIds::separatorColourId));
 
 	g.drawVerticalLine(_sep1x, 0.0f, getHeight() - 1.0f);
 	g.drawVerticalLine(_sep2x, 0.0f, getHeight() - 1.0f);
 
-    //[UserPaint] Add your own custom painting code here..
+
     //[/UserPaint]
 }
 
@@ -250,7 +254,7 @@ void ManualControlComponent::resized()
     _sliderTranslationVelocity->setBounds (608 + 0, 4 + 32, 208, 31);
     //[UserResized] Add your own custom resize handling here..
 
-	
+
 	auto area = getLocalBounds();
 
 	// layout sequence manager
