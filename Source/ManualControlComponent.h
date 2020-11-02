@@ -87,6 +87,8 @@ private:
     std::unique_ptr<juce::Label> _labelRotationVelocity;
     std::unique_ptr<juce::Slider> _sliderTranslationVelocity;
     std::unique_ptr<juce::Label> _labelTranslationVelocity;
+    std::unique_ptr<juce::Label> _labelDefaultVelos;
+    std::unique_ptr<juce::Label> _labelInput;
 
 
     //==============================================================================

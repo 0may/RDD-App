@@ -209,18 +209,18 @@ void MidiSequenceManagerComponent::resized()
     //[UserPreResize] Add your own custom resize code here..
     //[/UserPreResize]
 
-    _tableComponent->setBounds (0, 32, proportionOfWidth (1.0000f), getHeight() - 96);
-    _buttonDelete->setBounds (0 + proportionOfWidth (1.0000f) - 4 - 24, 32 + (getHeight() - 96) - -4, 24, 24);
-    _buttonExport->setBounds (((0 + proportionOfWidth (1.0000f) - 4 - 24) + 24 - 60) + 60 - 64 - 60, ((32 + (getHeight() - 96) - -4) + 24 - -8) + 0, 60, 24);
-    _buttonImport->setBounds ((0 + proportionOfWidth (1.0000f) - 4 - 24) + 24 - 60, (32 + (getHeight() - 96) - -4) + 24 - -8, 60, 24);
-    _buttonAdd->setBounds ((0 + proportionOfWidth (1.0000f) - 4 - 24) + 24 - 28 - 24, (32 + (getHeight() - 96) - -4) + 0, 24, 24);
-    _buttonMoveDown->setBounds (((0 + proportionOfWidth (1.0000f) - 4 - 24) + 24 - 28 - 24) + 24 - 28 - 24, ((32 + (getHeight() - 96) - -4) + 0) + 0, 24, 24);
-    _buttonMoveUp->setBounds ((((0 + proportionOfWidth (1.0000f) - 4 - 24) + 24 - 28 - 24) + 24 - 28 - 24) + 24 - 28 - 24, (((32 + (getHeight() - 96) - -4) + 0) + 0) + 0, 24, 24);
-    _buttonPlay->setBounds (0 + 4, 32 + (getHeight() - 96) - -4, 24, 24);
-    _buttonStop->setBounds ((0 + 4) + 28, (32 + (getHeight() - 96) - -4) + 0, 24, 24);
-    _buttonRecord->setBounds (((((0 + 4) + 28) + 28) + 28) + 28, ((((32 + (getHeight() - 96) - -4) + 0) + 0) + 0) + 0, 24, 24);
-    _buttonSkipBack->setBounds (((0 + 4) + 28) + 28, ((32 + (getHeight() - 96) - -4) + 0) + 0, 24, 24);
-    _buttonSkipForward->setBounds ((((0 + 4) + 28) + 28) + 28, (((32 + (getHeight() - 96) - -4) + 0) + 0) + 0, 24, 24);
+    _tableComponent->setBounds (0, 40, proportionOfWidth (1.0000f), getHeight() - 104);
+    _buttonDelete->setBounds (0 + proportionOfWidth (1.0000f) - 4 - 24, 40 + (getHeight() - 104) - -4, 24, 24);
+    _buttonExport->setBounds (((0 + proportionOfWidth (1.0000f) - 4 - 24) + 24 - 60) + 60 - 64 - 60, ((40 + (getHeight() - 104) - -4) + 24 - -8) + 0, 60, 24);
+    _buttonImport->setBounds ((0 + proportionOfWidth (1.0000f) - 4 - 24) + 24 - 60, (40 + (getHeight() - 104) - -4) + 24 - -8, 60, 24);
+    _buttonAdd->setBounds ((0 + proportionOfWidth (1.0000f) - 4 - 24) + 24 - 28 - 24, (40 + (getHeight() - 104) - -4) + 0, 24, 24);
+    _buttonMoveDown->setBounds (((0 + proportionOfWidth (1.0000f) - 4 - 24) + 24 - 28 - 24) + 24 - 28 - 24, ((40 + (getHeight() - 104) - -4) + 0) + 0, 24, 24);
+    _buttonMoveUp->setBounds ((((0 + proportionOfWidth (1.0000f) - 4 - 24) + 24 - 28 - 24) + 24 - 28 - 24) + 24 - 28 - 24, (((40 + (getHeight() - 104) - -4) + 0) + 0) + 0, 24, 24);
+    _buttonPlay->setBounds (0 + 4, 40 + (getHeight() - 104) - -4, 24, 24);
+    _buttonStop->setBounds ((0 + 4) + 28, (40 + (getHeight() - 104) - -4) + 0, 24, 24);
+    _buttonRecord->setBounds (((((0 + 4) + 28) + 28) + 28) + 28, ((((40 + (getHeight() - 104) - -4) + 0) + 0) + 0) + 0, 24, 24);
+    _buttonSkipBack->setBounds (((0 + 4) + 28) + 28, ((40 + (getHeight() - 104) - -4) + 0) + 0, 24, 24);
+    _buttonSkipForward->setBounds ((((0 + 4) + 28) + 28) + 28, (((40 + (getHeight() - 104) - -4) + 0) + 0) + 0, 24, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -423,7 +423,7 @@ BEGIN_JUCER_METADATA
          focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
          kerning="0.0" bold="0" italic="0" justification="33"/>
   <GENERICCOMPONENT name="table component" id="73bbbf9ac926ed51" memberName="_tableComponent"
-                    virtualName="" explicitFocusOrder="0" pos="0 32 100% 96M" class="MidiSequenceTableComponent"
+                    virtualName="" explicitFocusOrder="0" pos="0 40 100% 104M" class="MidiSequenceTableComponent"
                     params=""/>
   <IMAGEBUTTON name="delete button" id="4e09b5c4a2436584" memberName="_buttonDelete"
                virtualName="" explicitFocusOrder="0" pos="4Rr -4R 24 24" posRelativeX="73bbbf9ac926ed51"

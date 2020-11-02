@@ -47,10 +47,9 @@ ManualControlComponent::ManualControlComponent ()
     _labelTranslation->setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     _labelTranslation->setJustificationType (juce::Justification::centredLeft);
     _labelTranslation->setEditable (false, false, false);
+    _labelTranslation->setColour (juce::Label::textColourId, juce::Colour (0xffcdcdcd));
     _labelTranslation->setColour (juce::TextEditor::textColourId, juce::Colours::black);
     _labelTranslation->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
-
-    _labelTranslation->setBounds (0, 0, 150, 24);
 
     _labelRotation.reset (new juce::Label ("rotation label",
                                            TRANS("Rotational motion")));
@@ -58,6 +57,7 @@ ManualControlComponent::ManualControlComponent ()
     _labelRotation->setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     _labelRotation->setJustificationType (juce::Justification::centredLeft);
     _labelRotation->setEditable (false, false, false);
+    _labelRotation->setColour (juce::Label::textColourId, juce::Colour (0xffcdcdcd));
     _labelRotation->setColour (juce::TextEditor::textColourId, juce::Colours::black);
     _labelRotation->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
@@ -75,6 +75,7 @@ ManualControlComponent::ManualControlComponent ()
     _labelSpkRotation->setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     _labelSpkRotation->setJustificationType (juce::Justification::centredLeft);
     _labelSpkRotation->setEditable (false, false, false);
+    _labelSpkRotation->setColour (juce::Label::textColourId, juce::Colour (0xffcdcdcd));
     _labelSpkRotation->setColour (juce::TextEditor::textColourId, juce::Colours::black);
     _labelSpkRotation->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
@@ -88,6 +89,7 @@ ManualControlComponent::ManualControlComponent ()
     _labelSpkAngle->setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     _labelSpkAngle->setJustificationType (juce::Justification::centredLeft);
     _labelSpkAngle->setEditable (false, false, false);
+    _labelSpkAngle->setColour (juce::Label::textColourId, juce::Colour (0xffcdcdcd));
     _labelSpkAngle->setColour (juce::TextEditor::textColourId, juce::Colours::black);
     _labelSpkAngle->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
@@ -105,11 +107,12 @@ ManualControlComponent::ManualControlComponent ()
     _sliderSpkVelocity->addListener (this);
 
     _labelSpkVelocity.reset (new juce::Label ("speaker velocity label",
-                                              TRANS("Speaker velocity")));
+                                              TRANS("Speaker rotation")));
     addAndMakeVisible (_labelSpkVelocity.get());
     _labelSpkVelocity->setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     _labelSpkVelocity->setJustificationType (juce::Justification::centredLeft);
     _labelSpkVelocity->setEditable (false, false, false);
+    _labelSpkVelocity->setColour (juce::Label::textColourId, juce::Colour (0xffcdcdcd));
     _labelSpkVelocity->setColour (juce::TextEditor::textColourId, juce::Colours::black);
     _labelSpkVelocity->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
@@ -127,11 +130,12 @@ ManualControlComponent::ManualControlComponent ()
     _sliderRotationVelocity->addListener (this);
 
     _labelRotationVelocity.reset (new juce::Label ("rotation velocity label",
-                                                   TRANS("Rotation velocity")));
+                                                   TRANS("Rotation")));
     addAndMakeVisible (_labelRotationVelocity.get());
     _labelRotationVelocity->setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     _labelRotationVelocity->setJustificationType (juce::Justification::centredLeft);
     _labelRotationVelocity->setEditable (false, false, false);
+    _labelRotationVelocity->setColour (juce::Label::textColourId, juce::Colour (0xffcdcdcd));
     _labelRotationVelocity->setColour (juce::TextEditor::textColourId, juce::Colours::black);
     _labelRotationVelocity->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
@@ -149,15 +153,38 @@ ManualControlComponent::ManualControlComponent ()
     _sliderTranslationVelocity->addListener (this);
 
     _labelTranslationVelocity.reset (new juce::Label ("translation velocity label",
-                                                      TRANS("Translation velocity")));
+                                                      TRANS("Translation")));
     addAndMakeVisible (_labelTranslationVelocity.get());
     _labelTranslationVelocity->setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     _labelTranslationVelocity->setJustificationType (juce::Justification::centredLeft);
     _labelTranslationVelocity->setEditable (false, false, false);
+    _labelTranslationVelocity->setColour (juce::Label::textColourId, juce::Colour (0xffcdcdcd));
     _labelTranslationVelocity->setColour (juce::TextEditor::textColourId, juce::Colours::black);
     _labelTranslationVelocity->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
-    _labelTranslationVelocity->setBounds (608, 4, 130, 24);
+    _labelDefaultVelos.reset (new juce::Label ("default velocities label",
+                                               TRANS("Default velocities")));
+    addAndMakeVisible (_labelDefaultVelos.get());
+    _labelDefaultVelos->setTooltip (TRANS("Default velocities are used whenever an input cannot provide different velocity values, e.g. motion by keyboard input or positioning the speaker by angle input."));
+    _labelDefaultVelos->setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    _labelDefaultVelos->setJustificationType (juce::Justification::centredLeft);
+    _labelDefaultVelos->setEditable (false, false, false);
+    _labelDefaultVelos->setColour (juce::TextEditor::textColourId, juce::Colours::black);
+    _labelDefaultVelos->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
+
+    _labelDefaultVelos->setBounds (608, 0, 150, 24);
+
+    _labelInput.reset (new juce::Label ("input label",
+                                        TRANS("Motion input")));
+    addAndMakeVisible (_labelInput.get());
+    _labelInput->setTooltip (TRANS("Controls for motion input"));
+    _labelInput->setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    _labelInput->setJustificationType (juce::Justification::centredLeft);
+    _labelInput->setEditable (false, false, false);
+    _labelInput->setColour (juce::TextEditor::textColourId, juce::Colours::black);
+    _labelInput->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
+
+    _labelInput->setBounds (0, 0, 150, 24);
 
 
     //[UserPreSize]
@@ -179,6 +206,11 @@ ManualControlComponent::ManualControlComponent ()
 
 	_sep1x = 100;
 	_sep2x = 200;
+
+	_sliderTranslationVelocity->setValue(127);
+	_sliderRotationVelocity->setValue(127);
+	_sliderSpkVelocity->setValue(127);
+
 
 
 	setColour(ColourIds::backgroundColourId, Colour(0xff323e44));
@@ -207,6 +239,8 @@ ManualControlComponent::~ManualControlComponent()
     _labelRotationVelocity = nullptr;
     _sliderTranslationVelocity = nullptr;
     _labelTranslationVelocity = nullptr;
+    _labelDefaultVelos = nullptr;
+    _labelInput = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -240,18 +274,20 @@ void ManualControlComponent::resized()
     //[/UserPreResize]
 
     _sequenceManager->setBounds (getWidth() - 500, 0, 500, proportionOfHeight (1.0000f));
-    _inputTranslation->setBounds (0, 0 + 32, getWidth() - 925, 400);
-    _labelRotation->setBounds (0, (0 + 32) + 400 - -30, 150, 24);
-    _inputRotation->setBounds (0, ((0 + 32) + 400 - -30) + 32, juce::roundToInt ((getWidth() - 925) * 1.0000f), 31);
-    _inputSpkRotation->setBounds (0 + (getWidth() - 925) - -96 - 31, (0 + 32) + 0, 31, juce::roundToInt (400 * 1.0000f));
-    _labelSpkRotation->setBounds (0 + (getWidth() - 925) - -24, 0, 120, 24);
-    _inputSpkAngle->setBounds (0 + (juce::roundToInt ((getWidth() - 925) * 1.0000f)) - -30, ((0 + 32) + 0) + (juce::roundToInt (400 * 1.0000f)) - -30, 100, 100);
-    _labelSpkAngle->setBounds ((0 + (juce::roundToInt ((getWidth() - 925) * 1.0000f)) - -30) + 2, (((0 + 32) + 0) + (juce::roundToInt (400 * 1.0000f)) - -30) + 100 - -6, 100, 24);
-    _sliderSpkVelocity->setBounds (((608 + 0) + 0) + 0, ((4 + 120) + 120) + 32, 208, 31);
-    _labelSpkVelocity->setBounds ((608 + 0) + 0, (4 + 120) + 120, 130, 24);
-    _sliderRotationVelocity->setBounds ((608 + 0) + 0, (4 + 120) + 32, 208, 31);
-    _labelRotationVelocity->setBounds (608 + 0, 4 + 120, 130, 24);
-    _sliderTranslationVelocity->setBounds (608 + 0, 4 + 32, 208, 31);
+    _inputTranslation->setBounds (0, (0 + 40) + 32, getWidth() - 925, 400);
+    _labelTranslation->setBounds (0, 0 + 40, 150, 24);
+    _labelRotation->setBounds (0, ((0 + 40) + 32) + 400 - -30, 150, 24);
+    _inputRotation->setBounds (0, (((0 + 40) + 32) + 400 - -30) + 32, juce::roundToInt ((getWidth() - 925) * 1.0000f), 31);
+    _inputSpkRotation->setBounds (0 + (getWidth() - 925) - -96 - 31, ((0 + 40) + 32) + 0, 31, juce::roundToInt (400 * 1.0000f));
+    _labelSpkRotation->setBounds (0 + (getWidth() - 925) - -24, (0 + 40) + 0, 120, 24);
+    _inputSpkAngle->setBounds (0 + (juce::roundToInt ((getWidth() - 925) * 1.0000f)) - -30, (((0 + 40) + 32) + 0) + (juce::roundToInt (400 * 1.0000f)) - -30, 100, 100);
+    _labelSpkAngle->setBounds ((0 + (juce::roundToInt ((getWidth() - 925) * 1.0000f)) - -30) + 2, ((((0 + 40) + 32) + 0) + (juce::roundToInt (400 * 1.0000f)) - -30) + 100 - -6, 100, 24);
+    _sliderSpkVelocity->setBounds (((608 + 0) + 0) + 0, (((0 + 40) + 80) + 80) + 26, 208, 31);
+    _labelSpkVelocity->setBounds ((608 + 0) + 0, ((0 + 40) + 80) + 80, 130, 24);
+    _sliderRotationVelocity->setBounds ((608 + 0) + 0, ((0 + 40) + 80) + 26, 208, 31);
+    _labelRotationVelocity->setBounds (608 + 0, (0 + 40) + 80, 130, 24);
+    _sliderTranslationVelocity->setBounds (608 + 0, (0 + 40) + 26, 208, 31);
+    _labelTranslationVelocity->setBounds (608, 0 + 40, 130, 24);
     //[UserResized] Add your own custom resize handling here..
 
 
@@ -261,7 +297,7 @@ void ManualControlComponent::resized()
 	_sequenceManager->setBounds(area.removeFromRight(500));
 
 
-	// layout parameter sliders
+	// layout default velocity sliders
 	auto areaParams = area.removeFromRight(250);
 
 	_sep1x = areaParams.getX() + 10;
@@ -270,27 +306,34 @@ void ManualControlComponent::resized()
 	int dx = _sep1x + 10;
 	int dy = 4;
 
+	_labelDefaultVelos->setBounds(dx, dy, 150, 24);
+
+	dy += 40;
 	_labelTranslationVelocity->setBounds(dx, dy, 130, 24);
-	_sliderTranslationVelocity->setBounds(dx, dy + 32, 208, 31);
+	_sliderTranslationVelocity->setBounds(dx, dy + 26, 208, 31);
 
-	dy += 120;
+	dy += 80;
 	_labelRotationVelocity->setBounds(dx, dy, 130, 24);
-	_sliderRotationVelocity->setBounds(dx, dy + 32, 208, 31);
+	_sliderRotationVelocity->setBounds(dx, dy + 26, 208, 31);
 
-	dy += 120;
+	dy += 80;
 	_labelSpkVelocity->setBounds(dx, dy, 130, 24);
-	_sliderSpkVelocity->setBounds(dx, dy + 32, 208, 31);
+	_sliderSpkVelocity->setBounds(dx, dy + 26, 208, 31);
 
 
 	// layout input components
 
 	int w = area.getWidth() - 220;
-	int h = area.getHeight() - 260;
+	int h = area.getHeight() - 280;
 
 	int s = (w > h) ? h : w;
 
 	dx = 4;
 	dy = 2;
+
+	_labelInput->setBounds(dx, dy, 150, 24);
+
+	dy += 40;
 	_labelTranslation->setBounds(dx, dy, 150, 24);
 	_inputTranslation->setBounds(dx, dy + 32, s, s);
 
@@ -299,12 +342,12 @@ void ManualControlComponent::resized()
 	_inputSpkRotation->setBounds(dx + 42, dy + 32, 31, s);
 
 	dx = 4;
-	dy = s + 114;
+	dy = s + 144;
 	_labelRotation->setBounds(dx, dy, 150, 24);
 	_inputRotation->setBounds(dx, dy + 32, s, 31);
 
-	dx = s + 74;
-	dy = s + 72;
+	dx = s + 70;
+	dy = s + 102;
 	_labelSpkAngle->setBounds(dx + 10, dy, 100, 24);
 	_inputSpkAngle->setBounds(dx, dy + 30, 120, 120);
 
@@ -367,13 +410,14 @@ BEGIN_JUCER_METADATA
                     virtualName="" explicitFocusOrder="0" pos="0 32 925M 400" posRelativeY="b2fcac2b642bd3cd"
                     class="XYInputComponent" params="511, 511, &quot;Translation&quot;"/>
   <LABEL name="translation label" id="b2fcac2b642bd3cd" memberName="_labelTranslation"
-         virtualName="" explicitFocusOrder="0" pos="0 0 150 24" edTextCol="ff000000"
-         edBkgCol="0" labelText="Translational motion" editableSingleClick="0"
-         editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
-         fontsize="15.0" kerning="0.0" bold="0" italic="0" justification="33"/>
+         virtualName="" explicitFocusOrder="0" pos="0 40 150 24" posRelativeY="2856c3183c1225a"
+         textCol="ffcdcdcd" edTextCol="ff000000" edBkgCol="0" labelText="Translational motion"
+         editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
+         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+         italic="0" justification="33"/>
   <LABEL name="rotation label" id="3f5312a800ec5984" memberName="_labelRotation"
          virtualName="" explicitFocusOrder="0" pos="0 -30R 150 24" posRelativeY="51b2d13e951c1c36"
-         edTextCol="ff000000" edBkgCol="0" labelText="Rotational motion"
+         textCol="ffcdcdcd" edTextCol="ff000000" edBkgCol="0" labelText="Rotational motion"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
          italic="0" justification="33"/>
@@ -386,56 +430,68 @@ BEGIN_JUCER_METADATA
                     class="XYInputComponent" params="31, 511, &quot;Speaker Rotation&quot;"/>
   <LABEL name="speaker rotation label" id="aa7d76a9a553223" memberName="_labelSpkRotation"
          virtualName="" explicitFocusOrder="0" pos="-24R 0 120 24" posRelativeX="51b2d13e951c1c36"
-         edTextCol="ff000000" edBkgCol="0" labelText="Speaker rotation"
-         editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
-         italic="0" justification="33"/>
+         posRelativeY="b2fcac2b642bd3cd" textCol="ffcdcdcd" edTextCol="ff000000"
+         edBkgCol="0" labelText="Speaker rotation" editableSingleClick="0"
+         editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
+         fontsize="15.0" kerning="0.0" bold="0" italic="0" justification="33"/>
   <GENERICCOMPONENT name="speaker angle input" id="8fb7635da3960044" memberName="_inputSpkAngle"
                     virtualName="" explicitFocusOrder="0" pos="-30R -30R 100 100"
                     posRelativeX="4fe9eb57af480cb5" posRelativeY="bb192f3df5a8603b"
                     class="AngleInputComponent" params=""/>
   <LABEL name="speaker angle label" id="2aa9e54fcf6b5790" memberName="_labelSpkAngle"
          virtualName="" explicitFocusOrder="0" pos="2 -6R 100 24" posRelativeX="8fb7635da3960044"
-         posRelativeY="8fb7635da3960044" edTextCol="ff000000" edBkgCol="0"
-         labelText="Speaker angle" editableSingleClick="0" editableDoubleClick="0"
-         focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
-         kerning="0.0" bold="0" italic="0" justification="33"/>
+         posRelativeY="8fb7635da3960044" textCol="ffcdcdcd" edTextCol="ff000000"
+         edBkgCol="0" labelText="Speaker angle" editableSingleClick="0"
+         editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
+         fontsize="15.0" kerning="0.0" bold="0" italic="0" justification="33"/>
   <SLIDER name="speaker velocity slider" id="4ad6a1a20f094c52" memberName="_sliderSpkVelocity"
-          virtualName="" explicitFocusOrder="0" pos="0 32 208 31" posRelativeX="b7a922d3c97653ae"
+          virtualName="" explicitFocusOrder="0" pos="0 26 208 31" posRelativeX="b7a922d3c97653ae"
           posRelativeY="b7a922d3c97653ae" tooltip="Speaker rotation velocity used for keyboard or angle input"
           bkgcol="ff121e24" thumbcol="ffa45c94" trackcol="ffa45c94" rotarysliderfill="ff121e24"
           rotaryslideroutline="ff121e24" min="1.0" max="127.0" int="1.0"
           style="LinearHorizontal" textBoxPos="TextBoxRight" textBoxEditable="1"
           textBoxWidth="50" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
   <LABEL name="speaker velocity label" id="b7a922d3c97653ae" memberName="_labelSpkVelocity"
-         virtualName="" explicitFocusOrder="0" pos="0 120 130 24" posRelativeX="f7484d74122f4e37"
-         posRelativeY="f7484d74122f4e37" edTextCol="ff000000" edBkgCol="0"
-         labelText="Speaker velocity" editableSingleClick="0" editableDoubleClick="0"
-         focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
-         kerning="0.0" bold="0" italic="0" justification="33"/>
+         virtualName="" explicitFocusOrder="0" pos="0 80 130 24" posRelativeX="f7484d74122f4e37"
+         posRelativeY="f7484d74122f4e37" textCol="ffcdcdcd" edTextCol="ff000000"
+         edBkgCol="0" labelText="Speaker rotation" editableSingleClick="0"
+         editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
+         fontsize="15.0" kerning="0.0" bold="0" italic="0" justification="33"/>
   <SLIDER name="rotation velocity slider" id="5467c2aadbf1b739" memberName="_sliderRotationVelocity"
-          virtualName="" explicitFocusOrder="0" pos="0 32 208 31" posRelativeX="f7484d74122f4e37"
+          virtualName="" explicitFocusOrder="0" pos="0 26 208 31" posRelativeX="f7484d74122f4e37"
           posRelativeY="f7484d74122f4e37" tooltip="Robot rotation velocity used for keyboard or angle input"
           bkgcol="ff121e24" thumbcol="ffa45c94" trackcol="ffa45c94" rotarysliderfill="ff121e24"
           rotaryslideroutline="ff121e24" min="1.0" max="127.0" int="1.0"
           style="LinearHorizontal" textBoxPos="TextBoxRight" textBoxEditable="1"
           textBoxWidth="50" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
   <LABEL name="rotation velocity label" id="f7484d74122f4e37" memberName="_labelRotationVelocity"
-         virtualName="" explicitFocusOrder="0" pos="0 120 130 24" posRelativeX="b58d566532bf862f"
-         posRelativeY="b58d566532bf862f" edTextCol="ff000000" edBkgCol="0"
-         labelText="Rotation velocity" editableSingleClick="0" editableDoubleClick="0"
+         virtualName="" explicitFocusOrder="0" pos="0 80 130 24" posRelativeX="b58d566532bf862f"
+         posRelativeY="b58d566532bf862f" textCol="ffcdcdcd" edTextCol="ff000000"
+         edBkgCol="0" labelText="Rotation" editableSingleClick="0" editableDoubleClick="0"
          focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
          kerning="0.0" bold="0" italic="0" justification="33"/>
   <SLIDER name="translation velocity slider" id="3ded3cd63a4d5af8" memberName="_sliderTranslationVelocity"
-          virtualName="" explicitFocusOrder="0" pos="0 32 208 31" posRelativeX="b58d566532bf862f"
+          virtualName="" explicitFocusOrder="0" pos="0 26 208 31" posRelativeX="b58d566532bf862f"
           posRelativeY="b58d566532bf862f" tooltip="Robot translation velocity used for keyboard or angle input"
           bkgcol="ff121e24" thumbcol="ffa45c94" trackcol="ffa45c94" rotarysliderfill="ff121e24"
           rotaryslideroutline="ff121e24" min="1.0" max="127.0" int="1.0"
           style="LinearHorizontal" textBoxPos="TextBoxRight" textBoxEditable="1"
           textBoxWidth="50" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
   <LABEL name="translation velocity label" id="b58d566532bf862f" memberName="_labelTranslationVelocity"
-         virtualName="" explicitFocusOrder="0" pos="608 4 130 24" edTextCol="ff000000"
-         edBkgCol="0" labelText="Translation velocity" editableSingleClick="0"
+         virtualName="" explicitFocusOrder="0" pos="608 40 130 24" posRelativeY="a3c518a62f7fb027"
+         textCol="ffcdcdcd" edTextCol="ff000000" edBkgCol="0" labelText="Translation"
+         editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
+         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+         italic="0" justification="33"/>
+  <LABEL name="default velocities label" id="a3c518a62f7fb027" memberName="_labelDefaultVelos"
+         virtualName="" explicitFocusOrder="0" pos="608 0 150 24" tooltip="Default velocities are used whenever an input cannot provide different velocity values, e.g. motion by keyboard input or positioning the speaker by angle input."
+         edTextCol="ff000000" edBkgCol="0" labelText="Default velocities"
+         editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
+         fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
+         italic="0" justification="33"/>
+  <LABEL name="input label" id="2856c3183c1225a" memberName="_labelInput"
+         virtualName="" explicitFocusOrder="0" pos="0 0 150 24" tooltip="Controls for motion input"
+         edTextCol="ff000000" edBkgCol="0" labelText="Motion input" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
          fontsize="15.0" kerning="0.0" bold="0" italic="0" justification="33"/>
 </JUCER_COMPONENT>
