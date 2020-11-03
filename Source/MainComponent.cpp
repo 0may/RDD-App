@@ -8,6 +8,7 @@
 
 #include "MainComponent.h"
 #include "MainManager.h"
+#include "JuceHeader.h"
 
 //==============================================================================
 MainComponent::MainComponent()
@@ -19,11 +20,17 @@ MainComponent::MainComponent()
 	// init MainManager
 	rdd::MainManager::instance();
 
+	auto* keyMappings = rdd::MainManager::instance().commandManager().getKeyMappings();
+	keyMappings->resetToDefaultMappings();
+
+	addKeyListener(keyMappings);
 }
 
 MainComponent::~MainComponent()
 {
 	Logger::setCurrentLogger(nullptr);
+
+	removeKeyListener(rdd::MainManager::instance().commandManager().getKeyMappings());
 }
 
 //==============================================================================
