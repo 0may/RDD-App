@@ -40,8 +40,8 @@ AngleInputComponent::AngleInputComponent ()
 
 
     //[Constructor] You can add your own custom stuff here..
-	_min = 0.0f;
-	_max = 360.0f;
+	_min = -180.0f;
+	_max = 180.0f;
 	_angle = 0.0f;
 
 
@@ -125,7 +125,8 @@ float AngleInputComponent::getAngle() const {
 
 
 float AngleInputComponent::getMappedAngle() const {
-	return _angle / (float_Pi*2.0f) * (_max - _min) + _min;
+	//return _angle / (float_Pi*2.0f) * (_max - _min) + _min;
+	return (_angle + float_Pi) / (float_Pi*2.0f) * (_max - _min) + _min;
 }
 
 
@@ -134,12 +135,7 @@ void AngleInputComponent::mouseDown(const MouseEvent& event) {
 
 	_mouseDown = true;
 
-	float angle = toAngle(event.getMouseDownPosition().x - getWidth()*0.5f, getHeight()*0.5f - event.getMouseDownPosition().y);
-
-	if (angle < 0.0f)
-		_angle = 2.0f*float_Pi + angle;
-	else
-		_angle = angle;
+	_angle = toAngle(event.getMouseDownPosition().x - getWidth()*0.5f, getHeight()*0.5f - event.getMouseDownPosition().y);
 
 	repaint();
 
@@ -149,12 +145,7 @@ void AngleInputComponent::mouseDown(const MouseEvent& event) {
 
 void AngleInputComponent::mouseDrag(const MouseEvent& event) {
 
-	float angle = toAngle(event.getMouseDownPosition().x + event.getOffsetFromDragStart().x - getWidth()*0.5f, getHeight()*0.5f - event.getMouseDownPosition().y - event.getOffsetFromDragStart().y);
-
-	if (angle < 0.0f)
-		_angle = 2.0f*float_Pi + angle;
-	else
-		_angle = angle;
+	_angle = toAngle(event.getMouseDownPosition().x + event.getOffsetFromDragStart().x - getWidth()*0.5f, getHeight()*0.5f - event.getMouseDownPosition().y - event.getOffsetFromDragStart().y);
 
 	repaint();
 
@@ -174,7 +165,7 @@ void AngleInputComponent::mouseUp(const MouseEvent& /*event*/) {
 	repaint();
 
 
-	sendChangeMessage();
+	//sendChangeMessage();
 }
 
 

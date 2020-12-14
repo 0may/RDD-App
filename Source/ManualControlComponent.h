@@ -38,7 +38,13 @@
                                                                     //[/Comments]
 */
 class ManualControlComponent  : public Component,
+<<<<<<< main
                                 public juce::Slider::Listener
+=======
+                                public ApplicationCommandTarget,
+                                public juce::Slider::Listener,
+                                public juce::Button::Listener
+>>>>>>> local
 {
 public:
     //==============================================================================
@@ -52,6 +58,7 @@ public:
     void paint (juce::Graphics& g) override;
     void resized() override;
     void sliderValueChanged (juce::Slider* sliderThatWasMoved) override;
+    void buttonClicked (juce::Button* buttonThatWasClicked) override;
 
 
 
@@ -89,6 +96,7 @@ private:
     std::unique_ptr<juce::Label> _labelTranslationVelocity;
     std::unique_ptr<juce::Label> _labelDefaultVelos;
     std::unique_ptr<juce::Label> _labelInput;
+    std::unique_ptr<juce::TextButton> _buttonSpkPositionReset;
 
 
     //==============================================================================

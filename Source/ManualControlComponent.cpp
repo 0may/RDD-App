@@ -186,6 +186,14 @@ ManualControlComponent::ManualControlComponent ()
 
     _labelInput->setBounds (0, 0, 150, 24);
 
+    _buttonSpkPositionReset.reset (new juce::TextButton ("speaker position reset"));
+    addAndMakeVisible (_buttonSpkPositionReset.get());
+    _buttonSpkPositionReset->setTooltip (TRANS("Reset speaker position to zero position"));
+    _buttonSpkPositionReset->setButtonText (TRANS("Reset"));
+    _buttonSpkPositionReset->addListener (this);
+
+    _buttonSpkPositionReset->setBounds (624, 176, 46, 24);
+
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -202,6 +210,8 @@ ManualControlComponent::ManualControlComponent ()
 	_inputSpkRotation->addChangeListener(&rdd::MainManager::instance().midiController());
 	_inputSpkRotation->setMapping(0, 0, -1, 1);
 
+
+	_inputSpkAngle->setMapping(-255.999f, 255.999f);
 	_inputSpkAngle->addChangeListener(&rdd::MainManager::instance().midiController());
 
 	_sep1x = 100;
@@ -241,6 +251,7 @@ ManualControlComponent::~ManualControlComponent()
     _labelTranslationVelocity = nullptr;
     _labelDefaultVelos = nullptr;
     _labelInput = nullptr;
+    _buttonSpkPositionReset = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -273,8 +284,13 @@ void ManualControlComponent::resized()
     //[UserPreResize] Add your own custom resize code here..
     //[/UserPreResize]
 
+<<<<<<< main
     _sequenceManager->setBounds (getWidth() - 500, 0, 500, proportionOfHeight (1.0000f));
     _inputTranslation->setBounds (0, (0 + 40) + 32, getWidth() - 925, 400);
+=======
+    _sequenceManager->setBounds (getWidth() - 1140, 0, 500, proportionOfHeight (0.7708f));
+    _inputTranslation->setBounds (0, (0 + 40) + -8, getWidth() - 1192, 400);
+>>>>>>> local
     _labelTranslation->setBounds (0, 0 + 40, 150, 24);
     _labelRotation->setBounds (0, ((0 + 40) + 32) + 400 - -30, 150, 24);
     _inputRotation->setBounds (0, (((0 + 40) + 32) + 400 - -30) + 32, juce::roundToInt ((getWidth() - 925) * 1.0000f), 31);
@@ -324,7 +340,7 @@ void ManualControlComponent::resized()
 	// layout input components
 
 	int w = area.getWidth() - 220;
-	int h = area.getHeight() - 280;
+	int h = area.getHeight() - 320;
 
 	int s = (w > h) ? h : w;
 
@@ -350,6 +366,7 @@ void ManualControlComponent::resized()
 	dy = s + 102;
 	_labelSpkAngle->setBounds(dx + 10, dy, 100, 24);
 	_inputSpkAngle->setBounds(dx, dy + 30, 120, 120);
+	_buttonSpkPositionReset->setBounds(dx + 38, dy + 160, 46, 24);
 
 
     //[/UserResized]
@@ -383,6 +400,22 @@ void ManualControlComponent::sliderValueChanged (juce::Slider* sliderThatWasMove
     //[/UsersliderValueChanged_Post]
 }
 
+void ManualControlComponent::buttonClicked (juce::Button* buttonThatWasClicked)
+{
+    //[UserbuttonClicked_Pre]
+    //[/UserbuttonClicked_Pre]
+
+    if (buttonThatWasClicked == _buttonSpkPositionReset.get())
+    {
+        //[UserButtonCode__buttonSpkPositionReset] -- add your button handler code here..
+		rdd::MainManager::instance().midiController().sendParameter(rdd::MidiSettings::SPEAKER_POSITION_RESET, 1);
+        //[/UserButtonCode__buttonSpkPositionReset]
+    }
+
+    //[UserbuttonClicked_Post]
+    //[/UserbuttonClicked_Post]
+}
+
 
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
@@ -404,8 +437,13 @@ BEGIN_JUCER_METADATA
                  fixedSize="0" initialWidth="600" initialHeight="600">
   <BACKGROUND backgroundColour="ff323e44"/>
   <GENERICCOMPONENT name="new component" id="47ca8be8a00e3ab8" memberName="_sequenceManager"
+<<<<<<< main
                     virtualName="" explicitFocusOrder="0" pos="500R 0 500 100%" class="MidiSequenceManagerComponent"
                     params=""/>
+=======
+                    virtualName="" explicitFocusOrder="0" pos="1140R 0 500 77.081%"
+                    class="MidiSequenceManagerComponent" params=""/>
+>>>>>>> local
   <GENERICCOMPONENT name="translation input" id="51b2d13e951c1c36" memberName="_inputTranslation"
                     virtualName="" explicitFocusOrder="0" pos="0 32 925M 400" posRelativeY="b2fcac2b642bd3cd"
                     class="XYInputComponent" params="511, 511, &quot;Translation&quot;"/>
@@ -494,6 +532,9 @@ BEGIN_JUCER_METADATA
          edTextCol="ff000000" edBkgCol="0" labelText="Motion input" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
          fontsize="15.0" kerning="0.0" bold="0" italic="0" justification="33"/>
+  <TEXTBUTTON name="speaker position reset" id="ab4f9e33da19faf4" memberName="_buttonSpkPositionReset"
+              virtualName="" explicitFocusOrder="0" pos="624 176 46 24" tooltip="Reset speaker position to zero position"
+              buttonText="Reset" connectedEdges="0" needsCallback="1" radioGroupId="0"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

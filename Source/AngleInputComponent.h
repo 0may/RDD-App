@@ -44,8 +44,8 @@ public:
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
 
-	// set a mapping from the internal radian representation (0 to 2*PI).
-	// Default mapping is 0 to 360. Note that 'max' is exclusive
+	// set a mapping from the internal radian representation [-PI to PI].
+	// Default mapping is -180.0 to 180.0
 	void setMapping(float min, float max);
 
 	float getAngle() const;

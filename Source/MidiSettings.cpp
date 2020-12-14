@@ -34,6 +34,7 @@ MidiSettings::MidiSettings()
 	_cc[SPEAKER_POSITION_Q2] = 34;
 	_cc[SPEAKER_POSITION_Q3] = 35;
 	_cc[SPEAKER_POSITION_Q4] = 36;
+	_cc[SPEAKER_POSITION_RESET] = 37;
 }
 
 
@@ -71,6 +72,7 @@ String MidiSettings::toString() {
 	s += " cc speaker_position_q2:  " + String(getCC(SPEAKER_POSITION_Q2)) + "\n";
 	s += " cc speaker_position_q3:  " + String(getCC(SPEAKER_POSITION_Q3)) + "\n";
 	s += " cc speaker_position_q4:  " + String(getCC(SPEAKER_POSITION_Q4)) + "\n";
+	s += " cc speaker_position_reset:  " + String(getCC(SPEAKER_POSITION_RESET)) + "\n";
 
 	return s;
 }
@@ -110,6 +112,7 @@ bool MidiSettings::validateAndRead(var json) {
 			ret &= getIntFromJsonObject(objCC, "speaker_position_q2", _cc[SPEAKER_POSITION_Q2]);
 			ret &= getIntFromJsonObject(objCC, "speaker_position_q3", _cc[SPEAKER_POSITION_Q3]);
 			ret &= getIntFromJsonObject(objCC, "speaker_position_q4", _cc[SPEAKER_POSITION_Q4]);
+			ret &= getIntFromJsonObject(objCC, "speaker_position_reset", _cc[SPEAKER_POSITION_RESET]);
 		}
 		else
 			ret = false;

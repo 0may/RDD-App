@@ -151,6 +151,10 @@ bool MidiController::stopCommand(MidiSettings::BotCommand cmd) {
 		Logger::writeToLog(_logMsg);
 	}
 
+	for (size_t i = 0; i < _midiOutputs.size(); i++) {
+		_midiOutputs[i]->sendMessageNow(m);
+	}
+
 	return true;
 }
 
@@ -376,17 +380,17 @@ void MidiController::changeListenerCallback(ChangeBroadcaster* source) {
 	if (angleInput) {
 		auto input = angleInput->getMappedAngle();
 
-		if (input < 90.0f) {
-			sendParameter(rdd::MidiSettings::SPEAKER_POSITION_Q1, (uint8)(input / 90.0 * 128.0));
+		if (input <= -128.0f) {
+			sendParameter(rdd::MidiSettings::SPEAKER_POSITION_Q4, (uint8)(abs(input) - 128.0));
 		}
-		else if (input < 180.0f) {
-			sendParameter(rdd::MidiSettings::SPEAKER_POSITION_Q2, (uint8)((input - 90.0f) / 90.0 * 128.0));
+		else if (input < 0.0f) {
+			sendParameter(rdd::MidiSettings::SPEAKER_POSITION_Q3, (uint8)(abs(input)));
 		}
-		else if (input < 270.0f) {
-			sendParameter(rdd::MidiSettings::SPEAKER_POSITION_Q3, (uint8)((input - 180.0f) / 90.0 * 128.0));
+		else if (input < 128.0f) {
+			sendParameter(rdd::MidiSettings::SPEAKER_POSITION_Q1, (uint8)(input));
 		}
-		else {
-			sendParameter(rdd::MidiSettings::SPEAKER_POSITION_Q4, (uint8)((input - 270.0f) / 90.0 * 128.0));
+		else {  // (input >= 128.0f)
+			sendParameter(rdd::MidiSettings::SPEAKER_POSITION_Q2, (uint8)(input - 128.0));
 		}
 	}
 
