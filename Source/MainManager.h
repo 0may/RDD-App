@@ -13,6 +13,7 @@
 
 #include "MidiController.h"
 #include "MidiSequenceManager.h"
+#include "JuceHeader.h"
 
 namespace rdd {
 
@@ -27,6 +28,7 @@ namespace rdd {
 
 		MidiController& midiController();
 		MidiSequenceManager& midiSequenceManager();
+		ApplicationCommandManager& commandManager();
 
 
 	private:
@@ -42,6 +44,7 @@ namespace rdd {
 	private:
 		MidiController _midiController;
 		MidiSequenceManager _midiSequenceManager;
+		ApplicationCommandManager _cmdManager;
 	};
 
 

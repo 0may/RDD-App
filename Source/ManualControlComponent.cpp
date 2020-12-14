@@ -221,10 +221,19 @@ ManualControlComponent::ManualControlComponent ()
 	_sliderRotationVelocity->setValue(127);
 	_sliderSpkVelocity->setValue(127);
 
-
-
 	setColour(ColourIds::backgroundColourId, Colour(0xff323e44));
 	setColour(ColourIds::separatorColourId, Colour(0xffafafaf));
+
+
+	// variables and init of application commands
+
+	_moveFB = 0;
+	_moveLR = 0;
+	_rotateLR = 0;
+	_speakerUD = 0;
+
+	rdd::MainManager::instance().commandManager().registerAllCommandsForTarget(this);
+
 
     //[/Constructor]
 }
@@ -255,6 +264,7 @@ ManualControlComponent::~ManualControlComponent()
 
 
     //[Destructor]. You can add your own custom destruction code here..
+
     //[/Destructor]
 }
 
@@ -284,25 +294,20 @@ void ManualControlComponent::resized()
     //[UserPreResize] Add your own custom resize code here..
     //[/UserPreResize]
 
-<<<<<<< main
-    _sequenceManager->setBounds (getWidth() - 500, 0, 500, proportionOfHeight (1.0000f));
-    _inputTranslation->setBounds (0, (0 + 40) + 32, getWidth() - 925, 400);
-=======
     _sequenceManager->setBounds (getWidth() - 1140, 0, 500, proportionOfHeight (0.7708f));
     _inputTranslation->setBounds (0, (0 + 40) + -8, getWidth() - 1192, 400);
->>>>>>> local
     _labelTranslation->setBounds (0, 0 + 40, 150, 24);
-    _labelRotation->setBounds (0, ((0 + 40) + 32) + 400 - -30, 150, 24);
-    _inputRotation->setBounds (0, (((0 + 40) + 32) + 400 - -30) + 32, juce::roundToInt ((getWidth() - 925) * 1.0000f), 31);
-    _inputSpkRotation->setBounds (0 + (getWidth() - 925) - -96 - 31, ((0 + 40) + 32) + 0, 31, juce::roundToInt (400 * 1.0000f));
-    _labelSpkRotation->setBounds (0 + (getWidth() - 925) - -24, (0 + 40) + 0, 120, 24);
-    _inputSpkAngle->setBounds (0 + (juce::roundToInt ((getWidth() - 925) * 1.0000f)) - -30, (((0 + 40) + 32) + 0) + (juce::roundToInt (400 * 1.0000f)) - -30, 100, 100);
-    _labelSpkAngle->setBounds ((0 + (juce::roundToInt ((getWidth() - 925) * 1.0000f)) - -30) + 2, ((((0 + 40) + 32) + 0) + (juce::roundToInt (400 * 1.0000f)) - -30) + 100 - -6, 100, 24);
-    _sliderSpkVelocity->setBounds (((608 + 0) + 0) + 0, (((0 + 40) + 80) + 80) + 26, 208, 31);
-    _labelSpkVelocity->setBounds ((608 + 0) + 0, ((0 + 40) + 80) + 80, 130, 24);
-    _sliderRotationVelocity->setBounds ((608 + 0) + 0, ((0 + 40) + 80) + 26, 208, 31);
-    _labelRotationVelocity->setBounds (608 + 0, (0 + 40) + 80, 130, 24);
-    _sliderTranslationVelocity->setBounds (608 + 0, (0 + 40) + 26, 208, 31);
+    _labelRotation->setBounds (0, ((0 + 40) + -8) + 400 - -30, 150, 24);
+    _inputRotation->setBounds (0, (((0 + 40) + -8) + 400 - -30) + 32, juce::roundToInt ((getWidth() - 1192) * 1.0000f), 0);
+    _inputSpkRotation->setBounds (0 + (getWidth() - 1192) - -31 - 31, ((0 + 40) + -8) + -32, 31, juce::roundToInt (400 * 1.0000f));
+    _labelSpkRotation->setBounds (0 + (getWidth() - 1192), (0 + 40) + -40, 120, 24);
+    _inputSpkAngle->setBounds (0 + (juce::roundToInt ((getWidth() - 1192) * 1.0000f)), (((0 + 40) + -8) + -32) + (juce::roundToInt (400 * 1.0000f)) - 400, 100, 100);
+    _labelSpkAngle->setBounds ((0 + (juce::roundToInt ((getWidth() - 1192) * 1.0000f))) + 2, ((((0 + 40) + -8) + -32) + (juce::roundToInt (400 * 1.0000f)) - 400) + 100 - -6, 100, 24);
+    _sliderSpkVelocity->setBounds (((608 + -608) + 0) + 0, (((0 + 40) + 40) + 0) + -54, 208, 31);
+    _labelSpkVelocity->setBounds ((608 + -608) + 0, ((0 + 40) + 40) + 0, 130, 24);
+    _sliderRotationVelocity->setBounds ((608 + -608) + 0, ((0 + 40) + 40) + -54, 208, 31);
+    _labelRotationVelocity->setBounds (608 + -608, (0 + 40) + 40, 130, 24);
+    _sliderTranslationVelocity->setBounds (608 + -608, (0 + 40) + -14, 208, 31);
     _labelTranslationVelocity->setBounds (608, 0 + 40, 130, 24);
     //[UserResized] Add your own custom resize handling here..
 
@@ -419,6 +424,210 @@ void ManualControlComponent::buttonClicked (juce::Button* buttonThatWasClicked)
 
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
+
+ApplicationCommandTarget * 	ManualControlComponent::getNextCommandTarget() {
+	return nullptr;
+}
+
+
+void ManualControlComponent::getAllCommands(Array< CommandID > &commands) {
+	//commands.clear();
+
+	commands.add(1000); // move forward
+	commands.add(1001); // move backward
+	commands.add(1002); // move left
+	commands.add(1003); // move right
+	commands.add(1004); // rotate left
+	commands.add(1005); // rotate right
+	commands.add(1006); // rotate speaker up
+	commands.add(1007); // rotate speaker down
+}
+
+
+void ManualControlComponent::getCommandInfo(CommandID commandID, ApplicationCommandInfo &result) {
+
+
+	if (commandID == 1000) {
+		result.setInfo("move_forward", "Move the RDD platform forward with default speed", "Translational Motion", ApplicationCommandInfo::wantsKeyUpDownCallbacks);
+		result.addDefaultKeypress('w', ModifierKeys::noModifiers);
+		//if (_moveFB == 1)
+		//	result.setActive(false);
+	}
+	else if (commandID == 1001) {
+		result.setInfo("move_backward", "Move the RDD platform backward with default speed", "Translational Motion", ApplicationCommandInfo::wantsKeyUpDownCallbacks);
+		result.addDefaultKeypress('s', ModifierKeys::noModifiers);
+		//if (_moveFB == -1)
+		//	result.setActive(false);
+	}
+	else if (commandID == 1002) {
+		result.setInfo("strafe_left", "Move the RDD platform left with default speed", "Translational Motion", ApplicationCommandInfo::wantsKeyUpDownCallbacks);
+		result.addDefaultKeypress('a', ModifierKeys::noModifiers);
+		//if (_moveLR == 1)
+		//	result.setActive(false);
+	}
+	else if (commandID == 1003) {
+		result.setInfo("strafe_right", "Move the RDD platform right with default speed", "Translational Motion", ApplicationCommandInfo::wantsKeyUpDownCallbacks);
+		result.addDefaultKeypress('d', ModifierKeys::noModifiers);
+		//if (_moveLR == -1)
+		//	result.setActive(false);
+	}
+	else if (commandID == 1004) {
+		result.setInfo("rotate_left", "Rotate the RDD platform left with default speed", "Rotational Motion", ApplicationCommandInfo::wantsKeyUpDownCallbacks);
+		result.addDefaultKeypress(KeyPress::leftKey, ModifierKeys::noModifiers);
+		//if (_rotateLR == 1)
+		//	result.setActive(false);
+	}
+	else if (commandID == 1005) {
+		result.setInfo("rotate_right", "Rotate the RDD platform right with default speed", "Rotational Motion", ApplicationCommandInfo::wantsKeyUpDownCallbacks);
+		result.addDefaultKeypress(KeyPress::rightKey, ModifierKeys::noModifiers);
+		//if (_rotateLR == -1)
+		//	result.setActive(false);
+	}
+	else if (commandID == 1006) {
+		result.setInfo("speaker_up", "Rotate the speaker up with default speed", "Speaker Motion", ApplicationCommandInfo::wantsKeyUpDownCallbacks);
+		result.addDefaultKeypress(KeyPress::upKey, ModifierKeys::noModifiers);
+		//if (_speakerUD == 1)
+		//	result.setActive(false);
+	}
+	else if (commandID == 1007) {
+		result.setInfo("speaker_down", "Rotate the speaker down with default speed", "Speaker Motion", ApplicationCommandInfo::wantsKeyUpDownCallbacks);
+		result.addDefaultKeypress(KeyPress::downKey, ModifierKeys::noModifiers);
+		//if (_rotateLR == -1)
+		//	result.setActive(false);
+	}
+}
+
+
+bool ManualControlComponent::perform(const InvocationInfo &info) {
+
+	if (info.commandID == 1000) {  // move forward command
+
+		if (info.isKeyDown && _moveFB == 0) {
+			_moveFB = -1;
+			rdd::MainManager::instance().midiController().startCommand(rdd::MidiSettings::MOVE_FORWARD, (int8)_sliderTranslationVelocity->getValue());
+			//rdd::MainManager::instance().commandManager().commandStatusChanged();
+		}
+		else if ((!info.isKeyDown) && _moveFB == -1) {
+			rdd::MainManager::instance().midiController().stopCommand(rdd::MidiSettings::MOVE_FORWARD);
+			_moveFB = 0;
+			//rdd::MainManager::instance().commandManager().commandStatusChanged();
+		}
+
+		return true;
+	}
+	else if (info.commandID == 1001) { // move backward command
+
+		if (info.isKeyDown && _moveFB == 0) {
+			_moveFB = 1;
+			rdd::MainManager::instance().midiController().startCommand(rdd::MidiSettings::MOVE_BACKWARD, (int8)_sliderTranslationVelocity->getValue());
+			//rdd::MainManager::instance().commandManager().commandStatusChanged();
+		}
+		else if (!info.isKeyDown && _moveFB == 1) {
+			rdd::MainManager::instance().midiController().stopCommand(rdd::MidiSettings::MOVE_BACKWARD);
+			_moveFB = 0;
+			//rdd::MainManager::instance().commandManager().commandStatusChanged();
+		}
+
+		return true;
+	}
+	else if (info.commandID == 1002) { // strafe left command
+
+		if (info.isKeyDown && _moveLR == 0) {
+			_moveLR = -1;
+			rdd::MainManager::instance().midiController().startCommand(rdd::MidiSettings::STRAFE_LEFT, (int8)_sliderTranslationVelocity->getValue());
+			//rdd::MainManager::instance().commandManager().commandStatusChanged();
+		}
+		else if (!info.isKeyDown && _moveLR == -1) {
+			rdd::MainManager::instance().midiController().stopCommand(rdd::MidiSettings::STRAFE_LEFT);
+			_moveLR = 0;
+			//rdd::MainManager::instance().commandManager().commandStatusChanged();
+		}
+
+		return true;
+	}
+	else if (info.commandID == 1003) { // strafe right command
+
+		if (info.isKeyDown && _moveLR == 0) {
+			_moveLR = 1;
+			rdd::MainManager::instance().midiController().startCommand(rdd::MidiSettings::STRAFE_RIGHT, (int8)_sliderTranslationVelocity->getValue());
+			//rdd::MainManager::instance().commandManager().commandStatusChanged();
+		}
+		else if (!info.isKeyDown && _moveLR == 1) {
+			rdd::MainManager::instance().midiController().stopCommand(rdd::MidiSettings::STRAFE_RIGHT);
+			_moveLR = 0;
+			//rdd::MainManager::instance().commandManager().commandStatusChanged();
+		}
+
+		return true;
+	}
+	else if (info.commandID == 1004) { // rotate left command
+
+		if (info.isKeyDown && _rotateLR == 0) {
+			_rotateLR = -1;
+			rdd::MainManager::instance().midiController().startCommand(rdd::MidiSettings::ROTATE_LEFT, (int8)_sliderRotationVelocity->getValue());
+			//rdd::MainManager::instance().commandManager().commandStatusChanged();
+		}
+		else if (!info.isKeyDown && _rotateLR == -1) {
+			rdd::MainManager::instance().midiController().stopCommand(rdd::MidiSettings::ROTATE_LEFT);
+			_rotateLR = 0;
+			//rdd::MainManager::instance().commandManager().commandStatusChanged();
+		}
+
+		return true;
+	}
+	else if (info.commandID == 1005) { // rotate right command
+
+		if (info.isKeyDown && _rotateLR == 0) {
+			_rotateLR = 1;
+			rdd::MainManager::instance().midiController().startCommand(rdd::MidiSettings::ROTATE_RIGHT, (int8)_sliderRotationVelocity->getValue());
+			//rdd::MainManager::instance().commandManager().commandStatusChanged();
+		}
+		else if (!info.isKeyDown && _rotateLR == 1) {
+			rdd::MainManager::instance().midiController().stopCommand(rdd::MidiSettings::ROTATE_RIGHT);
+			_rotateLR = 0;
+			//rdd::MainManager::instance().commandManager().commandStatusChanged();
+		}
+
+		return true;
+	}
+	else if (info.commandID == 1006) { // rotate speaker up command  #TODO: fix bug with speaker commands only reacting to key presses after slider use
+
+		if (info.isKeyDown && _speakerUD == 0) {
+			_speakerUD = -1;
+			rdd::MainManager::instance().midiController().startCommand(rdd::MidiSettings::SPEAKER_UP, (int8)_sliderSpkVelocity->getValue());
+			//rdd::MainManager::instance().commandManager().commandStatusChanged();
+		}
+		else if (!info.isKeyDown && _speakerUD == -1) {
+			rdd::MainManager::instance().midiController().stopCommand(rdd::MidiSettings::SPEAKER_UP);
+			_speakerUD = 0;
+			//rdd::MainManager::instance().commandManager().commandStatusChanged();
+		}
+
+		return true;
+	}
+	else if (info.commandID == 1007) { // rotate speaker down command
+
+		if (info.isKeyDown && _speakerUD == 0) {
+			_speakerUD = 1;
+			rdd::MainManager::instance().midiController().startCommand(rdd::MidiSettings::SPEAKER_DOWN, (int8)_sliderSpkVelocity->getValue());
+			//rdd::MainManager::instance().commandManager().commandStatusChanged();
+		}
+		else if (!info.isKeyDown && _speakerUD == 1) {
+			rdd::MainManager::instance().midiController().stopCommand(rdd::MidiSettings::SPEAKER_DOWN);
+			_speakerUD = 0;
+			//rdd::MainManager::instance().commandManager().commandStatusChanged();
+		}
+
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+
+
+
 //[/MiscUserCode]
 
 
@@ -432,20 +641,16 @@ void ManualControlComponent::buttonClicked (juce::Button* buttonThatWasClicked)
 BEGIN_JUCER_METADATA
 
 <JUCER_COMPONENT documentType="Component" className="ManualControlComponent" componentName=""
-                 parentClasses="public Component" constructorParams="" variableInitialisers=""
-                 snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
-                 fixedSize="0" initialWidth="600" initialHeight="600">
+                 parentClasses="public Component, public ApplicationCommandTarget"
+                 constructorParams="" variableInitialisers="" snapPixels="8" snapActive="1"
+                 snapShown="1" overlayOpacity="0.330" fixedSize="0" initialWidth="600"
+                 initialHeight="600">
   <BACKGROUND backgroundColour="ff323e44"/>
   <GENERICCOMPONENT name="new component" id="47ca8be8a00e3ab8" memberName="_sequenceManager"
-<<<<<<< main
-                    virtualName="" explicitFocusOrder="0" pos="500R 0 500 100%" class="MidiSequenceManagerComponent"
-                    params=""/>
-=======
-                    virtualName="" explicitFocusOrder="0" pos="1140R 0 500 77.081%"
+                    virtualName="" explicitFocusOrder="0" pos="1140R 0 500 77.136%"
                     class="MidiSequenceManagerComponent" params=""/>
->>>>>>> local
   <GENERICCOMPONENT name="translation input" id="51b2d13e951c1c36" memberName="_inputTranslation"
-                    virtualName="" explicitFocusOrder="0" pos="0 32 925M 400" posRelativeY="b2fcac2b642bd3cd"
+                    virtualName="" explicitFocusOrder="0" pos="0 -8 1192M 400" posRelativeY="b2fcac2b642bd3cd"
                     class="XYInputComponent" params="511, 511, &quot;Translation&quot;"/>
   <LABEL name="translation label" id="b2fcac2b642bd3cd" memberName="_labelTranslation"
          virtualName="" explicitFocusOrder="0" pos="0 40 150 24" posRelativeY="2856c3183c1225a"
@@ -460,22 +665,21 @@ BEGIN_JUCER_METADATA
          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
          italic="0" justification="33"/>
   <GENERICCOMPONENT name="rotation input" id="4fe9eb57af480cb5" memberName="_inputRotation"
-                    virtualName="" explicitFocusOrder="0" pos="0 32 100% 31" posRelativeY="3f5312a800ec5984"
+                    virtualName="" explicitFocusOrder="0" pos="0 32 100% 0" posRelativeY="3f5312a800ec5984"
                     posRelativeW="51b2d13e951c1c36" class="XYInputComponent" params="511, 31, &quot;Rotation&quot;"/>
   <GENERICCOMPONENT name="speaker rotation input" id="bb192f3df5a8603b" memberName="_inputSpkRotation"
-                    virtualName="" explicitFocusOrder="0" pos="-96Rr 0 31 100%" posRelativeX="51b2d13e951c1c36"
-                    posRelativeY="51b2d13e951c1c36" posRelativeH="51b2d13e951c1c36"
-                    class="XYInputComponent" params="31, 511, &quot;Speaker Rotation&quot;"/>
+                    virtualName="" explicitFocusOrder="0" pos="-31Rr -32 31 100%"
+                    posRelativeX="51b2d13e951c1c36" posRelativeY="51b2d13e951c1c36"
+                    posRelativeH="51b2d13e951c1c36" class="XYInputComponent" params="31, 511, &quot;Speaker Rotation&quot;"/>
   <LABEL name="speaker rotation label" id="aa7d76a9a553223" memberName="_labelSpkRotation"
-         virtualName="" explicitFocusOrder="0" pos="-24R 0 120 24" posRelativeX="51b2d13e951c1c36"
+         virtualName="" explicitFocusOrder="0" pos="0R -40 120 24" posRelativeX="51b2d13e951c1c36"
          posRelativeY="b2fcac2b642bd3cd" textCol="ffcdcdcd" edTextCol="ff000000"
          edBkgCol="0" labelText="Speaker rotation" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
          fontsize="15.0" kerning="0.0" bold="0" italic="0" justification="33"/>
   <GENERICCOMPONENT name="speaker angle input" id="8fb7635da3960044" memberName="_inputSpkAngle"
-                    virtualName="" explicitFocusOrder="0" pos="-30R -30R 100 100"
-                    posRelativeX="4fe9eb57af480cb5" posRelativeY="bb192f3df5a8603b"
-                    class="AngleInputComponent" params=""/>
+                    virtualName="" explicitFocusOrder="0" pos="0R 400R 100 100" posRelativeX="4fe9eb57af480cb5"
+                    posRelativeY="bb192f3df5a8603b" class="AngleInputComponent" params=""/>
   <LABEL name="speaker angle label" id="2aa9e54fcf6b5790" memberName="_labelSpkAngle"
          virtualName="" explicitFocusOrder="0" pos="2 -6R 100 24" posRelativeX="8fb7635da3960044"
          posRelativeY="8fb7635da3960044" textCol="ffcdcdcd" edTextCol="ff000000"
@@ -483,33 +687,33 @@ BEGIN_JUCER_METADATA
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
          fontsize="15.0" kerning="0.0" bold="0" italic="0" justification="33"/>
   <SLIDER name="speaker velocity slider" id="4ad6a1a20f094c52" memberName="_sliderSpkVelocity"
-          virtualName="" explicitFocusOrder="0" pos="0 26 208 31" posRelativeX="b7a922d3c97653ae"
+          virtualName="" explicitFocusOrder="0" pos="0 -54 208 31" posRelativeX="b7a922d3c97653ae"
           posRelativeY="b7a922d3c97653ae" tooltip="Speaker rotation velocity used for keyboard or angle input"
           bkgcol="ff121e24" thumbcol="ffa45c94" trackcol="ffa45c94" rotarysliderfill="ff121e24"
           rotaryslideroutline="ff121e24" min="1.0" max="127.0" int="1.0"
           style="LinearHorizontal" textBoxPos="TextBoxRight" textBoxEditable="1"
           textBoxWidth="50" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
   <LABEL name="speaker velocity label" id="b7a922d3c97653ae" memberName="_labelSpkVelocity"
-         virtualName="" explicitFocusOrder="0" pos="0 80 130 24" posRelativeX="f7484d74122f4e37"
+         virtualName="" explicitFocusOrder="0" pos="0 0 130 24" posRelativeX="f7484d74122f4e37"
          posRelativeY="f7484d74122f4e37" textCol="ffcdcdcd" edTextCol="ff000000"
          edBkgCol="0" labelText="Speaker rotation" editableSingleClick="0"
          editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
          fontsize="15.0" kerning="0.0" bold="0" italic="0" justification="33"/>
   <SLIDER name="rotation velocity slider" id="5467c2aadbf1b739" memberName="_sliderRotationVelocity"
-          virtualName="" explicitFocusOrder="0" pos="0 26 208 31" posRelativeX="f7484d74122f4e37"
+          virtualName="" explicitFocusOrder="0" pos="0 -54 208 31" posRelativeX="f7484d74122f4e37"
           posRelativeY="f7484d74122f4e37" tooltip="Robot rotation velocity used for keyboard or angle input"
           bkgcol="ff121e24" thumbcol="ffa45c94" trackcol="ffa45c94" rotarysliderfill="ff121e24"
           rotaryslideroutline="ff121e24" min="1.0" max="127.0" int="1.0"
           style="LinearHorizontal" textBoxPos="TextBoxRight" textBoxEditable="1"
           textBoxWidth="50" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
   <LABEL name="rotation velocity label" id="f7484d74122f4e37" memberName="_labelRotationVelocity"
-         virtualName="" explicitFocusOrder="0" pos="0 80 130 24" posRelativeX="b58d566532bf862f"
+         virtualName="" explicitFocusOrder="0" pos="-608 40 130 24" posRelativeX="b58d566532bf862f"
          posRelativeY="b58d566532bf862f" textCol="ffcdcdcd" edTextCol="ff000000"
          edBkgCol="0" labelText="Rotation" editableSingleClick="0" editableDoubleClick="0"
          focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
          kerning="0.0" bold="0" italic="0" justification="33"/>
   <SLIDER name="translation velocity slider" id="3ded3cd63a4d5af8" memberName="_sliderTranslationVelocity"
-          virtualName="" explicitFocusOrder="0" pos="0 26 208 31" posRelativeX="b58d566532bf862f"
+          virtualName="" explicitFocusOrder="0" pos="-608 -14 208 31" posRelativeX="b58d566532bf862f"
           posRelativeY="b58d566532bf862f" tooltip="Robot translation velocity used for keyboard or angle input"
           bkgcol="ff121e24" thumbcol="ffa45c94" trackcol="ffa45c94" rotarysliderfill="ff121e24"
           rotaryslideroutline="ff121e24" min="1.0" max="127.0" int="1.0"

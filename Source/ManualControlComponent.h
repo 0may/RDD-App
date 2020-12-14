@@ -38,13 +38,9 @@
                                                                     //[/Comments]
 */
 class ManualControlComponent  : public Component,
-<<<<<<< main
-                                public juce::Slider::Listener
-=======
                                 public ApplicationCommandTarget,
                                 public juce::Slider::Listener,
                                 public juce::Button::Listener
->>>>>>> local
 {
 public:
     //==============================================================================
@@ -53,6 +49,15 @@ public:
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
+
+
+	// ApplicationCommandTarget methods to override
+	ApplicationCommandTarget * 	getNextCommandTarget() override;
+	void getAllCommands(Array< CommandID > &commands) override;
+	void getCommandInfo(CommandID commandID, ApplicationCommandInfo &result) override;
+	bool perform(const InvocationInfo &info) override;
+
+
     //[/UserMethods]
 
     void paint (juce::Graphics& g) override;
@@ -64,7 +69,12 @@ public:
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
-	int _sep1x, _sep2x;
+	int _sep1x, _sep2x;  // x-coordinate of the two vertical separators
+
+	int8 _moveFB;      // indicator if the forward (-1) or backward (1) move command is active, 0 for inactive
+	int8 _moveLR;		// indicator if the left (-1) or right (1) move command is active, 0 for inactive
+	int8 _rotateLR;    // indicator if the left (-1) or right (1) rotate command is active, 0 for inactive
+	int8 _speakerUD;   // indicator if the up (-1) or down (1) speaker rotate command is active, 0 for inactive
 
 
 public:

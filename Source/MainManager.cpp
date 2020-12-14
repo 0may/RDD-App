@@ -60,3 +60,8 @@ MidiSequenceManager& MainManager::midiSequenceManager() {
 	return _midiSequenceManager;
 
 }
+
+
+ApplicationCommandManager& MainManager::commandManager() {
+	return _cmdManager;
+}
