@@ -57,7 +57,7 @@ void MainComponent::resized()
 
 	auto area = getLocalBounds();
 
-	_logComponent.setBounds(area.removeFromBottom(200));
+	_logComponent.setBounds(area.removeFromRight(300));
 	_tabsComponent.setBounds(area);
 
     

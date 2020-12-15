@@ -7,12 +7,12 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.4.7
+  Created with Projucer version: 6.0.3
 
   ------------------------------------------------------------------------------
 
   The Projucer is part of the JUCE library.
-  Copyright (c) 2017 - ROLI Ltd.
+  Copyright (c) 2020 - Raw Material Software Limited.
 
   ==============================================================================
 */
@@ -32,7 +32,7 @@ LogComponent::LogComponent ()
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]
 
-    textEditor.reset (new TextEditor ("new text editor"));
+    textEditor.reset (new juce::TextEditor ("new text editor"));
     addAndMakeVisible (textEditor.get());
     textEditor->setMultiLine (true);
     textEditor->setReturnKeyStartsNewLine (true);
@@ -40,7 +40,7 @@ LogComponent::LogComponent ()
     textEditor->setScrollbarsShown (true);
     textEditor->setCaretVisible (false);
     textEditor->setPopupMenuEnabled (false);
-    textEditor->setText (String());
+    textEditor->setText (juce::String());
 
 
     //[UserPreSize]
@@ -66,12 +66,12 @@ LogComponent::~LogComponent()
 }
 
 //==============================================================================
-void LogComponent::paint (Graphics& g)
+void LogComponent::paint (juce::Graphics& g)
 {
     //[UserPrePaint] Add your own custom painting code here..
     //[/UserPrePaint]
 
-    g.fillAll (Colour (0xff323e44));
+    g.fillAll (juce::Colour (0xff323e44));
 
     //[UserPaint] Add your own custom painting code here..
     //[/UserPaint]

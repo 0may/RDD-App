@@ -33,10 +33,6 @@ ManualControlComponent::ManualControlComponent ()
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]
 
-    _sequenceManager.reset (new MidiSequenceManagerComponent());
-    addAndMakeVisible (_sequenceManager.get());
-    _sequenceManager->setName ("new component");
-
     _inputTranslation.reset (new XYInputComponent (511, 511, "Translation"));
     addAndMakeVisible (_inputTranslation.get());
     _inputTranslation->setName ("translation input");
@@ -243,7 +239,6 @@ ManualControlComponent::~ManualControlComponent()
     //[Destructor_pre]. You can add your own custom destruction code here..
     //[/Destructor_pre]
 
-    _sequenceManager = nullptr;
     _inputTranslation = nullptr;
     _labelTranslation = nullptr;
     _labelRotation = nullptr;
@@ -283,7 +278,7 @@ void ManualControlComponent::paint (juce::Graphics& g)
 	g.setColour(findColour(ColourIds::separatorColourId));
 
 	g.drawVerticalLine(_sep1x, 0.0f, getHeight() - 1.0f);
-	g.drawVerticalLine(_sep2x, 0.0f, getHeight() - 1.0f);
+	//g.drawVerticalLine(_sep2x, 0.0f, getHeight() - 1.0f);
 
 
     //[/UserPaint]
@@ -294,7 +289,6 @@ void ManualControlComponent::resized()
     //[UserPreResize] Add your own custom resize code here..
     //[/UserPreResize]
 
-    _sequenceManager->setBounds (getWidth() - 1140, 0, 500, proportionOfHeight (0.7708f));
     _inputTranslation->setBounds (0, (0 + 40) + -8, getWidth() - 1192, 400);
     _labelTranslation->setBounds (0, 0 + 40, 150, 24);
     _labelRotation->setBounds (0, ((0 + 40) + -8) + 400 - -30, 150, 24);
@@ -315,7 +309,7 @@ void ManualControlComponent::resized()
 	auto area = getLocalBounds();
 
 	// layout sequence manager
-	_sequenceManager->setBounds(area.removeFromRight(500));
+	//_sequenceManager->setBounds(area.removeFromRight(500));
 
 
 	// layout default velocity sliders
@@ -646,9 +640,6 @@ BEGIN_JUCER_METADATA
                  snapShown="1" overlayOpacity="0.330" fixedSize="0" initialWidth="600"
                  initialHeight="600">
   <BACKGROUND backgroundColour="ff323e44"/>
-  <GENERICCOMPONENT name="new component" id="47ca8be8a00e3ab8" memberName="_sequenceManager"
-                    virtualName="" explicitFocusOrder="0" pos="1140R 0 500 77.136%"
-                    class="MidiSequenceManagerComponent" params=""/>
   <GENERICCOMPONENT name="translation input" id="51b2d13e951c1c36" memberName="_inputTranslation"
                     virtualName="" explicitFocusOrder="0" pos="0 -8 1192M 400" posRelativeY="b2fcac2b642bd3cd"
                     class="XYInputComponent" params="511, 511, &quot;Translation&quot;"/>

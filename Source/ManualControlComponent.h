@@ -89,7 +89,6 @@ private:
     //[/UserVariables]
 
     //==============================================================================
-    std::unique_ptr<MidiSequenceManagerComponent> _sequenceManager;
     std::unique_ptr<XYInputComponent> _inputTranslation;
     std::unique_ptr<juce::Label> _labelTranslation;
     std::unique_ptr<juce::Label> _labelRotation;
