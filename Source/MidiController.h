@@ -13,6 +13,7 @@
 #include <AppConfig.h>
 #include <JuceHeader.h>
 #include <set>
+#include <map>
 #include "MidiSettings.h"
 
 using namespace juce;
@@ -68,6 +69,16 @@ namespace rdd {
 
 		uint64_t _midiClock;
 		bool _midiClockStarted;
+
+		// item to control midi message resends
+		struct MidiMessageResend {
+			int resend;
+			MidiMessage msg;
+		};
+
+		// maps to the MidiMessageResend items for the different commands and parameters
+		std::map<MidiSettings::BotCommand, MidiMessageResend> _mapCmdResend;
+		std::map<MidiSettings::BotParameter, MidiMessageResend> _mapParamResend;
 
 	};
 }

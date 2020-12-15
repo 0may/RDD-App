@@ -35,6 +35,8 @@ MidiSettings::MidiSettings()
 	_cc[SPEAKER_POSITION_Q3] = 35;
 	_cc[SPEAKER_POSITION_Q4] = 36;
 	_cc[SPEAKER_POSITION_RESET] = 37;
+
+	_resend = 0;
 }
 
 
@@ -74,6 +76,9 @@ String MidiSettings::toString() {
 	s += " cc speaker_position_q4:  " + String(getCC(SPEAKER_POSITION_Q4)) + "\n";
 	s += " cc speaker_position_reset:  " + String(getCC(SPEAKER_POSITION_RESET)) + "\n";
 
+
+	s += " resend:             " + String(_resend) + "\n";
+
 	return s;
 }
 
@@ -87,6 +92,10 @@ bool MidiSettings::validateAndRead(var json) {
 		bool ret = true;
 
 		ret &= getIntFromJsonObject(obj, "channel", _channel);
+		ret &= getIntFromJsonObject(obj, "resend", _resend);
+
+		if (_resend < 0)
+			_resend = 0;
 
 
 		auto* objNotes = getChildObjectFromJsonObject(obj, "notes");

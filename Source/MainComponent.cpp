@@ -24,6 +24,7 @@ MainComponent::MainComponent()
 	keyMappings->resetToDefaultMappings();
 
 	addKeyListener(keyMappings);
+
 }
 
 MainComponent::~MainComponent()

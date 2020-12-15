@@ -57,6 +57,8 @@ namespace rdd {
 
 		inline int getCC(BotParameter param) { return _cc.find(param)->second; }
 
+		inline int getNumResends() { return _resend; }
+
 		String toString();
 
 
@@ -77,6 +79,7 @@ namespace rdd {
 
 		std::map<BotParameter, int>	_cc;
 
+		int _resend;
 
 	};
 

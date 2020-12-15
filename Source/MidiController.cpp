@@ -118,10 +118,27 @@ bool MidiController::startCommand(MidiSettings::BotCommand cmd, uint8 velocity) 
 
 	MidiMessage m = MidiMessage::noteOn(_midiSettings.getChannel(), _midiSettings.getNote(cmd), velocity);
 	
-	MainManager::instance().midiSequenceManager().receiveMidiMessage(m);
+	//MainManager::instance().midiSequenceManager().receiveMidiMessage(m);
 
 	for (size_t i = 0; i < _midiOutputs.size(); i++) {
 		_midiOutputs[i]->sendMessageNow(m);
+	}
+
+	// update resend control items
+	if (_midiSettings.getNumResends() > 0) {
+
+		std::map<MidiSettings::BotCommand, MidiMessageResend>::iterator it = _mapCmdResend.find(cmd);
+
+		if (it != _mapCmdResend.end()) {
+			it->second.resend = _midiSettings.getNumResends();
+			it->second.msg = m;
+		}
+		else {
+			MidiMessageResend r;
+			r.resend = _midiSettings.getNumResends();
+			r.msg = m;
+			_mapCmdResend.insert(std::pair<MidiSettings::BotCommand, MidiMessageResend>(cmd, r));
+		}
 	}
 
 	if (_loggingEnabled) {
@@ -140,19 +157,32 @@ bool MidiController::stopCommand(MidiSettings::BotCommand cmd) {
 
 	MidiMessage m = MidiMessage::noteOff(_midiSettings.getChannel(), _midiSettings.getNote(cmd));
 
-	MainManager::instance().midiSequenceManager().receiveMidiMessage(m);
+	//MainManager::instance().midiSequenceManager().receiveMidiMessage(m);
 
 	for (size_t i = 0; i < _midiOutputs.size(); i++) {
 		_midiOutputs[i]->sendMessageNow(m);
+	}
+
+	// update resend control items
+	if (_midiSettings.getNumResends() > 0) {
+
+		std::map<MidiSettings::BotCommand, MidiMessageResend>::iterator it = _mapCmdResend.find(cmd);
+
+		if (it != _mapCmdResend.end()) {
+			it->second.resend = _midiSettings.getNumResends();
+			it->second.msg = m;
+		}
+		else {
+			MidiMessageResend r;
+			r.resend = _midiSettings.getNumResends();
+			r.msg = m;
+			_mapCmdResend.insert(std::pair<MidiSettings::BotCommand, MidiMessageResend>(cmd, r));
+		}
 	}
 
 	if (_loggingEnabled) {
 		sprintf(_logMsg, "Midi Send: NoteOff(%d,%d,0)", m.getChannel(), m.getNoteNumber());
 		Logger::writeToLog(_logMsg);
-	}
-
-	for (size_t i = 0; i < _midiOutputs.size(); i++) {
-		_midiOutputs[i]->sendMessageNow(m);
 	}
 
 	return true;
@@ -166,10 +196,56 @@ bool MidiController::sendParameter(MidiSettings::BotParameter param, uint8 value
 
 	MidiMessage m = MidiMessage::controllerEvent(_midiSettings.getChannel(), _midiSettings.getCC(param), value);
 
-	MainManager::instance().midiSequenceManager().receiveMidiMessage(m);
+	//MainManager::instance().midiSequenceManager().receiveMidiMessage(m);
 
 	for (size_t i = 0; i < _midiOutputs.size(); i++) {
 		_midiOutputs[i]->sendMessageNow(m);
+	}
+
+
+	// update resend control items
+	if (_midiSettings.getNumResends() > 0) {
+		std::map<MidiSettings::BotParameter, MidiMessageResend>::iterator it;
+
+
+		// SPEAKER_POSITION_XX parameters should not be resend if another SPEAKER_POSITION_XY
+		// is parameter is sent, as the all affect a single real value, the speaker's angle.
+		// Use only one MidiMessageResend item for all SPEAKER_POSITION_ parameters represented 
+		// by the key SPEAKER_POSITION_Q1
+		if (param == MidiSettings::SPEAKER_POSITION_Q1
+			|| param == MidiSettings::SPEAKER_POSITION_Q2
+			|| param == MidiSettings::SPEAKER_POSITION_Q3
+			|| param == MidiSettings::SPEAKER_POSITION_Q4
+			|| param == MidiSettings::SPEAKER_POSITION_RESET)
+		{
+			it = _mapParamResend.find(MidiSettings::SPEAKER_POSITION_Q1);
+
+			if (it != _mapParamResend.end()) {
+				it->second.resend = _midiSettings.getNumResends();
+				it->second.msg = m;
+			}
+			else {
+				MidiMessageResend r;
+				r.resend = _midiSettings.getNumResends();
+				r.msg = m;
+				_mapParamResend.insert(std::pair<MidiSettings::BotParameter, MidiMessageResend>(MidiSettings::SPEAKER_POSITION_Q1, r));
+			}
+		}
+		else { // default speed values may be resent without any trouble
+
+			it = _mapParamResend.find(param);		
+			
+			if (it != _mapParamResend.end()) {
+				it->second.resend = _midiSettings.getNumResends();
+				it->second.msg = m;
+			}
+			else {
+				MidiMessageResend r;
+				r.resend = _midiSettings.getNumResends();
+				r.msg = m;
+				_mapParamResend.insert(std::pair<MidiSettings::BotParameter, MidiMessageResend>(param, r));
+			}
+		}
 	}
 
 	if (_loggingEnabled) {
@@ -398,13 +474,64 @@ void MidiController::changeListenerCallback(ChangeBroadcaster* source) {
 
 
 void MidiController::timerCallback() {
+	size_t i;
 	MidiMessage m = MidiMessage::midiClock();
 
-	for (size_t i = 0; i < _midiOutputs.size(); i++) {
+
+	// send alive signal (MIDI clock message)
+	for (i = 0; i < _midiOutputs.size(); i++) {
 		_midiOutputs[i]->sendMessageNow(m);
 	}
 
-	//if (_loggingEnabled) {
-	//	Logger::writeToLog("Midi Send: Clock");
-	//}
+
+	// resend latest MIDI messages for bot commands and parameters
+
+	std::map<MidiSettings::BotCommand, MidiMessageResend>::iterator itCmdResend = _mapCmdResend.begin();
+
+	while (itCmdResend != _mapCmdResend.end()) {
+		if ((itCmdResend->second).resend != 0) {
+
+			m = (itCmdResend->second).msg;
+
+			for (i = 0; i < _midiOutputs.size(); i++) {
+				_midiOutputs[i]->sendMessageNow(m);
+			}
+
+			if ((itCmdResend->second).resend > 0) {
+				(itCmdResend->second).resend--;
+			}
+
+			//if (_loggingEnabled) {
+			//	sprintf(_logMsg, "Midi Send: NoteOn(%d,%d,%d)", m.getChannel(), m.getNoteNumber(), m.getVelocity());
+			//	Logger::writeToLog(_logMsg);
+			//}
+		}
+
+		itCmdResend++;
+	}
+
+
+	std::map<MidiSettings::BotParameter, MidiMessageResend>::iterator itParamResend = _mapParamResend.begin();
+
+	while (itParamResend != _mapParamResend.end()) {
+		if ((itParamResend->second).resend != 0) {
+
+			m = (itParamResend->second).msg;
+
+			for (i = 0; i < _midiOutputs.size(); i++) {
+				_midiOutputs[i]->sendMessageNow(m);
+			}
+
+			if ((itParamResend->second).resend > 0) {
+				(itParamResend->second).resend--;
+			}
+
+			//if (_loggingEnabled) {
+			//	sprintf(_logMsg, "Midi Send: CC(%d,%d,%d)", m.getChannel(), m.getControllerNumber(), m.getControllerValue());
+			//	Logger::writeToLog(_logMsg);
+			//}
+		}
+
+		itParamResend++;
+	}
 }

@@ -24,12 +24,9 @@ MainManager::MainManager() {
 
 	if (midiSettings.load(midiSettingsFile) && _midiController.config(midiSettings)) {
 
-		Logger::writeToLog(midiSettings.toString());
-
-		_midiController.startTimer(200);
-
 		_midiController.enableLogging(true);
 
+		_midiController.startTimer(100);
 
 	}
 	else {
