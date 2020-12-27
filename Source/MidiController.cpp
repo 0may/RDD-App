@@ -501,10 +501,10 @@ void MidiController::timerCallback() {
 				(itCmdResend->second).resend--;
 			}
 
-			//if (_loggingEnabled) {
-			//	sprintf(_logMsg, "Midi Send: NoteOn(%d,%d,%d)", m.getChannel(), m.getNoteNumber(), m.getVelocity());
-			//	Logger::writeToLog(_logMsg);
-			//}
+			if (_loggingEnabled) {
+				sprintf(_logMsg, "Midi Send: NoteOn(%d,%d,%d)", m.getChannel(), m.getNoteNumber(), m.getVelocity());
+				Logger::writeToLog(_logMsg);
+			}
 		}
 
 		itCmdResend++;
@@ -526,10 +526,10 @@ void MidiController::timerCallback() {
 				(itParamResend->second).resend--;
 			}
 
-			//if (_loggingEnabled) {
-			//	sprintf(_logMsg, "Midi Send: CC(%d,%d,%d)", m.getChannel(), m.getControllerNumber(), m.getControllerValue());
-			//	Logger::writeToLog(_logMsg);
-			//}
+			if (_loggingEnabled) {
+				sprintf(_logMsg, "Midi Send: CC(%d,%d,%d)", m.getChannel(), m.getControllerNumber(), m.getControllerValue());
+				Logger::writeToLog(_logMsg);
+			}
 		}
 
 		itParamResend++;
