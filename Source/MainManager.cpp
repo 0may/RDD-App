@@ -26,7 +26,7 @@ MainManager::MainManager() {
 
 		_midiController.enableLogging(true);
 
-		_midiController.startTimer(100);
+		_midiController.startTimer(150);
 
 	}
 	else {

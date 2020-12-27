@@ -159,9 +159,9 @@ ManualControlComponent::ManualControlComponent ()
     _labelTranslationVelocity->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
     _labelDefaultVelos.reset (new juce::Label ("default velocities label",
-                                               TRANS("Default velocities")));
+                                               TRANS("Velocity scalings")));
     addAndMakeVisible (_labelDefaultVelos.get());
-    _labelDefaultVelos->setTooltip (TRANS("Default velocities are used whenever an input cannot provide different velocity values, e.g. motion by keyboard input or positioning the speaker by angle input."));
+    _labelDefaultVelos->setTooltip (TRANS("Velocity scalings are used to reduce velocities to the configured percentage of the maximum velocities"));
     _labelDefaultVelos->setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
     _labelDefaultVelos->setJustificationType (juce::Justification::centredLeft);
     _labelDefaultVelos->setEditable (false, false, false);
@@ -498,7 +498,7 @@ bool ManualControlComponent::perform(const InvocationInfo &info) {
 
 		if (info.isKeyDown && _moveFB == 0) {
 			_moveFB = -1;
-			rdd::MainManager::instance().midiController().startCommand(rdd::MidiSettings::MOVE_FORWARD, (int8)_sliderTranslationVelocity->getValue());
+			rdd::MainManager::instance().midiController().startCommand(rdd::MidiSettings::MOVE_FORWARD, 127);
 			//rdd::MainManager::instance().commandManager().commandStatusChanged();
 		}
 		else if ((!info.isKeyDown) && _moveFB == -1) {
@@ -513,7 +513,7 @@ bool ManualControlComponent::perform(const InvocationInfo &info) {
 
 		if (info.isKeyDown && _moveFB == 0) {
 			_moveFB = 1;
-			rdd::MainManager::instance().midiController().startCommand(rdd::MidiSettings::MOVE_BACKWARD, (int8)_sliderTranslationVelocity->getValue());
+			rdd::MainManager::instance().midiController().startCommand(rdd::MidiSettings::MOVE_BACKWARD, 127);
 			//rdd::MainManager::instance().commandManager().commandStatusChanged();
 		}
 		else if (!info.isKeyDown && _moveFB == 1) {
@@ -528,7 +528,7 @@ bool ManualControlComponent::perform(const InvocationInfo &info) {
 
 		if (info.isKeyDown && _moveLR == 0) {
 			_moveLR = -1;
-			rdd::MainManager::instance().midiController().startCommand(rdd::MidiSettings::STRAFE_LEFT, (int8)_sliderTranslationVelocity->getValue());
+			rdd::MainManager::instance().midiController().startCommand(rdd::MidiSettings::STRAFE_LEFT, 127);
 			//rdd::MainManager::instance().commandManager().commandStatusChanged();
 		}
 		else if (!info.isKeyDown && _moveLR == -1) {
@@ -543,7 +543,7 @@ bool ManualControlComponent::perform(const InvocationInfo &info) {
 
 		if (info.isKeyDown && _moveLR == 0) {
 			_moveLR = 1;
-			rdd::MainManager::instance().midiController().startCommand(rdd::MidiSettings::STRAFE_RIGHT, (int8)_sliderTranslationVelocity->getValue());
+			rdd::MainManager::instance().midiController().startCommand(rdd::MidiSettings::STRAFE_RIGHT, 127);
 			//rdd::MainManager::instance().commandManager().commandStatusChanged();
 		}
 		else if (!info.isKeyDown && _moveLR == 1) {
@@ -558,7 +558,7 @@ bool ManualControlComponent::perform(const InvocationInfo &info) {
 
 		if (info.isKeyDown && _rotateLR == 0) {
 			_rotateLR = -1;
-			rdd::MainManager::instance().midiController().startCommand(rdd::MidiSettings::ROTATE_LEFT, (int8)_sliderRotationVelocity->getValue());
+			rdd::MainManager::instance().midiController().startCommand(rdd::MidiSettings::ROTATE_LEFT, 127);
 			//rdd::MainManager::instance().commandManager().commandStatusChanged();
 		}
 		else if (!info.isKeyDown && _rotateLR == -1) {
@@ -573,7 +573,7 @@ bool ManualControlComponent::perform(const InvocationInfo &info) {
 
 		if (info.isKeyDown && _rotateLR == 0) {
 			_rotateLR = 1;
-			rdd::MainManager::instance().midiController().startCommand(rdd::MidiSettings::ROTATE_RIGHT, (int8)_sliderRotationVelocity->getValue());
+			rdd::MainManager::instance().midiController().startCommand(rdd::MidiSettings::ROTATE_RIGHT, 127);
 			//rdd::MainManager::instance().commandManager().commandStatusChanged();
 		}
 		else if (!info.isKeyDown && _rotateLR == 1) {
@@ -588,7 +588,7 @@ bool ManualControlComponent::perform(const InvocationInfo &info) {
 
 		if (info.isKeyDown && _speakerUD == 0) {
 			_speakerUD = -1;
-			rdd::MainManager::instance().midiController().startCommand(rdd::MidiSettings::SPEAKER_UP, (int8)_sliderSpkVelocity->getValue());
+			rdd::MainManager::instance().midiController().startCommand(rdd::MidiSettings::SPEAKER_UP, 127);
 			//rdd::MainManager::instance().commandManager().commandStatusChanged();
 		}
 		else if (!info.isKeyDown && _speakerUD == -1) {
@@ -603,7 +603,7 @@ bool ManualControlComponent::perform(const InvocationInfo &info) {
 
 		if (info.isKeyDown && _speakerUD == 0) {
 			_speakerUD = 1;
-			rdd::MainManager::instance().midiController().startCommand(rdd::MidiSettings::SPEAKER_DOWN, (int8)_sliderSpkVelocity->getValue());
+			rdd::MainManager::instance().midiController().startCommand(rdd::MidiSettings::SPEAKER_DOWN, 127);
 			//rdd::MainManager::instance().commandManager().commandStatusChanged();
 		}
 		else if (!info.isKeyDown && _speakerUD == 1) {
@@ -717,8 +717,8 @@ BEGIN_JUCER_METADATA
          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
          italic="0" justification="33"/>
   <LABEL name="default velocities label" id="a3c518a62f7fb027" memberName="_labelDefaultVelos"
-         virtualName="" explicitFocusOrder="0" pos="608 0 150 24" tooltip="Default velocities are used whenever an input cannot provide different velocity values, e.g. motion by keyboard input or positioning the speaker by angle input."
-         edTextCol="ff000000" edBkgCol="0" labelText="Default velocities"
+         virtualName="" explicitFocusOrder="0" pos="608 0 150 24" tooltip="Velocity scalings are used to reduce velocities to the configured percentage of the maximum velocities"
+         edTextCol="ff000000" edBkgCol="0" labelText="Velocity scalings"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="15.0" kerning="0.0" bold="0"
          italic="0" justification="33"/>
