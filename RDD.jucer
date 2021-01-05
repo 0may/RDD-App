@@ -11,6 +11,10 @@
               file="Source/CommandRecorder.h"/>
         <FILE id="Q8o2mm" name="MainManager.cpp" compile="1" resource="0" file="Source/MainManager.cpp"/>
         <FILE id="f8iHIU" name="MainManager.h" compile="0" resource="0" file="Source/MainManager.h"/>
+        <FILE id="hYhu8H" name="WaypointsManager.cpp" compile="1" resource="0"
+              file="Source/WaypointsManager.cpp"/>
+        <FILE id="LBJk2B" name="WaypointsManager.h" compile="0" resource="0"
+              file="Source/WaypointsManager.h"/>
       </GROUP>
       <GROUP id="{EE2AA553-5B17-E516-52BE-8D82D8D4B452}" name="Midi">
         <FILE id="HrcpzF" name="MidiController.cpp" compile="1" resource="0"
@@ -31,6 +35,14 @@
         <FILE id="dxNawJ" name="MidiSettings.h" compile="0" resource="0" file="Source/MidiSettings.h"/>
       </GROUP>
       <GROUP id="{62FA6BFF-8C52-5DAF-61DD-2143AA85F673}" name="Ui">
+        <FILE id="L5TzlP" name="WaypointMapComponent.cpp" compile="1" resource="0"
+              file="Source/WaypointMapComponent.cpp"/>
+        <FILE id="DkxQoV" name="WaypointMapComponent.h" compile="0" resource="0"
+              file="Source/WaypointMapComponent.h"/>
+        <FILE id="aItpc2" name="WaypointEditorComponent.cpp" compile="1" resource="0"
+              file="Source/WaypointEditorComponent.cpp"/>
+        <FILE id="zNySh8" name="WaypointEditorComponent.h" compile="0" resource="0"
+              file="Source/WaypointEditorComponent.h"/>
         <FILE id="bRCEMh" name="AngleInputComponent.cpp" compile="1" resource="0"
               file="Source/AngleInputComponent.cpp"/>
         <FILE id="sPR6Rp" name="AngleInputComponent.h" compile="0" resource="0"

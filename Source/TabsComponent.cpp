@@ -20,6 +20,7 @@
 //[Headers] You can add your own extra header files here...
 #include "SettingsComponent.h"
 #include "ManualControlComponent.h"
+#include "WaypointEditorComponent.h"
 //[/Headers]
 
 #include "TabsComponent.h"
@@ -38,7 +39,7 @@ TabsComponent::TabsComponent ()
     addAndMakeVisible (tabbedComponent.get());
     tabbedComponent->setTabBarDepth (30);
     tabbedComponent->addTab (TRANS("Manual Control"), juce::Colours::lightgrey, new ManualControlComponent(), true);
-    tabbedComponent->addTab (TRANS("Waypoint Editor"), juce::Colours::lightgrey, 0, false);
+    tabbedComponent->addTab (TRANS("Waypoint Editor"), juce::Colours::lightgrey, new WaypointEditorComponent(), true);
     tabbedComponent->addTab (TRANS("Settings"), juce::Colours::lightgrey, new Viewport(), true);
     tabbedComponent->setCurrentTabIndex (0);
 
@@ -122,7 +123,7 @@ BEGIN_JUCER_METADATA
                    tabBarDepth="30" initialTab="0">
     <TAB name="Manual Control" colour="ffd3d3d3" useJucerComp="0" contentClassName="ManualControlComponent"
          constructorParams="" jucerComponentFile=""/>
-    <TAB name="Waypoint Editor" colour="ffd3d3d3" useJucerComp="0" contentClassName=""
+    <TAB name="Waypoint Editor" colour="ffd3d3d3" useJucerComp="0" contentClassName="WaypointEditorComponent"
          constructorParams="" jucerComponentFile=""/>
     <TAB name="Settings" colour="ffd3d3d3" useJucerComp="0" contentClassName="Viewport"
          constructorParams="" jucerComponentFile=""/>
