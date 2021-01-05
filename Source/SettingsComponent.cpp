@@ -42,8 +42,8 @@ SettingsComponent::SettingsComponent ()
 
     //[Constructor] You can add your own custom stuff here..
 
-	_midiInputComponent.addChangeListener(&rdd::MainManager::instance().midiController());
-	_midiOutputComponent.addChangeListener(&rdd::MainManager::instance().midiController());
+	_midiInputComponent.addChangeListener(&rdd::MainManager::instance().getMidiController());
+	_midiOutputComponent.addChangeListener(&rdd::MainManager::instance().getMidiController());
 
 	addAndMakeVisible(_midiInputComponent);
 	addAndMakeVisible(_midiOutputComponent);

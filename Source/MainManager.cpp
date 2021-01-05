@@ -20,7 +20,11 @@ MainManager::MainManager() {
 	MidiSettings midiSettings;
 
 	//File midiSettingsFile(File::getCurrentWorkingDirectory().getChildFile("../../midiconfig.json"));
-	File midiSettingsFile(File::getCurrentWorkingDirectory().getChildFile("../../Assets/ConfigFiles/midiconfig.json"));
+
+	setAssetsDirectory("../../Assets/");
+
+
+	File midiSettingsFile(_assetsDirectory.getChildFile("ConfigFiles/midiconfig.json"));
 
 	if (midiSettings.load(midiSettingsFile) && _midiController.config(midiSettings)) {
 
@@ -48,17 +52,32 @@ MainManager& MainManager::instance() {
 }
 
 
-MidiController& MainManager::midiController() {
+MidiController& MainManager::getMidiController() {
 	return _midiController;
 }
 
 
-MidiSequenceManager& MainManager::midiSequenceManager() {
+MidiSequenceManager& MainManager::getMidiSequenceManager() {
 	return _midiSequenceManager;
 
 }
 
 
-ApplicationCommandManager& MainManager::commandManager() {
+ApplicationCommandManager& MainManager::getCommandManager() {
 	return _cmdManager;
+}
+
+
+const File MainManager::getAssetsDirectory() const {
+	return _assetsDirectory;
+}
+
+
+void MainManager::setAssetsDirectory(String path) {
+	_assetsDirectory = File(path).getFullPathName();
+}
+
+
+void MainManager::setAssetsDirectory(File path) {
+	_assetsDirectory = path.getFullPathName();
 }

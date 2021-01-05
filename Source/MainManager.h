@@ -26,10 +26,13 @@ namespace rdd {
 
 		static MainManager& instance();
 
-		MidiController& midiController();
-		MidiSequenceManager& midiSequenceManager();
-		ApplicationCommandManager& commandManager();
+		MidiController& getMidiController();
+		MidiSequenceManager& getMidiSequenceManager();
+		ApplicationCommandManager& getCommandManager();
 
+		const File getAssetsDirectory() const;
+		void setAssetsDirectory(String path);
+		void setAssetsDirectory(File path);
 
 	private:
 		MainManager();
@@ -45,6 +48,7 @@ namespace rdd {
 		MidiController _midiController;
 		MidiSequenceManager _midiSequenceManager;
 		ApplicationCommandManager _cmdManager;
+		File _assetsDirectory;
 	};
 
 

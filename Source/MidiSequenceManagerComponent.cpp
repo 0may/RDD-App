@@ -235,7 +235,7 @@ void MidiSequenceManagerComponent::buttonClicked (juce::Button* buttonThatWasCli
         //[UserButtonCode__buttonDelete] -- add your button handler code here..
 
 
-		auto name = rdd::MainManager::instance().midiSequenceManager().getSelectedMidiSequenceName();
+		auto name = rdd::MainManager::instance().getMidiSequenceManager().getSelectedMidiSequenceName();
 
 		String msg("Please confirm deletion of sequence '");
 		msg.append(name, 100);
@@ -243,7 +243,7 @@ void MidiSequenceManagerComponent::buttonClicked (juce::Button* buttonThatWasCli
 
 		if (AlertWindow::showOkCancelBox(AlertWindow::QuestionIcon, "Delete sequence", msg)) {
 
-			if (rdd::MainManager::instance().midiSequenceManager().removeSelectedMidiSequence()) {
+			if (rdd::MainManager::instance().getMidiSequenceManager().removeSelectedMidiSequence()) {
 				_tableComponent->updateTable();
 			}
 		}
@@ -257,17 +257,17 @@ void MidiSequenceManagerComponent::buttonClicked (juce::Button* buttonThatWasCli
     {
         //[UserButtonCode__buttonExport] -- add your button handler code here..
 
-		if (rdd::MainManager::instance().midiSequenceManager().getSelectedMidiSequenceIdx() != -1) {
+		if (rdd::MainManager::instance().getMidiSequenceManager().getSelectedMidiSequenceIdx() != -1) {
 
-			FileChooser fc("Choose a file for export...", File::getCurrentWorkingDirectory().getChildFile(rdd::MainManager::instance().midiSequenceManager().getSelectedMidiSequenceName()), "*.mid;*.midi", true);
+			FileChooser fc("Choose a file for export...", File::getCurrentWorkingDirectory().getChildFile(rdd::MainManager::instance().getMidiSequenceManager().getSelectedMidiSequenceName()), "*.mid;*.midi", true);
 			if (fc.browseForFileToSave(true)) {
 				auto result = fc.getURLResult();
 
 				if (!result.isEmpty() && result.isLocalFile()) {
 
-					rdd::MainManager::instance().midiSequenceManager().getSelectedMidiSequence()->updateMatchedPairs();
+					rdd::MainManager::instance().getMidiSequenceManager().getSelectedMidiSequence()->updateMatchedPairs();
 
-					if (rdd::MainManager::instance().midiSequenceManager().saveMidiSequence(rdd::MainManager::instance().midiSequenceManager().getSelectedMidiSequenceIdx(), result.getLocalFile())) {
+					if (rdd::MainManager::instance().getMidiSequenceManager().saveMidiSequence(rdd::MainManager::instance().getMidiSequenceManager().getSelectedMidiSequenceIdx(), result.getLocalFile())) {
 						AlertWindow::showMessageBox(AlertWindow::InfoIcon, "MIDI file export",
 							"MIDI sequence successfully exported.",
 							"OK");
@@ -293,7 +293,7 @@ void MidiSequenceManagerComponent::buttonClicked (juce::Button* buttonThatWasCli
 
 
 			if (!result.isEmpty() && result.isLocalFile()) {
-				if (rdd::MainManager::instance().midiSequenceManager().loadMidiSequence(result.getLocalFile()) != -1) {
+				if (rdd::MainManager::instance().getMidiSequenceManager().loadMidiSequence(result.getLocalFile()) != -1) {
 					AlertWindow::showMessageBox(AlertWindow::InfoIcon, "MIDI file import",
 						"MIDI sequence successfully imported.",
 						"OK");
@@ -315,7 +315,7 @@ void MidiSequenceManagerComponent::buttonClicked (juce::Button* buttonThatWasCli
         //[UserButtonCode__buttonAdd] -- add your button handler code here..
 
 
-		int n = rdd::MainManager::instance().midiSequenceManager().getNumMidiSequences() + 1;
+		int n = rdd::MainManager::instance().getMidiSequenceManager().getNumMidiSequences() + 1;
 		String name("Sequence");
 		name.append(String(n), 10);
 
@@ -329,7 +329,7 @@ void MidiSequenceManagerComponent::buttonClicked (juce::Button* buttonThatWasCli
 		if (w.runModalLoop() != 0) // OK clicked
 		{
 			name = w.getTextEditorContents("text");
-			rdd::MainManager::instance().midiSequenceManager().addNewMidiSequence(name);
+			rdd::MainManager::instance().getMidiSequenceManager().addNewMidiSequence(name);
 			_tableComponent->updateTable();
 		}
 #else
@@ -343,7 +343,7 @@ void MidiSequenceManagerComponent::buttonClicked (juce::Button* buttonThatWasCli
     else if (buttonThatWasClicked == _buttonMoveDown.get())
     {
         //[UserButtonCode__buttonMoveDown] -- add your button handler code here..
-		if (rdd::MainManager::instance().midiSequenceManager().moveSelectedMidiSequence(false)) {
+		if (rdd::MainManager::instance().getMidiSequenceManager().moveSelectedMidiSequence(false)) {
 			_tableComponent->updateTable();
 		}
         //[/UserButtonCode__buttonMoveDown]
@@ -351,7 +351,7 @@ void MidiSequenceManagerComponent::buttonClicked (juce::Button* buttonThatWasCli
     else if (buttonThatWasClicked == _buttonMoveUp.get())
     {
         //[UserButtonCode__buttonMoveUp] -- add your button handler code here..
-		if (rdd::MainManager::instance().midiSequenceManager().moveSelectedMidiSequence(true)) {
+		if (rdd::MainManager::instance().getMidiSequenceManager().moveSelectedMidiSequence(true)) {
 			_tableComponent->updateTable();
 		}
         //[/UserButtonCode__buttonMoveUp]
@@ -370,15 +370,15 @@ void MidiSequenceManagerComponent::buttonClicked (juce::Button* buttonThatWasCli
     {
         //[UserButtonCode__buttonRecord] -- add your button handler code here..
 		if (buttonThatWasClicked->getToggleState()) {
-			rdd::MainManager::instance().midiSequenceManager().startRecording();
+			rdd::MainManager::instance().getMidiSequenceManager().startRecording();
 		}
 		else {
-			rdd::MainManager::instance().midiSequenceManager().stopRecording();
+			rdd::MainManager::instance().getMidiSequenceManager().stopRecording();
 			_tableComponent->updateTable();
 		}
 
 		// set toggle state to the actual recording state... just in case if a recording command failed
-		buttonThatWasClicked->setToggleState(rdd::MainManager::instance().midiSequenceManager().isRecording(), NotificationType::dontSendNotification);
+		buttonThatWasClicked->setToggleState(rdd::MainManager::instance().getMidiSequenceManager().isRecording(), NotificationType::dontSendNotification);
 
         //[/UserButtonCode__buttonRecord]
     }

@@ -198,17 +198,17 @@ ManualControlComponent::ManualControlComponent ()
 
 
     //[Constructor] You can add your own custom stuff here..
-	_inputTranslation->addChangeListener(&rdd::MainManager::instance().midiController());
+	_inputTranslation->addChangeListener(&rdd::MainManager::instance().getMidiController());
 
-	_inputRotation->addChangeListener(&rdd::MainManager::instance().midiController());
+	_inputRotation->addChangeListener(&rdd::MainManager::instance().getMidiController());
 	_inputRotation->setMapping(-1, 1, 0, 0);
 
-	_inputSpkRotation->addChangeListener(&rdd::MainManager::instance().midiController());
+	_inputSpkRotation->addChangeListener(&rdd::MainManager::instance().getMidiController());
 	_inputSpkRotation->setMapping(0, 0, -1, 1);
 
 
 	_inputSpkAngle->setMapping(-255.999f, 255.999f);
-	_inputSpkAngle->addChangeListener(&rdd::MainManager::instance().midiController());
+	_inputSpkAngle->addChangeListener(&rdd::MainManager::instance().getMidiController());
 
 	_sep1x = 100;
 	_sep2x = 200;
@@ -228,7 +228,7 @@ ManualControlComponent::ManualControlComponent ()
 	_rotateLR = 0;
 	_speakerUD = 0;
 
-	rdd::MainManager::instance().commandManager().registerAllCommandsForTarget(this);
+	rdd::MainManager::instance().getCommandManager().registerAllCommandsForTarget(this);
 
 
     //[/Constructor]
@@ -379,19 +379,19 @@ void ManualControlComponent::sliderValueChanged (juce::Slider* sliderThatWasMove
     if (sliderThatWasMoved == _sliderSpkVelocity.get())
     {
         //[UserSliderCode__sliderSpkVelocity] -- add your slider handling code here..
-		rdd::MainManager::instance().midiController().sendParameter(rdd::MidiSettings::SPEAKER_SPEED, (uint8)_sliderSpkVelocity->getValue());
+		rdd::MainManager::instance().getMidiController().sendParameter(rdd::MidiSettings::SPEAKER_SPEED, (uint8)_sliderSpkVelocity->getValue());
         //[/UserSliderCode__sliderSpkVelocity]
     }
     else if (sliderThatWasMoved == _sliderRotationVelocity.get())
     {
         //[UserSliderCode__sliderRotationVelocity] -- add your slider handling code here..
-		rdd::MainManager::instance().midiController().sendParameter(rdd::MidiSettings::ROTATE_SPEED, (uint8)_sliderRotationVelocity->getValue());
+		rdd::MainManager::instance().getMidiController().sendParameter(rdd::MidiSettings::ROTATE_SPEED, (uint8)_sliderRotationVelocity->getValue());
         //[/UserSliderCode__sliderRotationVelocity]
     }
     else if (sliderThatWasMoved == _sliderTranslationVelocity.get())
     {
         //[UserSliderCode__sliderTranslationVelocity] -- add your slider handling code here..
-		rdd::MainManager::instance().midiController().sendParameter(rdd::MidiSettings::MOVE_SPEED, (uint8)_sliderTranslationVelocity->getValue());
+		rdd::MainManager::instance().getMidiController().sendParameter(rdd::MidiSettings::MOVE_SPEED, (uint8)_sliderTranslationVelocity->getValue());
         //[/UserSliderCode__sliderTranslationVelocity]
     }
 
@@ -407,7 +407,7 @@ void ManualControlComponent::buttonClicked (juce::Button* buttonThatWasClicked)
     if (buttonThatWasClicked == _buttonSpkPositionReset.get())
     {
         //[UserButtonCode__buttonSpkPositionReset] -- add your button handler code here..
-		rdd::MainManager::instance().midiController().sendParameter(rdd::MidiSettings::SPEAKER_POSITION_RESET, 1);
+		rdd::MainManager::instance().getMidiController().sendParameter(rdd::MidiSettings::SPEAKER_POSITION_RESET, 1);
         //[/UserButtonCode__buttonSpkPositionReset]
     }
 
@@ -498,11 +498,11 @@ bool ManualControlComponent::perform(const InvocationInfo &info) {
 
 		if (info.isKeyDown && _moveFB == 0) {
 			_moveFB = -1;
-			rdd::MainManager::instance().midiController().startCommand(rdd::MidiSettings::MOVE_FORWARD, 127);
+			rdd::MainManager::instance().getMidiController().startCommand(rdd::MidiSettings::MOVE_FORWARD, 127);
 			//rdd::MainManager::instance().commandManager().commandStatusChanged();
 		}
 		else if ((!info.isKeyDown) && _moveFB == -1) {
-			rdd::MainManager::instance().midiController().stopCommand(rdd::MidiSettings::MOVE_FORWARD);
+			rdd::MainManager::instance().getMidiController().stopCommand(rdd::MidiSettings::MOVE_FORWARD);
 			_moveFB = 0;
 			//rdd::MainManager::instance().commandManager().commandStatusChanged();
 		}
@@ -513,11 +513,11 @@ bool ManualControlComponent::perform(const InvocationInfo &info) {
 
 		if (info.isKeyDown && _moveFB == 0) {
 			_moveFB = 1;
-			rdd::MainManager::instance().midiController().startCommand(rdd::MidiSettings::MOVE_BACKWARD, 127);
+			rdd::MainManager::instance().getMidiController().startCommand(rdd::MidiSettings::MOVE_BACKWARD, 127);
 			//rdd::MainManager::instance().commandManager().commandStatusChanged();
 		}
 		else if (!info.isKeyDown && _moveFB == 1) {
-			rdd::MainManager::instance().midiController().stopCommand(rdd::MidiSettings::MOVE_BACKWARD);
+			rdd::MainManager::instance().getMidiController().stopCommand(rdd::MidiSettings::MOVE_BACKWARD);
 			_moveFB = 0;
 			//rdd::MainManager::instance().commandManager().commandStatusChanged();
 		}
@@ -528,11 +528,11 @@ bool ManualControlComponent::perform(const InvocationInfo &info) {
 
 		if (info.isKeyDown && _moveLR == 0) {
 			_moveLR = -1;
-			rdd::MainManager::instance().midiController().startCommand(rdd::MidiSettings::STRAFE_LEFT, 127);
+			rdd::MainManager::instance().getMidiController().startCommand(rdd::MidiSettings::STRAFE_LEFT, 127);
 			//rdd::MainManager::instance().commandManager().commandStatusChanged();
 		}
 		else if (!info.isKeyDown && _moveLR == -1) {
-			rdd::MainManager::instance().midiController().stopCommand(rdd::MidiSettings::STRAFE_LEFT);
+			rdd::MainManager::instance().getMidiController().stopCommand(rdd::MidiSettings::STRAFE_LEFT);
 			_moveLR = 0;
 			//rdd::MainManager::instance().commandManager().commandStatusChanged();
 		}
@@ -543,11 +543,11 @@ bool ManualControlComponent::perform(const InvocationInfo &info) {
 
 		if (info.isKeyDown && _moveLR == 0) {
 			_moveLR = 1;
-			rdd::MainManager::instance().midiController().startCommand(rdd::MidiSettings::STRAFE_RIGHT, 127);
+			rdd::MainManager::instance().getMidiController().startCommand(rdd::MidiSettings::STRAFE_RIGHT, 127);
 			//rdd::MainManager::instance().commandManager().commandStatusChanged();
 		}
 		else if (!info.isKeyDown && _moveLR == 1) {
-			rdd::MainManager::instance().midiController().stopCommand(rdd::MidiSettings::STRAFE_RIGHT);
+			rdd::MainManager::instance().getMidiController().stopCommand(rdd::MidiSettings::STRAFE_RIGHT);
 			_moveLR = 0;
 			//rdd::MainManager::instance().commandManager().commandStatusChanged();
 		}
@@ -558,11 +558,11 @@ bool ManualControlComponent::perform(const InvocationInfo &info) {
 
 		if (info.isKeyDown && _rotateLR == 0) {
 			_rotateLR = -1;
-			rdd::MainManager::instance().midiController().startCommand(rdd::MidiSettings::ROTATE_LEFT, 127);
+			rdd::MainManager::instance().getMidiController().startCommand(rdd::MidiSettings::ROTATE_LEFT, 127);
 			//rdd::MainManager::instance().commandManager().commandStatusChanged();
 		}
 		else if (!info.isKeyDown && _rotateLR == -1) {
-			rdd::MainManager::instance().midiController().stopCommand(rdd::MidiSettings::ROTATE_LEFT);
+			rdd::MainManager::instance().getMidiController().stopCommand(rdd::MidiSettings::ROTATE_LEFT);
 			_rotateLR = 0;
 			//rdd::MainManager::instance().commandManager().commandStatusChanged();
 		}
@@ -573,11 +573,11 @@ bool ManualControlComponent::perform(const InvocationInfo &info) {
 
 		if (info.isKeyDown && _rotateLR == 0) {
 			_rotateLR = 1;
-			rdd::MainManager::instance().midiController().startCommand(rdd::MidiSettings::ROTATE_RIGHT, 127);
+			rdd::MainManager::instance().getMidiController().startCommand(rdd::MidiSettings::ROTATE_RIGHT, 127);
 			//rdd::MainManager::instance().commandManager().commandStatusChanged();
 		}
 		else if (!info.isKeyDown && _rotateLR == 1) {
-			rdd::MainManager::instance().midiController().stopCommand(rdd::MidiSettings::ROTATE_RIGHT);
+			rdd::MainManager::instance().getMidiController().stopCommand(rdd::MidiSettings::ROTATE_RIGHT);
 			_rotateLR = 0;
 			//rdd::MainManager::instance().commandManager().commandStatusChanged();
 		}
@@ -588,11 +588,11 @@ bool ManualControlComponent::perform(const InvocationInfo &info) {
 
 		if (info.isKeyDown && _speakerUD == 0) {
 			_speakerUD = -1;
-			rdd::MainManager::instance().midiController().startCommand(rdd::MidiSettings::SPEAKER_UP, 127);
+			rdd::MainManager::instance().getMidiController().startCommand(rdd::MidiSettings::SPEAKER_UP, 127);
 			//rdd::MainManager::instance().commandManager().commandStatusChanged();
 		}
 		else if (!info.isKeyDown && _speakerUD == -1) {
-			rdd::MainManager::instance().midiController().stopCommand(rdd::MidiSettings::SPEAKER_UP);
+			rdd::MainManager::instance().getMidiController().stopCommand(rdd::MidiSettings::SPEAKER_UP);
 			_speakerUD = 0;
 			//rdd::MainManager::instance().commandManager().commandStatusChanged();
 		}
@@ -603,11 +603,11 @@ bool ManualControlComponent::perform(const InvocationInfo &info) {
 
 		if (info.isKeyDown && _speakerUD == 0) {
 			_speakerUD = 1;
-			rdd::MainManager::instance().midiController().startCommand(rdd::MidiSettings::SPEAKER_DOWN, 127);
+			rdd::MainManager::instance().getMidiController().startCommand(rdd::MidiSettings::SPEAKER_DOWN, 127);
 			//rdd::MainManager::instance().commandManager().commandStatusChanged();
 		}
 		else if (!info.isKeyDown && _speakerUD == 1) {
-			rdd::MainManager::instance().midiController().stopCommand(rdd::MidiSettings::SPEAKER_DOWN);
+			rdd::MainManager::instance().getMidiController().stopCommand(rdd::MidiSettings::SPEAKER_DOWN);
 			_speakerUD = 0;
 			//rdd::MainManager::instance().commandManager().commandStatusChanged();
 		}

@@ -42,7 +42,7 @@ MidiSequenceTableComponent::~MidiSequenceTableComponent()
 // This is overloaded from TableListBoxModel, and must return the total number of rows in our table
 int MidiSequenceTableComponent::getNumRows()  
 {
-	return rdd::MainManager::instance().midiSequenceManager().getNumMidiSequences();
+	return rdd::MainManager::instance().getMidiSequenceManager().getNumMidiSequences();
 }
 
 // This is overloaded from TableListBoxModel, and should fill in the background of the whole row
@@ -50,7 +50,7 @@ void MidiSequenceTableComponent::paintRowBackground(Graphics& g, int rowNumber, 
 {
 	auto alternateColour = getLookAndFeel().findColour(ListBox::backgroundColourId)
 		.interpolatedWith(getLookAndFeel().findColour(ListBox::textColourId), 0.03f);
-	if (rowNumber == rdd::MainManager::instance().midiSequenceManager().getSelectedMidiSequenceIdx())
+	if (rowNumber == rdd::MainManager::instance().getMidiSequenceManager().getSelectedMidiSequenceIdx())
 		g.fillAll(Colour(0xffa85c94));
 	else if (rowNumber % 2)
 		g.fillAll(alternateColour);
@@ -65,7 +65,7 @@ void MidiSequenceTableComponent::paintCell(Graphics& g, int rowNumber, int colum
 	g.setColour(getLookAndFeel().findColour(ListBox::textColourId));
 	g.setFont(font);
 
-	MidiMessageSequence* midiSequence = rdd::MainManager::instance().midiSequenceManager().getMidiSequence(rowNumber);
+	MidiMessageSequence* midiSequence = rdd::MainManager::instance().getMidiSequenceManager().getMidiSequence(rowNumber);
 
 	if (midiSequence) {
 		if (columnId == 1) {
@@ -102,9 +102,9 @@ Component* MidiSequenceTableComponent::refreshComponentForCell(int rowNumber, in
 
 	// same as above...
 	if (textLabel == nullptr)
-		textLabel = new EditableTextCustomComponent(*this, rdd::MainManager::instance().midiSequenceManager().getMidiSequenceName(rowNumber));
+		textLabel = new EditableTextCustomComponent(*this, rdd::MainManager::instance().getMidiSequenceManager().getMidiSequenceName(rowNumber));
 	else
-		textLabel->setText(rdd::MainManager::instance().midiSequenceManager().getMidiSequenceName(rowNumber), NotificationType::dontSendNotification);
+		textLabel->setText(rdd::MainManager::instance().getMidiSequenceManager().getMidiSequenceName(rowNumber), NotificationType::dontSendNotification);
 
 	textLabel->setRowAndColumn(rowNumber, columnId);
 	return textLabel;
@@ -126,7 +126,7 @@ int MidiSequenceTableComponent::getColumnAutoSizeWidth(int columnId)
 	for (int i = getNumRows(); --i >= 0;)
 	{
 
-		name = rdd::MainManager::instance().midiSequenceManager().getMidiSequenceName(i);
+		name = rdd::MainManager::instance().getMidiSequenceManager().getMidiSequenceName(i);
 
 		if (name.isNotEmpty())
 		{
@@ -159,11 +159,11 @@ void MidiSequenceTableComponent::selectedRowsChanged(int lastRowSelected) {
 
 void MidiSequenceTableComponent::cellClicked(int rowNumber, int columnId, const MouseEvent &) {
 
-	if (rowNumber == rdd::MainManager::instance().midiSequenceManager().getSelectedMidiSequenceIdx()) {
-		rdd::MainManager::instance().midiSequenceManager().unselectMidiSequence();
+	if (rowNumber == rdd::MainManager::instance().getMidiSequenceManager().getSelectedMidiSequenceIdx()) {
+		rdd::MainManager::instance().getMidiSequenceManager().unselectMidiSequence();
 	}
 	else {
-		rdd::MainManager::instance().midiSequenceManager().selectMidiSequence(rowNumber);
+		rdd::MainManager::instance().getMidiSequenceManager().selectMidiSequence(rowNumber);
 	}
 
 	repaint();
@@ -172,7 +172,7 @@ void MidiSequenceTableComponent::cellClicked(int rowNumber, int columnId, const 
 
 
 void MidiSequenceTableComponent::backgroundClicked(const MouseEvent &) {
-	rdd::MainManager::instance().midiSequenceManager().unselectMidiSequence();
+	rdd::MainManager::instance().getMidiSequenceManager().unselectMidiSequence();
 
 	repaint();
 }
@@ -181,7 +181,7 @@ void MidiSequenceTableComponent::backgroundClicked(const MouseEvent &) {
 String MidiSequenceTableComponent::getText(const int columnNumber, const int rowNumber) const
 {
 	if (columnNumber == 2) {
-		return rdd::MainManager::instance().midiSequenceManager().getMidiSequenceName(rowNumber);
+		return rdd::MainManager::instance().getMidiSequenceManager().getMidiSequenceName(rowNumber);
 	}
 	else if (columnNumber == 1)
 		return String(rowNumber + 1);
@@ -192,7 +192,7 @@ String MidiSequenceTableComponent::getText(const int columnNumber, const int row
 void MidiSequenceTableComponent::setText(const int columnNumber, const int rowNumber, const String& newText)
 {
 	if (columnNumber == 2 && newText.isNotEmpty()) {
-		rdd::MainManager::instance().midiSequenceManager().setMidiSequenceName(rowNumber, newText);
+		rdd::MainManager::instance().getMidiSequenceManager().setMidiSequenceName(rowNumber, newText);
 	}
 }
 
