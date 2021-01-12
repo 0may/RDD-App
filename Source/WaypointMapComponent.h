@@ -42,6 +42,7 @@ public:
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
+	void calculateMapArea();
     //[/UserMethods]
 
     void paint (juce::Graphics& g) override;
@@ -60,6 +61,9 @@ private:
 	float _mapZoom;
 	float _mapOffsetX;
 	float _mapOffsetY;
+
+	float _mapDisplayX, _mapDisplayY, _mapDisplayW, _mapDisplayH;
+
 	Point<int> _mousePosition;
 
     //[/UserVariables]

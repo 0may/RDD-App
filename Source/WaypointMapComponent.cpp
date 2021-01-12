@@ -51,6 +51,8 @@ WaypointMapComponent::WaypointMapComponent ()
 
 	_mapImg = PNGImageFormat::loadFrom(mapImageFile);
 
+	calculateMapArea();
+
     //[/Constructor]
 }
 
@@ -75,13 +77,22 @@ void WaypointMapComponent::paint (juce::Graphics& g)
 
     //[UserPaint] Add your own custom painting code here..
 
+	//g.drawImageWithin(
+	//	_mapImg,
+	//	_mapOffsetX, // + (1.0f - _mapZoom)*getLocalBounds().getWidth(),
+	//	_mapOffsetY, // + (1.0f - _mapZoom)*getLocalBounds().getHeight(),
+	//	getLocalBounds().getWidth()*_mapZoom,
+	//	getLocalBounds().getHeight()*_mapZoom,
+	//	RectanglePlacement(4 + 32)
+	//);
+
 	g.drawImageWithin(
 		_mapImg,
-		_mapOffsetX, // + (1.0f - _mapZoom)*getLocalBounds().getWidth(),
-		_mapOffsetY, // + (1.0f - _mapZoom)*getLocalBounds().getHeight(),
-		getLocalBounds().getWidth()*_mapZoom,
-		getLocalBounds().getHeight()*_mapZoom,
-		RectanglePlacement(4 + 32)
+		_mapDisplayX + _mapOffsetX,
+		_mapDisplayY + _mapOffsetY,
+		_mapDisplayW * _mapZoom,
+		_mapDisplayH * _mapZoom,
+		RectanglePlacement(64)
 	);
     //[/UserPaint]
 }
@@ -92,7 +103,7 @@ void WaypointMapComponent::resized()
     //[/UserPreResize]
 
     //[UserResized] Add your own custom resize handling here..
-
+	calculateMapArea();
     //[/UserResized]
 }
 
@@ -132,11 +143,23 @@ void WaypointMapComponent::mouseWheelMove (const juce::MouseEvent& e, const juce
 
 	if (dy > 0 && _mapZoom > 1.0f) {
 		_mapZoom /= 1.08f;
+
+		_mapOffsetX = (_mapOffsetX - e.getPosition().x) / 1.08f + e.getPosition().x;
+		_mapOffsetY = (_mapOffsetY - e.getPosition().y) / 1.08f + e.getPosition().y;
+
+
 		if (_mapZoom < 1.0f)
 			_mapZoom = 1.0f;
 	}
-	else if (dy < 0 && _mapZoom < 4.0f)
+	else if (dy < 0 && _mapZoom < 4.0f) {
 		_mapZoom *= 1.08f;
+
+		_mapOffsetX = (_mapOffsetX - e.getPosition().x) * 1.08f + e.getPosition().x;
+		_mapOffsetY = (_mapOffsetY - e.getPosition().y) * 1.08f + e.getPosition().y;
+
+	}
+
+
 
 	repaint();
 
@@ -148,6 +171,28 @@ void WaypointMapComponent::mouseWheelMove (const juce::MouseEvent& e, const juce
 
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
+
+void WaypointMapComponent::calculateMapArea() {
+
+	float mapW = (float)_mapImg.getWidth();
+	float mapH = (float)_mapImg.getHeight();
+	float viewportW = (float)getLocalBounds().getWidth();
+	float viewportH = (float)getLocalBounds().getHeight();
+
+	if (viewportW/viewportH < mapW/mapH) {
+		_mapDisplayW = viewportW;
+		_mapDisplayH = mapH * _mapDisplayW / mapW;
+		_mapDisplayX = 0.0f;
+		_mapDisplayY = (viewportH - _mapDisplayH)*0.5f;
+	}
+	else {
+		_mapDisplayH = viewportH;
+		_mapDisplayW = mapW * _mapDisplayH / mapH;
+		_mapDisplayY = 0.0f;
+		_mapDisplayX = (viewportW - _mapDisplayW)*0.5f;
+	}
+}
+
 //[/MiscUserCode]
 
 

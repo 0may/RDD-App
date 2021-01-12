@@ -11,6 +11,7 @@
 #pragma once
 
 #include <set>
+#include <JuceHeader.h>
 
 using namespace std;
 
@@ -25,6 +26,14 @@ public:
 		float y;
 		float alpha;
 		float beta;
+		String name;
+	};
+
+	struct WaypointComparator {
+		bool operator() (const Waypoint& lhs, const Waypoint& rhs) const
+		{
+			return lhs.t < rhs.t;
+		}
 	};
 
 
@@ -32,9 +41,21 @@ public:
 	WaypointsManager();
 	~WaypointsManager();
 
+	size_t getNumWaypoínts() const;
+
+	const Waypoint& getWaypoint(size_t idx) const;
+
+	bool addWaypoint(Waypoint wp);
+
+	Waypoint& checkoutWaypoint(size_t idx);
+
+	bool commitWaypoint();
+
 
 
 private:
-	set<Waypoint> _waypoints;
+	set<Waypoint, WaypointComparator> _waypoints;
+
+	set<Waypoint, WaypointComparator>::iterator _checkoutIterator;
 
 };
