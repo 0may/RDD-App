@@ -21,7 +21,8 @@ MainManager::MainManager() {
 
 	//File midiSettingsFile(File::getCurrentWorkingDirectory().getChildFile("../../midiconfig.json"));
 
-	setAssetsDirectory("../../Assets/");
+	//setAssetsDirectory("../../Assets/");
+	setAssetsDirectory("Assets/");
 
 
 	File midiSettingsFile(_assetsDirectory.getChildFile("ConfigFiles/midiconfig.json"));
