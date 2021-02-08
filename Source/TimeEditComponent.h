@@ -21,8 +21,10 @@
 
 //[Headers]     -- You can add your own extra header files here --
 #include <JuceHeader.h>
-#include "WaypointMapComponent.h"
-#include "WaypointEditComponent.h"
+#include "TimeInputListener.h"
+#include "Time.h"
+
+using namespace rdd;
 //[/Headers]
 
 
@@ -35,12 +37,12 @@
     Describe your class and how it works here!
                                                                     //[/Comments]
 */
-class WaypointEditorComponent  : public juce::Component
+class TimeEditComponent  : public juce::Component
 {
 public:
     //==============================================================================
-    WaypointEditorComponent ();
-    ~WaypointEditorComponent() override;
+    TimeEditComponent ();
+    ~TimeEditComponent() override;
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
@@ -53,15 +55,22 @@ public:
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
+    rdd::Time* _time;
+    TimeInputListener* _timeInputListener;
     //[/UserVariables]
 
     //==============================================================================
-    std::unique_ptr<WaypointMapComponent> _waypointMapComponent;
-    std::unique_ptr<WaypointEditComponent> _waypointEditComponent;
+    std::unique_ptr<juce::TextEditor> _mins;
+    std::unique_ptr<juce::TextEditor> _secs;
+    std::unique_ptr<juce::TextEditor> _millis;
+    std::unique_ptr<juce::TextEditor> _hours;
+    std::unique_ptr<juce::Label> _dpLabel;
+    std::unique_ptr<juce::Label> _dpLabel2;
+    std::unique_ptr<juce::Label> _periodLabel;
 
 
     //==============================================================================
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WaypointEditorComponent)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TimeEditComponent)
 };
 
 //[EndFile] You can add extra defines here...

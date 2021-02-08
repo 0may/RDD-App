@@ -20,25 +20,17 @@
 //[Headers] You can add your own extra header files here...
 //[/Headers]
 
-#include "WaypointEditorComponent.h"
+#include "WaypointListComponent.h"
 
 
 //[MiscUserDefs] You can add your own user definitions and misc code here...
 //[/MiscUserDefs]
 
 //==============================================================================
-WaypointEditorComponent::WaypointEditorComponent ()
+WaypointListComponent::WaypointListComponent ()
 {
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]
-
-    _waypointMapComponent.reset (new WaypointMapComponent());
-    addAndMakeVisible (_waypointMapComponent.get());
-    _waypointMapComponent->setName ("waypoint map component");
-
-    _waypointEditComponent.reset (new WaypointEditComponent());
-    addAndMakeVisible (_waypointEditComponent.get());
-    _waypointEditComponent->setName ("new component");
 
 
     //[UserPreSize]
@@ -51,13 +43,11 @@ WaypointEditorComponent::WaypointEditorComponent ()
     //[/Constructor]
 }
 
-WaypointEditorComponent::~WaypointEditorComponent()
+WaypointListComponent::~WaypointListComponent()
 {
     //[Destructor_pre]. You can add your own custom destruction code here..
     //[/Destructor_pre]
 
-    _waypointMapComponent = nullptr;
-    _waypointEditComponent = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -65,7 +55,7 @@ WaypointEditorComponent::~WaypointEditorComponent()
 }
 
 //==============================================================================
-void WaypointEditorComponent::paint (juce::Graphics& g)
+void WaypointListComponent::paint (juce::Graphics& g)
 {
     //[UserPrePaint] Add your own custom painting code here..
     //[/UserPrePaint]
@@ -76,13 +66,11 @@ void WaypointEditorComponent::paint (juce::Graphics& g)
     //[/UserPaint]
 }
 
-void WaypointEditorComponent::resized()
+void WaypointListComponent::resized()
 {
     //[UserPreResize] Add your own custom resize code here..
     //[/UserPreResize]
 
-    _waypointMapComponent->setBounds (0, 0, getWidth() - 300, proportionOfHeight (1.0000f));
-    _waypointEditComponent->setBounds (getWidth() - 295, getHeight() - 200, 295, 200);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -102,17 +90,11 @@ void WaypointEditorComponent::resized()
 
 BEGIN_JUCER_METADATA
 
-<JUCER_COMPONENT documentType="Component" className="WaypointEditorComponent"
-                 componentName="" parentClasses="public juce::Component" constructorParams=""
-                 variableInitialisers="" snapPixels="8" snapActive="1" snapShown="1"
-                 overlayOpacity="0.330" fixedSize="0" initialWidth="600" initialHeight="400">
+<JUCER_COMPONENT documentType="Component" className="WaypointListComponent" componentName=""
+                 parentClasses="public juce::Component" constructorParams="" variableInitialisers=""
+                 snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
+                 fixedSize="0" initialWidth="600" initialHeight="400">
   <BACKGROUND backgroundColour="ff323e44"/>
-  <GENERICCOMPONENT name="waypoint map component" id="d65263966a94c1f6" memberName="_waypointMapComponent"
-                    virtualName="" explicitFocusOrder="0" pos="0 0 300M 100%" class="WaypointMapComponent"
-                    params=""/>
-  <GENERICCOMPONENT name="new component" id="bf5ef8d35dbf4612" memberName="_waypointEditComponent"
-                    virtualName="" explicitFocusOrder="0" pos="0Rr 0Rr 295 200" class="WaypointEditComponent"
-                    params=""/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

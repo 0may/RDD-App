@@ -21,8 +21,6 @@
 
 //[Headers]     -- You can add your own extra header files here --
 #include <JuceHeader.h>
-#include "WaypointMapComponent.h"
-#include "WaypointEditComponent.h"
 //[/Headers]
 
 
@@ -35,12 +33,12 @@
     Describe your class and how it works here!
                                                                     //[/Comments]
 */
-class WaypointEditorComponent  : public juce::Component
+class WaypointListComponent  : public juce::Component
 {
 public:
     //==============================================================================
-    WaypointEditorComponent ();
-    ~WaypointEditorComponent() override;
+    WaypointListComponent ();
+    ~WaypointListComponent() override;
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
@@ -56,12 +54,10 @@ private:
     //[/UserVariables]
 
     //==============================================================================
-    std::unique_ptr<WaypointMapComponent> _waypointMapComponent;
-    std::unique_ptr<WaypointEditComponent> _waypointEditComponent;
 
 
     //==============================================================================
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WaypointEditorComponent)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WaypointListComponent)
 };
 
 //[EndFile] You can add extra defines here...

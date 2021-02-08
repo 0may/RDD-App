@@ -21,8 +21,7 @@
 
 //[Headers]     -- You can add your own extra header files here --
 #include <JuceHeader.h>
-#include "WaypointMapComponent.h"
-#include "WaypointEditComponent.h"
+#include "TimeEditComponent.h"
 //[/Headers]
 
 
@@ -35,12 +34,13 @@
     Describe your class and how it works here!
                                                                     //[/Comments]
 */
-class WaypointEditorComponent  : public juce::Component
+class WaypointEditComponent  : public juce::Component,
+                               public juce::ComboBox::Listener
 {
 public:
     //==============================================================================
-    WaypointEditorComponent ();
-    ~WaypointEditorComponent() override;
+    WaypointEditComponent ();
+    ~WaypointEditComponent() override;
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
@@ -48,6 +48,7 @@ public:
 
     void paint (juce::Graphics& g) override;
     void resized() override;
+    void comboBoxChanged (juce::ComboBox* comboBoxThatHasChanged) override;
 
 
 
@@ -56,12 +57,24 @@ private:
     //[/UserVariables]
 
     //==============================================================================
-    std::unique_ptr<WaypointMapComponent> _waypointMapComponent;
-    std::unique_ptr<WaypointEditComponent> _waypointEditComponent;
+    std::unique_ptr<juce::Label> _tLabel;
+    std::unique_ptr<juce::Label> _BLabel;
+    std::unique_ptr<juce::Label> _xLabel;
+    std::unique_ptr<juce::Label> _yLabel;
+    std::unique_ptr<juce::Label> _alphaLabel;
+    std::unique_ptr<juce::Label> _betaLabel;
+    std::unique_ptr<juce::Label> _nameLabel;
+    std::unique_ptr<juce::TextEditor> _alphaTextEditor;
+    std::unique_ptr<juce::TextEditor> _betaTextEditor;
+    std::unique_ptr<juce::TextEditor> _yTextEditor;
+    std::unique_ptr<juce::TextEditor> _xTextEditor;
+    std::unique_ptr<juce::TextEditor> _nameTextEditor;
+    std::unique_ptr<juce::ComboBox> _BComboBox;
+    std::unique_ptr<TimeEditComponent> _tTimeEdit;
 
 
     //==============================================================================
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WaypointEditorComponent)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WaypointEditComponent)
 };
 
 //[EndFile] You can add extra defines here...

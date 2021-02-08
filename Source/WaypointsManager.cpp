@@ -71,4 +71,6 @@ bool WaypointsManager::commitWaypoint() {
 	_waypoints.insert(wp);
 
 	_checkoutIterator = _waypoints.end();
+
+	return true;
 }
