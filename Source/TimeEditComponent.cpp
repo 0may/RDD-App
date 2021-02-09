@@ -126,8 +126,7 @@ TimeEditComponent::TimeEditComponent ()
 
     //[Constructor] You can add your own custom stuff here..
 
-    _time = new rdd::Time();
-    _timeInputListener = new TimeInputListener(_time);
+    _timeInputListener = new TimeInputListener(nullptr);
     _timeInputListener->setColours(_hours->findColour(TextEditor::textColourId), Colour(0xffccff0f), Colour(0xffff0000));
 
 
@@ -146,6 +145,8 @@ TimeEditComponent::TimeEditComponent ()
     _millis->setInputFilter(new TextEditor::LengthAndCharacterRestriction(3, "0123456789"), true);
     _millis->setJustification(Justification(2)); // justify left
     _millis->addListener(_timeInputListener);
+
+    setTimeObject(nullptr);
 
     //[/Constructor]
 }
@@ -167,9 +168,6 @@ TimeEditComponent::~TimeEditComponent()
     //[Destructor]. You can add your own custom destruction code here..
     delete _timeInputListener;
     _timeInputListener = nullptr;
-
-    delete _time;
-    _time = nullptr;
     //[/Destructor]
 }
 
@@ -197,6 +195,34 @@ void TimeEditComponent::resized()
 
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
+
+void TimeEditComponent::setTimeObject(rdd::Time* time) {
+
+    _time = time;
+    _timeInputListener->setTimeObject(_time);
+
+    if (_time == nullptr) {
+
+        _hours->setText("");
+        _mins->setText("");
+        _secs->setText("");
+        _millis->setText("");
+        this->setEnabled(false);
+    }
+    else {
+        _hours->setText(String(_time->getHours()));
+        _mins->setText(String(_time->getMins()));
+        _secs->setText(String(_time->getSecs()));
+        _millis->setText(String(_time->getMillis()));
+        _timeInputListener->textEditorReturnKeyPressed(*_hours);
+        _timeInputListener->textEditorReturnKeyPressed(*_mins);
+        _timeInputListener->textEditorReturnKeyPressed(*_secs);
+        _timeInputListener->textEditorReturnKeyPressed(*_millis);
+
+
+        this->setEnabled(true);
+    }
+}
 //[/MiscUserCode]
 
 

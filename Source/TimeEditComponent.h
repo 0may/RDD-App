@@ -46,6 +46,12 @@ public:
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
+    
+
+    friend class WaypointEditComponent;
+
+    void setTimeObject(rdd::Time* time);
+
     //[/UserMethods]
 
     void paint (juce::Graphics& g) override;

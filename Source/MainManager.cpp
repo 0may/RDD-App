@@ -33,6 +33,12 @@ MainManager::MainManager() {
 
 		_midiController.startTimer(150);
 
+		_waypointsManager.addNewWaypoint();
+		_waypointsManager.addNewWaypoint();
+		_waypointsManager.addNewWaypoint();
+		_waypointsManager.addNewWaypoint();
+		_waypointsManager.addNewWaypoint();
+
 	}
 	else {
 
@@ -55,6 +61,11 @@ MainManager& MainManager::instance() {
 
 MidiController& MainManager::getMidiController() {
 	return _midiController;
+}
+
+
+WaypointsManager& MainManager::getWaypointsManager() {
+	return _waypointsManager;
 }
 
 

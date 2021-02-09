@@ -12,50 +12,63 @@
 
 #include <set>
 #include <JuceHeader.h>
+#include "Waypoint.h"
 
 using namespace std;
+using namespace rdd;
 
 
-class WaypointsManager {
+class WaypointsManager : public juce::ChangeBroadcaster {
 
 public: 
-	struct Waypoint {
-		double t;
-		int B;
-		float x;
-		float y;
-		float alpha;
-		float beta;
-		String name;
-	};
 
 	struct WaypointComparator {
-		bool operator() (const Waypoint& lhs, const Waypoint& rhs) const
+		bool operator() (const Waypoint* lhs, const Waypoint* rhs) const
 		{
-			return lhs.t < rhs.t;
+			return lhs->t < rhs->t;
 		}
 	};
 
 
 public:
 	WaypointsManager();
+
 	~WaypointsManager();
 
-	size_t getNumWaypoínts() const;
+	/** Returns the number of waypoints stored in the manager */
+	size_t getNumWaypoints() const;
 
-	const Waypoint& getWaypoint(size_t idx) const;
+	/** Get a waypoint by index in the set of waypoints, read only */
+	const Waypoint* getWaypoint(size_t idx) const;
 
-	bool addWaypoint(Waypoint wp);
+	/** Add a new waypoint, 10 seconds after the last waypoint. 
+		Only successfull if no waypoint is checked out. Returns 
+		the index of the new waypoint or size_t::max on failure.
+	*/
+	size_t addNewWaypoint();
 
-	Waypoint& checkoutWaypoint(size_t idx);
+	/** Checkout a waypoint, i.e. make it editable */
+	Waypoint* checkoutWaypoint(size_t idx);
 
+	/** Get a pointer to a checked out waypoint. Returns nullptr if none is checked out. */
+	Waypoint* getCheckedOutWaypoint();
+
+	/** Commit a checked out waypoint, i.e. it is newly inserted to be sorted by time */
 	bool commitWaypoint();
+
+	/** Returns true if a waypoint is checked out, false otherwise */
+	bool isCheckedOut();
+
+	/** Get the index of a checked out waypoint. Returns size_t::max if none is checked out. */
+	size_t getCheckedOutIdx();
 
 
 
 private:
-	set<Waypoint, WaypointComparator> _waypoints;
+	set<Waypoint*, WaypointComparator> _waypoints;
 
-	set<Waypoint, WaypointComparator>::iterator _checkoutIterator;
+	set<Waypoint*, WaypointComparator>::iterator _checkoutIterator;
+
+	size_t _checkoutIdx;
 
 };

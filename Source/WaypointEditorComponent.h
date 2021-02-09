@@ -23,6 +23,7 @@
 #include <JuceHeader.h>
 #include "WaypointMapComponent.h"
 #include "WaypointEditComponent.h"
+#include "WaypointTableComponent.h"
 //[/Headers]
 
 
@@ -58,6 +59,7 @@ private:
     //==============================================================================
     std::unique_ptr<WaypointMapComponent> _waypointMapComponent;
     std::unique_ptr<WaypointEditComponent> _waypointEditComponent;
+    std::unique_ptr<WaypointTableComponent> _waypointTableComponent;
 
 
     //==============================================================================

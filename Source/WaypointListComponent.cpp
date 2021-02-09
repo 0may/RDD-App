@@ -32,6 +32,10 @@ WaypointListComponent::WaypointListComponent ()
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]
 
+    _waypointsTable.reset (new juce::Component());
+    addAndMakeVisible (_waypointsTable.get());
+    _waypointsTable->setName ("waypoints table component");
+
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -48,6 +52,7 @@ WaypointListComponent::~WaypointListComponent()
     //[Destructor_pre]. You can add your own custom destruction code here..
     //[/Destructor_pre]
 
+    _waypointsTable = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -71,6 +76,7 @@ void WaypointListComponent::resized()
     //[UserPreResize] Add your own custom resize code here..
     //[/UserPreResize]
 
+    _waypointsTable->setBounds (0, 0, proportionOfWidth (1.0000f), getHeight() - 48);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -95,6 +101,9 @@ BEGIN_JUCER_METADATA
                  snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
                  fixedSize="0" initialWidth="600" initialHeight="400">
   <BACKGROUND backgroundColour="ff323e44"/>
+  <GENERICCOMPONENT name="waypoints table component" id="738de22b360f5247" memberName="_waypointsTable"
+                    virtualName="" explicitFocusOrder="0" pos="0 0 100% 48M" class="juce::Component"
+                    params=""/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

@@ -18,6 +18,7 @@
 */
 
 //[Headers] You can add your own extra header files here...
+#include "MainManager.h"
 //[/Headers]
 
 #include "WaypointEditComponent.h"
@@ -198,20 +199,46 @@ WaypointEditComponent::WaypointEditComponent ()
 
     _xTextEditor->setInputFilter(new TextEditor::LengthAndCharacterRestriction(-1, "0123456789."), true);
     _xTextEditor->onTextChange = [&]() {
-        String s = _xTextEditor->getText();
-        int i1 = s.indexOfChar('.');
-        int i2 = s.lastIndexOfChar('.');
+        String s = correctFloatInput(_xTextEditor.get());
 
-        if (!(i1 == -1 || i2 == -1 || i1 == i2)) {
-            _xTextEditor->setText(s.substring(0, _xTextEditor->getCaretPosition() - 1) + s.substring(_xTextEditor->getCaretPosition()));
-            _xTextEditor->setCaretPosition(_xTextEditor->getCaretPosition()-1);
-        }
+        if (_waypoint)
+            _waypoint->x = (float)atof(s.toStdString().c_str());
     };
 
     _yTextEditor->setInputFilter(new TextEditor::LengthAndCharacterRestriction(-1, "0123456789."), true);
-    _alphaTextEditor->setInputFilter(new TextEditor::LengthAndCharacterRestriction(-1, "0123456789."), true);
-    _betaTextEditor->setInputFilter(new TextEditor::LengthAndCharacterRestriction(-1, "0123456789."), true);
+    _yTextEditor->onTextChange = [&]() {
+        String s = correctFloatInput(_yTextEditor.get());
 
+        if (_waypoint)
+            _waypoint->y = (float)atof(s.toStdString().c_str());
+    };
+
+    _alphaTextEditor->setInputFilter(new TextEditor::LengthAndCharacterRestriction(-1, "0123456789."), true);
+    _alphaTextEditor->onTextChange = [&]() {
+        String s = correctFloatInput(_alphaTextEditor.get());
+
+        if (_waypoint)
+            _waypoint->alpha = (float)atof(s.toStdString().c_str());
+    };
+
+    _betaTextEditor->setInputFilter(new TextEditor::LengthAndCharacterRestriction(-1, "0123456789."), true);
+    _betaTextEditor->onTextChange = [&]() {
+        String s = correctFloatInput(_betaTextEditor.get());
+
+        if (_waypoint)
+            _waypoint->beta = (float)atof(s.toStdString().c_str());
+    };
+
+    _nameTextEditor->onTextChange = [&]() {
+
+        if (_waypoint)
+            _waypoint->name = _nameTextEditor->getText();
+    };
+
+    setWaypoint(nullptr);
+
+    _tTimeEdit->_timeInputListener->addChangeListener(this);
+    MainManager::instance().getWaypointsManager().addChangeListener(this);
 
     //[/Constructor]
 }
@@ -293,6 +320,9 @@ void WaypointEditComponent::comboBoxChanged (juce::ComboBox* comboBoxThatHasChan
     if (comboBoxThatHasChanged == _BComboBox.get())
     {
         //[UserComboBoxCode__BComboBox] -- add your combo box handling code here..
+        if (_waypoint) {
+            _waypoint->B = _BComboBox->getSelectedId() - 1;
+        }
         //[/UserComboBoxCode__BComboBox]
     }
 
@@ -303,6 +333,68 @@ void WaypointEditComponent::comboBoxChanged (juce::ComboBox* comboBoxThatHasChan
 
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
+
+void WaypointEditComponent::setWaypoint(rdd::Waypoint* wp) {
+    _waypoint = wp;
+
+    if (_waypoint == nullptr) {
+
+        _tTimeEdit->setTimeObject(nullptr);
+
+        _xTextEditor->setText("");
+        _yTextEditor->setText("");
+        _alphaTextEditor->setText("");
+        _betaTextEditor->setText("");
+        _nameTextEditor->setText("");
+
+        this->setEnabled(false);
+    }
+    else {
+
+        _time.setTime(_waypoint->t);
+        _tTimeEdit->setTimeObject(&_time);
+
+        _xTextEditor->setText(String(_waypoint->x));
+        _yTextEditor->setText(String(_waypoint->y));
+        _alphaTextEditor->setText(String(_waypoint->alpha));
+        _betaTextEditor->setText(String(_waypoint->beta));
+        _nameTextEditor->setText(String(_waypoint->name));
+
+        this->setEnabled(true);
+
+    }
+}
+
+
+
+String WaypointEditComponent::correctFloatInput(TextEditor* e) {
+    String s = e->getText();
+    int i1 = s.indexOfChar('.');
+    int i2 = s.lastIndexOfChar('.');
+
+    if (!(i1 == -1 || i2 == -1 || i1 == i2)) {
+        s = s.substring(0, e->getCaretPosition() - 1) + s.substring(e->getCaretPosition());
+        e->setText(s);
+        e->setCaretPosition(e->getCaretPosition() - 1);
+    }
+
+    return s;
+}
+
+
+
+void WaypointEditComponent::changeListenerCallback(ChangeBroadcaster* source) {
+    WaypointsManager* wm = dynamic_cast<WaypointsManager*>(source);
+
+    if (dynamic_cast<WaypointsManager*>(source)) {
+        setWaypoint(dynamic_cast<WaypointsManager*>(source)->getCheckedOutWaypoint());
+    }
+    else if (dynamic_cast<TimeInputListener*>(source) && _waypoint) {
+        _waypoint->t = _time.seconds();
+    }
+
+}
+
 //[/MiscUserCode]
 
 
@@ -316,9 +408,10 @@ void WaypointEditComponent::comboBoxChanged (juce::ComboBox* comboBoxThatHasChan
 BEGIN_JUCER_METADATA
 
 <JUCER_COMPONENT documentType="Component" className="WaypointEditComponent" componentName=""
-                 parentClasses="public juce::Component" constructorParams="" variableInitialisers=""
-                 snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
-                 fixedSize="0" initialWidth="600" initialHeight="400">
+                 parentClasses="public juce::Component, public juce::ChangeListener"
+                 constructorParams="" variableInitialisers="" snapPixels="8" snapActive="1"
+                 snapShown="1" overlayOpacity="0.330" fixedSize="0" initialWidth="600"
+                 initialHeight="400">
   <BACKGROUND backgroundColour="ff323e44"/>
   <LABEL name="new label" id="60e103e155afb29" memberName="_tLabel" virtualName=""
          explicitFocusOrder="0" pos="16 16 48 24" edTextCol="ff000000"

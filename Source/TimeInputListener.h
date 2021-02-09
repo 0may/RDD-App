@@ -15,7 +15,7 @@
 
 namespace rdd {
 
-    class TimeInputListener : public TextEditor::Listener {
+    class TimeInputListener : public TextEditor::Listener, public ChangeBroadcaster {
 
     public:
         TimeInputListener(rdd::Time* time);
@@ -35,6 +35,8 @@ namespace rdd {
         /** Set colours for normal and alert display, only required when upper limit is specified
         */
         void setColours(Colour normalColour, Colour editColour = Colour(0xffffff88), Colour alertColour = Colour(0xffff0000));
+
+        void setTimeObject(rdd::Time* time);
 
     protected:
         Colour _normalColour;

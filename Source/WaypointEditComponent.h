@@ -22,6 +22,7 @@
 //[Headers]     -- You can add your own extra header files here --
 #include <JuceHeader.h>
 #include "TimeEditComponent.h"
+#include "Waypoint.h"
 //[/Headers]
 
 
@@ -35,6 +36,7 @@
                                                                     //[/Comments]
 */
 class WaypointEditComponent  : public juce::Component,
+                               public juce::ChangeListener,
                                public juce::ComboBox::Listener
 {
 public:
@@ -44,16 +46,26 @@ public:
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
+
+    void setWaypoint(rdd::Waypoint* wp); 
+
     //[/UserMethods]
 
     void paint (juce::Graphics& g) override;
     void resized() override;
     void comboBoxChanged (juce::ComboBox* comboBoxThatHasChanged) override;
 
+    void changeListenerCallback(ChangeBroadcaster* source) override;
 
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
+
+    String correctFloatInput(TextEditor* e);
+
+
+    rdd::Waypoint* _waypoint;
+    rdd::Time _time;  // time object buffer
     //[/UserVariables]
 
     //==============================================================================

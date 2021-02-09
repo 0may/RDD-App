@@ -10,13 +10,16 @@
               file="Source/IntInputListener.cpp"/>
         <FILE id="FEQ4yx" name="IntInputListener.h" compile="0" resource="0"
               file="Source/IntInputListener.h"/>
-        <FILE id="t5JagX" name="Time.h" compile="0" resource="0" file="Source/Time.h"/>
         <FILE id="YFSYr8" name="TimeInputListener.cpp" compile="1" resource="0"
               file="Source/TimeInputListener.cpp"/>
         <FILE id="jyGOGJ" name="TimeInputListener.h" compile="0" resource="0"
               file="Source/TimeInputListener.h"/>
       </GROUP>
       <GROUP id="{9F2FE09C-A5F5-3A2B-096D-E8EE17613655}" name="Core">
+        <FILE id="iiKG7C" name="Waypoint.cpp" compile="1" resource="0" file="Source/Waypoint.cpp"/>
+        <FILE id="mSeEYp" name="Waypoint.h" compile="0" resource="0" file="Source/Waypoint.h"/>
+        <FILE id="H8Hvi6" name="Time.cpp" compile="1" resource="0" file="Source/Time.cpp"/>
+        <FILE id="t5JagX" name="Time.h" compile="0" resource="0" file="Source/Time.h"/>
         <FILE id="x20qxJ" name="CommandPlayer.h" compile="0" resource="0" file="Source/CommandPlayer.h"/>
         <FILE id="k2jwyZ" name="CommandRecorder.h" compile="0" resource="0"
               file="Source/CommandRecorder.h"/>
@@ -46,6 +49,10 @@
         <FILE id="dxNawJ" name="MidiSettings.h" compile="0" resource="0" file="Source/MidiSettings.h"/>
       </GROUP>
       <GROUP id="{62FA6BFF-8C52-5DAF-61DD-2143AA85F673}" name="Ui">
+        <FILE id="uBgpcm" name="WaypointTableComponent.cpp" compile="1" resource="0"
+              file="Source/WaypointTableComponent.cpp"/>
+        <FILE id="z7slCo" name="WaypointTableComponent.h" compile="0" resource="0"
+              file="Source/WaypointTableComponent.h"/>
         <FILE id="SbeYsS" name="TimeEditComponent.cpp" compile="1" resource="0"
               file="Source/TimeEditComponent.cpp"/>
         <FILE id="NZbFDA" name="TimeEditComponent.h" compile="0" resource="0"

@@ -40,6 +40,10 @@ WaypointEditorComponent::WaypointEditorComponent ()
     addAndMakeVisible (_waypointEditComponent.get());
     _waypointEditComponent->setName ("new component");
 
+    _waypointTableComponent.reset (new WaypointTableComponent());
+    addAndMakeVisible (_waypointTableComponent.get());
+    _waypointTableComponent->setName ("waypoints list");
+
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -58,6 +62,7 @@ WaypointEditorComponent::~WaypointEditorComponent()
 
     _waypointMapComponent = nullptr;
     _waypointEditComponent = nullptr;
+    _waypointTableComponent = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -83,6 +88,7 @@ void WaypointEditorComponent::resized()
 
     _waypointMapComponent->setBounds (0, 0, getWidth() - 300, proportionOfHeight (1.0000f));
     _waypointEditComponent->setBounds (getWidth() - 295, getHeight() - 200, 295, 200);
+    _waypointTableComponent->setBounds (getWidth() - 295, 0, 295, getHeight() - 205);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -112,6 +118,9 @@ BEGIN_JUCER_METADATA
                     params=""/>
   <GENERICCOMPONENT name="new component" id="bf5ef8d35dbf4612" memberName="_waypointEditComponent"
                     virtualName="" explicitFocusOrder="0" pos="0Rr 0Rr 295 200" class="WaypointEditComponent"
+                    params=""/>
+  <GENERICCOMPONENT name="waypoints list" id="a77f7f5f159169f" memberName="_waypointTableComponent"
+                    virtualName="" explicitFocusOrder="0" pos="0Rr 0 295 205M" class="WaypointTableComponent"
                     params=""/>
 </JUCER_COMPONENT>
 

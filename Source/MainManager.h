@@ -13,6 +13,7 @@
 
 #include "MidiController.h"
 #include "MidiSequenceManager.h"
+#include "WaypointsManager.h"
 #include "JuceHeader.h"
 
 namespace rdd {
@@ -27,6 +28,7 @@ namespace rdd {
 		static MainManager& instance();
 
 		MidiController& getMidiController();
+		WaypointsManager& getWaypointsManager();
 		MidiSequenceManager& getMidiSequenceManager();
 		ApplicationCommandManager& getCommandManager();
 
@@ -46,6 +48,7 @@ namespace rdd {
 
 	private:
 		MidiController _midiController;
+		WaypointsManager _waypointsManager;
 		MidiSequenceManager _midiSequenceManager;
 		ApplicationCommandManager _cmdManager;
 		File _assetsDirectory;

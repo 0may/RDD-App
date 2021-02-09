@@ -69,7 +69,8 @@ void TimeInputListener::textEditorReturnKeyPressed(TextEditor& e) {
 
 
     if (e.getName().compare("hours text editor") == 0) {
-        _time->setHours((unsigned int)atoi(s.toStdString().c_str()));
+        if (_time)
+            _time->setHours((unsigned int)atoi(s.toStdString().c_str()));
         s = s.paddedLeft('0', 3);
     }
     else if (e.getName().compare("mins text editor") == 0) {
@@ -78,7 +79,8 @@ void TimeInputListener::textEditorReturnKeyPressed(TextEditor& e) {
             s = String(59);
         }
 
-        _time->setMins((unsigned char)atoi(s.toStdString().c_str()));
+        if (_time)
+            _time->setMins((unsigned char)atoi(s.toStdString().c_str()));
         s = s.paddedLeft('0', 2);
     }
     else if (e.getName().compare("secs text editor") == 0) {
@@ -87,35 +89,40 @@ void TimeInputListener::textEditorReturnKeyPressed(TextEditor& e) {
             s = String(59);
         }
 
-        _time->setSecs((unsigned char)atoi(s.toStdString().c_str()));
+        if (_time)
+            _time->setSecs((unsigned char)atoi(s.toStdString().c_str()));
         s = s.paddedLeft('0', 2);
     }
     else if (e.getName().compare("millis text editor") == 0) {
 
-        _time->setMillis((unsigned short)atoi(s.toStdString().c_str()));
+        if (_time)
+            _time->setMillis((unsigned short)atoi(s.toStdString().c_str()));
         s = s.paddedLeft('0', 3);
     }
 
-
     e.setText(s);
-    e.repaint();
 
     e.applyColourToAllText(_normalColour, true);
+
+    if (_time)
+        sendChangeMessage();
 }
 
 /** Called when the user presses the escape key. */
 void TimeInputListener::textEditorEscapeKeyPressed(TextEditor& e) {
-    if (e.getName().compare("hours text editor") == 0) {
-        e.setText(String(_time->getHours()));
-    }
-    else if (e.getName().compare("mins text editor") == 0) {
-        e.setText(String(_time->getMins()));
-    }
-    else if (e.getName().compare("secs text editor") == 0) {
-        e.setText(String(_time->getSecs()));
-    }
-    else if (e.getName().compare("millis text editor") == 0) {
-        e.setText(String(_time->getMillis()));
+    if (_time) {
+        if (e.getName().compare("hours text editor") == 0) {
+            e.setText(String(_time->getHours()));
+        }
+        else if (e.getName().compare("mins text editor") == 0) {
+            e.setText(String(_time->getMins()));
+        }
+        else if (e.getName().compare("secs text editor") == 0) {
+            e.setText(String(_time->getSecs()));
+        }
+        else if (e.getName().compare("millis text editor") == 0) {
+            e.setText(String(_time->getMillis()));
+        }
     }
     e.applyColourToAllText(_normalColour, true);
 }
@@ -130,4 +137,9 @@ void TimeInputListener::setColours(Colour normalColour, Colour editColour, Colou
     _normalColour = normalColour;
     _editColour = editColour;
     _alertColour = alertColour;
+}
+
+
+void TimeInputListener::setTimeObject(rdd::Time* time) {
+    _time = time;
 }

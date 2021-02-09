@@ -88,10 +88,10 @@ void WaypointMapComponent::paint (juce::Graphics& g)
 
 	g.drawImageWithin(
 		_mapImg,
-		_mapDisplayX + _mapOffsetX,
-		_mapDisplayY + _mapOffsetY,
-		_mapDisplayW * _mapZoom,
-		_mapDisplayH * _mapZoom,
+		(int)(_mapDisplayX + _mapOffsetX),
+		(int)(_mapDisplayY + _mapOffsetY),
+		(int)(_mapDisplayW * _mapZoom),
+		(int)(_mapDisplayH * _mapZoom),
 		RectanglePlacement(64)
 	);
     //[/UserPaint]
