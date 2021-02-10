@@ -33,12 +33,33 @@ MainManager::MainManager() {
 
 		_midiController.startTimer(150);
 
-		_waypointsManager.addNewWaypoint();
-		_waypointsManager.addNewWaypoint();
-		_waypointsManager.addNewWaypoint();
-		_waypointsManager.addNewWaypoint();
-		_waypointsManager.addNewWaypoint();
+		Waypoint* wp = _waypointsManager.checkoutWaypoint(_waypointsManager.addNewWaypoint());
+		wp->x = 100.5;
+		wp->y = 100.101;
+		wp->alpha = 45.0;
+		wp->beta = 10.453;
+		_waypointsManager.commitWaypoint();
 
+		wp = _waypointsManager.checkoutWaypoint(_waypointsManager.addNewWaypoint());
+		wp->x = 150.5;
+		wp->y = 120.101;
+		wp->alpha = 40.0;
+		wp->beta = 20.453;
+		_waypointsManager.commitWaypoint();
+
+		wp = _waypointsManager.checkoutWaypoint(_waypointsManager.addNewWaypoint());
+		wp->x = 160.5;
+		wp->y = 200.101;
+		wp->alpha = 15.0;
+		wp->beta = 50.453;
+		_waypointsManager.commitWaypoint();
+
+		wp = _waypointsManager.checkoutWaypoint(_waypointsManager.addNewWaypoint());
+		wp->x = 300.5;
+		wp->y = 400.101;
+		wp->alpha = 95.0;
+		wp->beta = 110.453;
+		_waypointsManager.commitWaypoint();
 	}
 	else {
 

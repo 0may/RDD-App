@@ -25,6 +25,8 @@ namespace rdd {
 
         Time();
 
+        Time(double seconds);
+
         void setTime(double seconds);
 
         void setTime(unsigned int hours, unsigned char mins, unsigned char secs, unsigned short millis);
@@ -46,8 +48,6 @@ namespace rdd {
         }
 
         String toString();
-
-
 
     protected:
         unsigned int _hours;

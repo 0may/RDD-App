@@ -36,7 +36,8 @@
     Describe your class and how it works here!
                                                                     //[/Comments]
 */
-class WaypointEditorComponent  : public juce::Component
+class WaypointEditorComponent  : public juce::Component,
+                                 public juce::Button::Listener
 {
 public:
     //==============================================================================
@@ -49,7 +50,13 @@ public:
 
     void paint (juce::Graphics& g) override;
     void resized() override;
+    void buttonClicked (juce::Button* buttonThatWasClicked) override;
 
+    // Binary resources:
+    static const char* minus_png;
+    static const int minus_pngSize;
+    static const char* plus_png;
+    static const int plus_pngSize;
 
 
 private:
@@ -60,6 +67,8 @@ private:
     std::unique_ptr<WaypointMapComponent> _waypointMapComponent;
     std::unique_ptr<WaypointEditComponent> _waypointEditComponent;
     std::unique_ptr<WaypointTableComponent> _waypointTableComponent;
+    std::unique_ptr<juce::ImageButton> _buttonDelete;
+    std::unique_ptr<juce::ImageButton> _buttonAdd;
 
 
     //==============================================================================

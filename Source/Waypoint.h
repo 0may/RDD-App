@@ -22,10 +22,6 @@ namespace rdd {
         Waypoint();
 
 
-        String toJSON(bool minify = true);
-
-
-
         double t;
         int B;
         float x;

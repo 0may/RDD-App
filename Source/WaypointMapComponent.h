@@ -21,6 +21,7 @@
 
 //[Headers]     -- You can add your own extra header files here --
 #include <JuceHeader.h>
+#include "Waypoint.h"
 //[/Headers]
 
 
@@ -33,7 +34,8 @@
     Describe your class and how it works here!
                                                                     //[/Comments]
 */
-class WaypointMapComponent  : public juce::Component
+class WaypointMapComponent  : public juce::Component,
+                              public juce::ChangeListener
 {
 public:
     //==============================================================================
@@ -43,6 +45,15 @@ public:
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
 	void calculateMapArea();
+
+    void drawWaypoint(juce::Graphics& g, rdd::Waypoint* wp, bool highlight);
+
+    void changeListenerCallback(ChangeBroadcaster* source) override;
+
+    Point<float> mapToScreen(float mapX, float mapY);
+    Point<float> screenToMap(float screenX, float screenY);
+
+
     //[/UserMethods]
 
     void paint (juce::Graphics& g) override;
@@ -50,6 +61,7 @@ public:
     void mouseDown (const juce::MouseEvent& e) override;
     void mouseDrag (const juce::MouseEvent& e) override;
     void mouseUp (const juce::MouseEvent& e) override;
+    void mouseDoubleClick (const juce::MouseEvent& e) override;
     void mouseWheelMove (const juce::MouseEvent& e, const juce::MouseWheelDetails& wheel) override;
 
 
@@ -65,6 +77,9 @@ private:
 	float _mapDisplayX, _mapDisplayY, _mapDisplayW, _mapDisplayH;
 
 	Point<int> _mousePosition;
+
+    float _wpSizeS, _wpSizeS2, _wpOffS, _wpOffS2;
+    float _wpSizeL, _wpSizeL2, _wpOffL, _wpOffL2;
 
     //[/UserVariables]
 

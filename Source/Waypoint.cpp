@@ -25,8 +25,3 @@ Waypoint::Waypoint()
     name = "wp";
 }
 
-
-String Waypoint::toJSON(bool minify) {
-    String s = "";
-    return s;
-}

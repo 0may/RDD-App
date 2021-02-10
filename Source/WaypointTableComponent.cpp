@@ -14,6 +14,7 @@
 #include "WaypointTableComponent.h"
 #include "MainManager.h"
 #include "TimeEditComponent.h"
+#include "WaypointEditComponent.h"
 
 using namespace rdd;
 
@@ -21,20 +22,20 @@ using namespace rdd;
 WaypointTableComponent::WaypointTableComponent() {
 
 	// Create our table component and add it to this component..
-	addAndMakeVisible(table);
-	table.setModel(this);
+	addAndMakeVisible(_waypointsTable);
+	_waypointsTable.setModel(this);
 
 	// give it a border
-	table.setColour(ListBox::outlineColourId, Colours::grey);
-	table.setOutlineThickness(1);
+	_waypointsTable.setColour(ListBox::outlineColourId, Colours::grey);
+	_waypointsTable.setOutlineThickness(1);
 
-	table.getHeader().addColumn("Time", 1, 112, 112, 112);
-	table.getHeader().addColumn("Name", 2, 300, 100, -1);
+	_waypointsTable.getHeader().addColumn("Time", 1, 100, 100, 100);
+	_waypointsTable.getHeader().addColumn("Name", 2, 198, 30, -1);
 
-	table.getHeader().setSortColumnId(1, false);
-	table.getHeader().setSortColumnId(2, false);
+	_waypointsTable.getHeader().setSortColumnId(1, false);
+	_waypointsTable.getHeader().setSortColumnId(2, false);
 
-	table.setMultipleSelectionEnabled(false);
+	_waypointsTable.setMultipleSelectionEnabled(false);
 }
 
 
@@ -56,7 +57,7 @@ void WaypointTableComponent::paintRowBackground(Graphics& g, int rowNumber, int 
 	if (MainManager::instance().getWaypointsManager().isCheckedOut()
 		&& rowNumber == (int)MainManager::instance().getWaypointsManager().getCheckedOutIdx())
 	{
-		g.fillAll(Colour(0xffa85c94));
+		g.fillAll(Colour(0xffa45c94));
 	}
 	else if (rowNumber % 2)
 		g.fillAll(alternateColour);
@@ -75,10 +76,10 @@ void WaypointTableComponent::paintCell(Graphics& g, int rowNumber, int columnId,
 
 	if (wp) {
 		if (columnId == 1) {
-			g.drawText(String(wp->t), 2, 0, width - 4, height, Justification::centredLeft, true);
+			g.drawText(rdd::Time(wp->t).toString(), 2, 0, width - 8, height, Justification::centredRight, true);
 		}
 		else if (columnId == 2) {
-			g.drawText(wp->name, 2, 0, width - 4, height, Justification::centredLeft, true);
+			g.drawText(wp->name, 4, 0, width - 6, height, Justification::centredLeft, true);
 		}
 
 
@@ -94,14 +95,14 @@ void WaypointTableComponent::paintCell(Graphics& g, int rowNumber, int columnId,
 Component* WaypointTableComponent::refreshComponentForCell(int rowNumber, int columnId, bool /*isRowSelected*/,
 	Component* existingComponentToUpdate)
 {
-	if (columnId == 1 || columnId == 2) // The ID and Length columns do not have a custom component
-	{
+	//if (columnId == 1 || columnId == 2) // The ID and Length columns do not have a custom component
+	//{
 		jassert(existingComponentToUpdate == nullptr);
 		return nullptr;
-	}
+//	}
 
 	// The other columns are editable text columns, for which we use the custom Label component
-	auto* textLabel = static_cast<EditableTextCustomComponent*> (existingComponentToUpdate);
+	//auto* textLabel = static_cast<EditableTextCustomComponent*> (existingComponentToUpdate);
 
 	//// same as above...
 	//if (textLabel == nullptr)
@@ -110,7 +111,7 @@ Component* WaypointTableComponent::refreshComponentForCell(int rowNumber, int co
 	//	textLabel->setText(MainManager::instance().getMidiSequenceManager().getMidiSequenceName(rowNumber), NotificationType::dontSendNotification);
 
 	//textLabel->setRowAndColumn(rowNumber, columnId);
-	return textLabel;
+	//return textLabel;
 }
 
 // This is overloaded from TableListBoxModel, and should choose the best width for the specified
@@ -118,9 +119,9 @@ Component* WaypointTableComponent::refreshComponentForCell(int rowNumber, int co
 int WaypointTableComponent::getColumnAutoSizeWidth(int columnId)
 {
 	if (columnId == 1)
-		return 112; // (this is the order column)
+		return 90; // (this is the order column)
 	else
-		return getWidth()-112;
+		return getWidth()-90;
 }
 
 
@@ -194,16 +195,25 @@ void WaypointTableComponent::setText(const int columnNumber, const int rowNumber
 
 void WaypointTableComponent::updateTable() {
 
-	table.updateContent();
+	_waypointsTable.updateContent();
 	repaint();
 }
+
+
+void WaypointTableComponent::changeListenerCallback(ChangeBroadcaster* source) {
+	if (dynamic_cast<WaypointEditComponent*>(source)) {
+		updateTable();
+	}
+}
+
 
 
 //==============================================================================
 void WaypointTableComponent::resized()
 {
 	// position our table with a gap around its edge
-	table.setBoundsInset(BorderSize<int>(4));
+	//table.setBoundsInset(BorderSize<int>(4));
+	_waypointsTable.setBounds(getLocalBounds());
 }
 
 

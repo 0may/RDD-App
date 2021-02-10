@@ -197,42 +197,52 @@ WaypointEditComponent::WaypointEditComponent ()
     _BComboBox->addItem("0", 1);
     _BComboBox->setSelectedId(1);
 
-    _xTextEditor->setInputFilter(new TextEditor::LengthAndCharacterRestriction(-1, "0123456789."), true);
+    _xTextEditor->setInputFilter(new TextEditor::LengthAndCharacterRestriction(-1, "0123456789.-"), true);
     _xTextEditor->onTextChange = [&]() {
         String s = correctFloatInput(_xTextEditor.get());
 
-        if (_waypoint)
+        if (_waypoint) {
             _waypoint->x = (float)atof(s.toStdString().c_str());
+            sendChangeMessage();
+        }
     };
 
-    _yTextEditor->setInputFilter(new TextEditor::LengthAndCharacterRestriction(-1, "0123456789."), true);
+    _yTextEditor->setInputFilter(new TextEditor::LengthAndCharacterRestriction(-1, "0123456789.-"), true);
     _yTextEditor->onTextChange = [&]() {
         String s = correctFloatInput(_yTextEditor.get());
 
-        if (_waypoint)
+        if (_waypoint) {
             _waypoint->y = (float)atof(s.toStdString().c_str());
+            sendChangeMessage();
+        }
     };
 
-    _alphaTextEditor->setInputFilter(new TextEditor::LengthAndCharacterRestriction(-1, "0123456789."), true);
+    _alphaTextEditor->setInputFilter(new TextEditor::LengthAndCharacterRestriction(-1, "0123456789.-"), true);
     _alphaTextEditor->onTextChange = [&]() {
         String s = correctFloatInput(_alphaTextEditor.get());
 
-        if (_waypoint)
+        if (_waypoint) {
             _waypoint->alpha = (float)atof(s.toStdString().c_str());
+            sendChangeMessage();
+        }
     };
 
-    _betaTextEditor->setInputFilter(new TextEditor::LengthAndCharacterRestriction(-1, "0123456789."), true);
+    _betaTextEditor->setInputFilter(new TextEditor::LengthAndCharacterRestriction(-1, "0123456789.-"), true);
     _betaTextEditor->onTextChange = [&]() {
         String s = correctFloatInput(_betaTextEditor.get());
 
-        if (_waypoint)
+        if (_waypoint) {
             _waypoint->beta = (float)atof(s.toStdString().c_str());
+            sendChangeMessage();
+        }
     };
 
     _nameTextEditor->onTextChange = [&]() {
 
-        if (_waypoint)
+        if (_waypoint) {
             _waypoint->name = _nameTextEditor->getText();
+            sendChangeMessage();
+        }
     };
 
     setWaypoint(nullptr);
@@ -378,13 +388,19 @@ String WaypointEditComponent::correctFloatInput(TextEditor* e) {
         e->setCaretPosition(e->getCaretPosition() - 1);
     }
 
+    i1 = s.lastIndexOfChar('-');
+    if (i1 > 0) {
+        s = s.substring(0, i1-1) + s.substring(i1);
+        e->setText(s);
+        e->setCaretPosition(e->getCaretPosition() - 1);
+    }
+
     return s;
 }
 
 
 
 void WaypointEditComponent::changeListenerCallback(ChangeBroadcaster* source) {
-    WaypointsManager* wm = dynamic_cast<WaypointsManager*>(source);
 
     if (dynamic_cast<WaypointsManager*>(source)) {
         setWaypoint(dynamic_cast<WaypointsManager*>(source)->getCheckedOutWaypoint());
@@ -408,7 +424,7 @@ void WaypointEditComponent::changeListenerCallback(ChangeBroadcaster* source) {
 BEGIN_JUCER_METADATA
 
 <JUCER_COMPONENT documentType="Component" className="WaypointEditComponent" componentName=""
-                 parentClasses="public juce::Component, public juce::ChangeListener"
+                 parentClasses="public juce::Component, public juce::ChangeListener, public juce::ChangeBroadcaster"
                  constructorParams="" variableInitialisers="" snapPixels="8" snapActive="1"
                  snapShown="1" overlayOpacity="0.330" fixedSize="0" initialWidth="600"
                  initialHeight="400">

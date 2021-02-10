@@ -62,6 +62,18 @@ public:
 	/** Get the index of a checked out waypoint. Returns size_t::max if none is checked out. */
 	size_t getCheckedOutIdx();
 
+	/** Deletes the checked out waypoint. Returns true on success, false on failure or if no waypoint is checked out. */
+	bool deleteCheckedOutWaypoint();
+
+	set<Waypoint*, WaypointComparator>::const_iterator cbegin();
+	set<Waypoint*, WaypointComparator>::const_iterator cend();
+
+	bool clear(bool requireNoCheckOut = true);
+
+	void saveWaypoints(File f, bool minify = true);
+
+	void loadWaypoints(File f);
+
 
 
 private:
@@ -70,5 +82,7 @@ private:
 	set<Waypoint*, WaypointComparator>::iterator _checkoutIterator;
 
 	size_t _checkoutIdx;
+
+	bool _isClearing;
 
 };

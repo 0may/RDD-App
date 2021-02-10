@@ -15,7 +15,9 @@
 //==============================================================================
 /*
 */
-class WaypointTableComponent : public juce::Component, public juce::TableListBoxModel
+class WaypointTableComponent : public juce::Component, 
+                                public juce::TableListBoxModel, 
+                                public juce::ChangeListener
 {
 public:
     WaypointTableComponent();
@@ -51,62 +53,64 @@ public:
 
     void updateTable();
 
+    void changeListenerCallback(ChangeBroadcaster* source) override;
+
 
     // void paint (juce::Graphics&) override;
     void resized() override;
 
 private:
 
-    TableListBox table;     // the table component itself
+    TableListBox _waypointsTable;     // the table component itself
     Font font{ 14.0f };
 
-    //==============================================================================
-    // This is a custom Label component, which we use for the table's editable text columns.
-    class EditableTextCustomComponent : public juce::Label
-    {
-    public:
-        EditableTextCustomComponent(WaypointTableComponent& td, String name) : owner(td)
-        {
-            // double click to edit the label text; single click handled below
-            setEditable(false, true, false);
-            setText(name, NotificationType::dontSendNotification);
-        }
+    ////==============================================================================
+    //// This is a custom Label component, which we use for the table's editable text columns.
+    //class EditableTextCustomComponent : public juce::Label
+    //{
+    //public:
+    //    EditableTextCustomComponent(WaypointTableComponent& td, String name) : owner(td)
+    //    {
+    //        // double click to edit the label text; single click handled below
+    //        setEditable(false, true, false);
+    //        setText(name, NotificationType::dontSendNotification);
+    //    }
 
-        void mouseDown(const MouseEvent& event) override
-        {
-            // single click on the label should simply select the row
-            owner.cellClicked(row, columnId, event);//.table.selectRowsBasedOnModifierKeys(row, event.mods, false);
+    //    void mouseDown(const MouseEvent& event) override
+    //    {
+    //        // single click on the label should simply select the row
+    //        owner.cellClicked(row, columnId, event);//.table.selectRowsBasedOnModifierKeys(row, event.mods, false);
 
-            Label::mouseDown(event);
-        }
+    //        Label::mouseDown(event);
+    //    }
 
-        void textWasEdited() override
-        {
-            owner.setText(columnId, row, getText());
-        }
+    //    void textWasEdited() override
+    //    {
+    //        owner.setText(columnId, row, getText());
+    //    }
 
-        // Our demo code will call this when we may need to update our contents
-        void setRowAndColumn(const int newRow, const int newColumn)
-        {
-            row = newRow;
-            columnId = newColumn;
-            // setText (owner.getText(columnId, row), dontSendNotification);
-        }
+    //    // Our demo code will call this when we may need to update our contents
+    //    void setRowAndColumn(const int newRow, const int newColumn)
+    //    {
+    //        row = newRow;
+    //        columnId = newColumn;
+    //        // setText (owner.getText(columnId, row), dontSendNotification);
+    //    }
 
-        void paint(Graphics& g) override
-        {
-            auto& lf = getLookAndFeel();
-            if (!dynamic_cast<LookAndFeel_V4*> (&lf))
-                lf.setColour(textColourId, Colours::black);
+    //    void paint(Graphics& g) override
+    //    {
+    //        auto& lf = getLookAndFeel();
+    //        if (!dynamic_cast<LookAndFeel_V4*> (&lf))
+    //            lf.setColour(textColourId, Colours::black);
 
-            Label::paint(g);
-        }
+    //        Label::paint(g);
+    //    }
 
-    private:
-        WaypointTableComponent& owner;
-        int row, columnId;
-        Colour textColour;
-    };
+    //private:
+    //    WaypointTableComponent& owner;
+    //    int row, columnId;
+    //    Colour textColour;
+    //};
 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(WaypointTableComponent)

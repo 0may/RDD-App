@@ -56,8 +56,6 @@ public:
 	void mouseDrag(const MouseEvent& event) override;
 	void mouseUp(const MouseEvent& event) override;
 
-
-	static Point<float> toPoint(float dist, float angle);
 	static float toAngle(float x, float y);
 
     //[/UserMethods]

@@ -18,6 +18,10 @@ rdd::Time::Time() {
     _millis = 0;
 }
 
+rdd::Time::Time(double seconds) {
+    setTime(seconds);
+}
+
 
 void rdd::Time::setTime(double seconds) {
     seconds = fabs(seconds);

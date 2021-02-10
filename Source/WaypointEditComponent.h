@@ -37,6 +37,7 @@
 */
 class WaypointEditComponent  : public juce::Component,
                                public juce::ChangeListener,
+                               public juce::ChangeBroadcaster,
                                public juce::ComboBox::Listener
 {
 public:
@@ -47,15 +48,14 @@ public:
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
 
-    void setWaypoint(rdd::Waypoint* wp); 
-
+    void setWaypoint(rdd::Waypoint* wp);
+    void changeListenerCallback(ChangeBroadcaster* source) override;
     //[/UserMethods]
 
     void paint (juce::Graphics& g) override;
     void resized() override;
     void comboBoxChanged (juce::ComboBox* comboBoxThatHasChanged) override;
 
-    void changeListenerCallback(ChangeBroadcaster* source) override;
 
 
 private:

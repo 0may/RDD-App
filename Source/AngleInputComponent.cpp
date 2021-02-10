@@ -18,6 +18,7 @@
 */
 
 //[Headers] You can add your own extra header files here...
+#include "Util.h"
 //[/Headers]
 
 #include "AngleInputComponent.h"
@@ -85,8 +86,8 @@ void AngleInputComponent::paint (juce::Graphics& g)
 	if (_mouseDown) {
 		// draw indicator
 		g.setColour(findColour(ColourIds::indicatorColourId));
-		Point<float> p1 = toPoint(s*0.05f, _angle);
-		Point<float> p2 = toPoint(s*0.45f, _angle);
+		Point<float> p1 = rdd::Util::polarToCartesian(_angle, s * 0.05f);
+		Point<float> p2 = rdd::Util::polarToCartesian(_angle, s * 0.45f);
 		g.drawLine(p1.x + s * 0.5f, s * 0.5f - p1.y, p2.x + s * 0.5f, s * 0.5f - p2.y, 11.0f);
 	}
 
@@ -169,13 +170,6 @@ void AngleInputComponent::mouseUp(const MouseEvent& /*event*/) {
 }
 
 
-
-
-
-
-Point<float> AngleInputComponent::toPoint(float dist, float angle) {
-	return Point<float>(dist * cos(angle), dist * sin(angle));
-}
 
 
 float AngleInputComponent::toAngle(float x, float y) {

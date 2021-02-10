@@ -14,6 +14,7 @@
               file="Source/TimeInputListener.cpp"/>
         <FILE id="jyGOGJ" name="TimeInputListener.h" compile="0" resource="0"
               file="Source/TimeInputListener.h"/>
+        <FILE id="AYnWKb" name="Util.h" compile="0" resource="0" file="Source/Util.h"/>
       </GROUP>
       <GROUP id="{9F2FE09C-A5F5-3A2B-096D-E8EE17613655}" name="Core">
         <FILE id="iiKG7C" name="Waypoint.cpp" compile="1" resource="0" file="Source/Waypoint.cpp"/>

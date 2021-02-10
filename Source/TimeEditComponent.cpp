@@ -223,6 +223,7 @@ void TimeEditComponent::setTimeObject(rdd::Time* time) {
         this->setEnabled(true);
     }
 }
+
 //[/MiscUserCode]
 
 
