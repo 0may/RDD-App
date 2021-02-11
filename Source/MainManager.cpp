@@ -25,41 +25,18 @@ MainManager::MainManager() {
 	//setAssetsDirectory("Assets/");
 
 
-	File midiSettingsFile(_assetsDirectory.getChildFile("ConfigFiles/midiconfig.json"));
+	if (!_map.loadMap(_assetsDirectory.getChildFile("map/map.yaml").getFullPathName())) {
+		AlertWindow::showMessageBox(AlertWindow::WarningIcon, "Warning", "Failed to load map from file\n" + _assetsDirectory.getChildFile("map/map.yaml").getFullPathName(), "Quit");
+	}
+
+
+	File midiSettingsFile(_assetsDirectory.getChildFile("config/midiconfig.json"));
 
 	if (midiSettings.load(midiSettingsFile) && _midiController.config(midiSettings)) {
 
 		_midiController.enableLogging(true);
 
 		_midiController.startTimer(150);
-
-		Waypoint* wp = _waypointsManager.checkoutWaypoint(_waypointsManager.addNewWaypoint());
-		wp->x = 100.5;
-		wp->y = 100.101;
-		wp->alpha = 45.0;
-		wp->beta = 10.453;
-		_waypointsManager.commitWaypoint();
-
-		wp = _waypointsManager.checkoutWaypoint(_waypointsManager.addNewWaypoint());
-		wp->x = 150.5;
-		wp->y = 120.101;
-		wp->alpha = 40.0;
-		wp->beta = 20.453;
-		_waypointsManager.commitWaypoint();
-
-		wp = _waypointsManager.checkoutWaypoint(_waypointsManager.addNewWaypoint());
-		wp->x = 160.5;
-		wp->y = 200.101;
-		wp->alpha = 15.0;
-		wp->beta = 50.453;
-		_waypointsManager.commitWaypoint();
-
-		wp = _waypointsManager.checkoutWaypoint(_waypointsManager.addNewWaypoint());
-		wp->x = 300.5;
-		wp->y = 400.101;
-		wp->alpha = 95.0;
-		wp->beta = 110.453;
-		_waypointsManager.commitWaypoint();
 	}
 	else {
 
@@ -77,16 +54,6 @@ MainManager::~MainManager() {
 MainManager& MainManager::instance() {
 	static MainManager _instance;
 	return _instance;
-}
-
-
-MidiController& MainManager::getMidiController() {
-	return _midiController;
-}
-
-
-WaypointsManager& MainManager::getWaypointsManager() {
-	return _waypointsManager;
 }
 
 

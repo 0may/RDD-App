@@ -65,6 +65,24 @@ WaypointEditorComponent::WaypointEditorComponent ()
                            juce::ImageCache::getFromMemory (plus_png, plus_pngSize), 1.000f, juce::Colour (0x00000000),
                            juce::ImageCache::getFromMemory (plus_png, plus_pngSize), 1.000f, juce::Colour (0xffababab),
                            juce::ImageCache::getFromMemory (plus_png, plus_pngSize), 1.000f, juce::Colour (0xffa45c94));
+    _buttonLoad.reset (new juce::TextButton ("load button"));
+    addAndMakeVisible (_buttonLoad.get());
+    _buttonLoad->setTooltip (TRANS("Load a set of waypoints from file"));
+    _buttonLoad->setButtonText (TRANS("Load"));
+    _buttonLoad->addListener (this);
+
+    _buttonSave.reset (new juce::TextButton ("save button"));
+    addAndMakeVisible (_buttonSave.get());
+    _buttonSave->setTooltip (TRANS("Save the current set of waypoints to file"));
+    _buttonSave->setButtonText (TRANS("Save"));
+    _buttonSave->addListener (this);
+
+    _buttonSend.reset (new juce::TextButton ("send button"));
+    addAndMakeVisible (_buttonSend.get());
+    _buttonSend->setTooltip (TRANS("Send the current set of waypoints to the speaker platform"));
+    _buttonSend->setButtonText (TRANS("Send"));
+    _buttonSend->addListener (this);
+
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -73,8 +91,13 @@ WaypointEditorComponent::WaypointEditorComponent ()
 
 
     //[Constructor] You can add your own custom stuff here..
-    _waypointEditComponent->addChangeListener(_waypointTableComponent.get());
-    _waypointEditComponent->addChangeListener(_waypointMapComponent.get());
+
+    _waypointEditComponent->addChangeListener(this);
+    _waypointMapComponent->addChangeListener(this);
+
+    MainManager::instance().getWaypointsManager().addChangeListener(this);
+
+
     //[/Constructor]
 }
 
@@ -88,6 +111,9 @@ WaypointEditorComponent::~WaypointEditorComponent()
     _waypointTableComponent = nullptr;
     _buttonDelete = nullptr;
     _buttonAdd = nullptr;
+    _buttonLoad = nullptr;
+    _buttonSave = nullptr;
+    _buttonSend = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -116,6 +142,9 @@ void WaypointEditorComponent::resized()
     _waypointTableComponent->setBounds (getWidth() - 2 - 298, 2, 298, getHeight() - 240);
     _buttonDelete->setBounds (getWidth() - 2 - 24, 2 + (getHeight() - 240) - -5, 24, 24);
     _buttonAdd->setBounds (getWidth() - 32 - 24, 2 + (getHeight() - 240) - -5, 24, 24);
+    _buttonLoad->setBounds ((getWidth() - 2 - 298) + 0, 2 + (getHeight() - 240) - -5, 50, 24);
+    _buttonSave->setBounds (((getWidth() - 2 - 298) + 0) + 50 - -5, (2 + (getHeight() - 240) - -5) + 0, 50, 24);
+    _buttonSend->setBounds ((((getWidth() - 2 - 298) + 0) + 50 - -5) + 50 - -5, ((2 + (getHeight() - 240) - -5) + 0) + 0, 50, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -136,9 +165,57 @@ void WaypointEditorComponent::buttonClicked (juce::Button* buttonThatWasClicked)
     {
         //[UserButtonCode__buttonAdd] -- add your button handler code here..
         MainManager::instance().getWaypointsManager().commitWaypoint();
-        MainManager::instance().getWaypointsManager().addNewWaypoint();
+        MainManager::instance().getWaypointsManager().checkoutWaypoint(MainManager::instance().getWaypointsManager().addNewWaypoint());
         _waypointTableComponent->updateTable();
         //[/UserButtonCode__buttonAdd]
+    }
+    else if (buttonThatWasClicked == _buttonLoad.get())
+    {
+        //[UserButtonCode__buttonLoad] -- add your button handler code here..
+        FileChooser fc(
+            "Choose a waypoint file to load...",
+            File::getSpecialLocation(File::SpecialLocationType::userDocumentsDirectory),
+            "*.json"
+        );
+
+
+        if (fc.browseForFileToOpen()) {
+            File f(fc.getResult());
+
+            if (!MainManager::instance().getWaypointsManager().loadWaypoints(f)) {
+                AlertWindow::showMessageBox(AlertWindow::WarningIcon, "Error", "Failed to load waypoints from file\n" + f.getFullPathName(), "Quit");
+            }
+            else {
+                _waypointTableComponent->updateTable();
+            }
+        }
+
+        //[/UserButtonCode__buttonLoad]
+    }
+    else if (buttonThatWasClicked == _buttonSave.get())
+    {
+        //[UserButtonCode__buttonSave] -- add your button handler code here..
+        FileChooser fc(
+            "Choose a file to save waypoints...",
+            File::getSpecialLocation(File::SpecialLocationType::userDocumentsDirectory),
+            "*.json"
+        );
+
+        if (fc.browseForFileToSave(true)) {
+            File f(fc.getResult());
+
+            if (!MainManager::instance().getWaypointsManager().saveWaypoints(f, false)) {
+                AlertWindow::showMessageBox(AlertWindow::WarningIcon, "Error", "Failed to save waypoints to file\n" + f.getFullPathName(), "Quit");
+            }
+        }
+
+
+        //[/UserButtonCode__buttonSave]
+    }
+    else if (buttonThatWasClicked == _buttonSend.get())
+    {
+        //[UserButtonCode__buttonSend] -- add your button handler code here..
+        //[/UserButtonCode__buttonSend]
     }
 
     //[UserbuttonClicked_Post]
@@ -148,6 +225,22 @@ void WaypointEditorComponent::buttonClicked (juce::Button* buttonThatWasClicked)
 
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
+
+void WaypointEditorComponent::changeListenerCallback(ChangeBroadcaster* source) {
+    if (dynamic_cast<WaypointsManager*>(source)) {
+        _waypointEditComponent->setWaypoint(dynamic_cast<WaypointsManager*>(source)->getCheckedOutWaypoint());
+        _waypointMapComponent->repaint();
+    }
+    else if (dynamic_cast<WaypointEditComponent*>(source)) {
+        _waypointTableComponent->updateTable();
+        _waypointMapComponent->repaint();
+    }
+    else if (dynamic_cast<WaypointMapComponent*>(source)) {
+        _waypointEditComponent->updateValues();
+    }
+}
+
+
 //[/MiscUserCode]
 
 
@@ -161,9 +254,10 @@ void WaypointEditorComponent::buttonClicked (juce::Button* buttonThatWasClicked)
 BEGIN_JUCER_METADATA
 
 <JUCER_COMPONENT documentType="Component" className="WaypointEditorComponent"
-                 componentName="" parentClasses="public juce::Component" constructorParams=""
-                 variableInitialisers="" snapPixels="8" snapActive="1" snapShown="1"
-                 overlayOpacity="0.330" fixedSize="0" initialWidth="600" initialHeight="400">
+                 componentName="" parentClasses="public juce::Component, public juce::ChangeListener"
+                 constructorParams="" variableInitialisers="" snapPixels="8" snapActive="1"
+                 snapShown="1" overlayOpacity="0.330" fixedSize="0" initialWidth="600"
+                 initialHeight="400">
   <BACKGROUND backgroundColour="ff323e44"/>
   <GENERICCOMPONENT name="waypoint map component" id="d65263966a94c1f6" memberName="_waypointMapComponent"
                     virtualName="" explicitFocusOrder="0" pos="2 2 306M 4M" class="WaypointMapComponent"
@@ -188,6 +282,18 @@ BEGIN_JUCER_METADATA
                opacityNormal="1.0" colourNormal="0" resourceOver="plus_png"
                opacityOver="1.0" colourOver="ffababab" resourceDown="plus_png"
                opacityDown="1.0" colourDown="ffa45c94"/>
+  <TEXTBUTTON name="load button" id="4ad0b6b394697c87" memberName="_buttonLoad"
+              virtualName="" explicitFocusOrder="0" pos="0 -5R 50 24" posRelativeX="a77f7f5f159169f"
+              posRelativeY="a77f7f5f159169f" tooltip="Load a set of waypoints from file"
+              buttonText="Load" connectedEdges="0" needsCallback="1" radioGroupId="0"/>
+  <TEXTBUTTON name="save button" id="d92027cd0c2d684b" memberName="_buttonSave"
+              virtualName="" explicitFocusOrder="0" pos="-5R 0 50 24" posRelativeX="4ad0b6b394697c87"
+              posRelativeY="4ad0b6b394697c87" tooltip="Save the current set of waypoints to file"
+              buttonText="Save" connectedEdges="0" needsCallback="1" radioGroupId="0"/>
+  <TEXTBUTTON name="send button" id="3f7b716f29e59a3e" memberName="_buttonSend"
+              virtualName="" explicitFocusOrder="0" pos="-5R 0 50 24" posRelativeX="d92027cd0c2d684b"
+              posRelativeY="d92027cd0c2d684b" tooltip="Send the current set of waypoints to the speaker platform"
+              buttonText="Send" connectedEdges="0" needsCallback="1" radioGroupId="0"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

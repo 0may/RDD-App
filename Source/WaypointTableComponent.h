@@ -16,8 +16,7 @@
 /*
 */
 class WaypointTableComponent : public juce::Component, 
-                                public juce::TableListBoxModel, 
-                                public juce::ChangeListener
+                                public juce::TableListBoxModel
 {
 public:
     WaypointTableComponent();
@@ -53,7 +52,6 @@ public:
 
     void updateTable();
 
-    void changeListenerCallback(ChangeBroadcaster* source) override;
 
 
     // void paint (juce::Graphics&) override;

@@ -37,6 +37,7 @@
                                                                     //[/Comments]
 */
 class WaypointEditorComponent  : public juce::Component,
+                                 public juce::ChangeListener,
                                  public juce::Button::Listener
 {
 public:
@@ -46,6 +47,7 @@ public:
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
+    void changeListenerCallback(ChangeBroadcaster* source) override;
     //[/UserMethods]
 
     void paint (juce::Graphics& g) override;
@@ -69,6 +71,9 @@ private:
     std::unique_ptr<WaypointTableComponent> _waypointTableComponent;
     std::unique_ptr<juce::ImageButton> _buttonDelete;
     std::unique_ptr<juce::ImageButton> _buttonAdd;
+    std::unique_ptr<juce::TextButton> _buttonLoad;
+    std::unique_ptr<juce::TextButton> _buttonSave;
+    std::unique_ptr<juce::TextButton> _buttonSend;
 
 
     //==============================================================================

@@ -17,6 +17,8 @@
         <FILE id="AYnWKb" name="Util.h" compile="0" resource="0" file="Source/Util.h"/>
       </GROUP>
       <GROUP id="{9F2FE09C-A5F5-3A2B-096D-E8EE17613655}" name="Core">
+        <FILE id="fujZdZ" name="Map.cpp" compile="1" resource="0" file="Source/Map.cpp"/>
+        <FILE id="MIe7t8" name="Map.h" compile="0" resource="0" file="Source/Map.h"/>
         <FILE id="iiKG7C" name="Waypoint.cpp" compile="1" resource="0" file="Source/Waypoint.cpp"/>
         <FILE id="mSeEYp" name="Waypoint.h" compile="0" resource="0" file="Source/Waypoint.h"/>
         <FILE id="H8Hvi6" name="Time.cpp" compile="1" resource="0" file="Source/Time.cpp"/>
@@ -160,10 +162,12 @@
         <MODULEPATH id="juce_audio_basics"/>
       </MODULEPATHS>
     </XCODE_MAC>
-    <VS2019 targetFolder="Builds/VisualStudio2019">
+    <VS2019 targetFolder="Builds/VisualStudio2019" externalLibraries="libyaml-cppmd.lib">
       <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug"/>
-        <CONFIGURATION isDebug="0" name="Release"/>
+        <CONFIGURATION isDebug="1" name="Debug" libraryPath="D:\Workspaces\JUCE\RDD-App\ExternalLibs\yaml-cpp-yaml-cpp-0.6.3\build\Debug"
+                       headerPath="D:\Workspaces\JUCE\RDD-App\ExternalLibs\yaml-cpp-yaml-cpp-0.6.3\include"/>
+        <CONFIGURATION isDebug="0" name="Release" headerPath="D:\Workspaces\JUCE\RDD-App\ExternalLibs\yaml-cpp-yaml-cpp-0.6.3\include"
+                       libraryPath="D:\Workspaces\JUCE\RDD-App\ExternalLibs\yaml-cpp-yaml-cpp-0.6.3\build\Release"/>
       </CONFIGURATIONS>
       <MODULEPATHS>
         <MODULEPATH id="juce_opengl"/>

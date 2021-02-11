@@ -66,10 +66,6 @@ namespace rdd {
 		
 		bool validateAndRead(var json);
 
-		bool getIntFromJsonObject(DynamicObject* obj, const String& id, int& buffer);
-
-		DynamicObject* getChildObjectFromJsonObject(DynamicObject* obj, const String& id);
-
 
 	protected:
 

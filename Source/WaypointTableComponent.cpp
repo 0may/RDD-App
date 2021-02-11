@@ -200,14 +200,6 @@ void WaypointTableComponent::updateTable() {
 }
 
 
-void WaypointTableComponent::changeListenerCallback(ChangeBroadcaster* source) {
-	if (dynamic_cast<WaypointEditComponent*>(source)) {
-		updateTable();
-	}
-}
-
-
-
 //==============================================================================
 void WaypointTableComponent::resized()
 {

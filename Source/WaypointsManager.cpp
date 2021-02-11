@@ -9,6 +9,7 @@
 */
 
 #include "WaypointsManager.h"
+#include "Util.h"
 
 
 
@@ -139,6 +140,7 @@ size_t WaypointsManager::getCheckedOutIdx() {
 
 bool WaypointsManager::deleteCheckedOutWaypoint() {
 	if (isCheckedOut() && !_isClearing) {
+		delete (*_checkoutIterator);
 		_waypoints.erase(_checkoutIterator);
 		_checkoutIterator = _waypoints.end();
 		_checkoutIdx = -1;
@@ -193,10 +195,139 @@ bool WaypointsManager::clear(bool requireNoCheckOut) {
 
 }
 
-void WaypointsManager::saveWaypoints(File f, bool minify) {
+bool WaypointsManager::saveWaypoints(File f, bool minify) {
 
+	if (_waypoints.empty())
+		return false;
+
+	commitWaypoint();
+	
+	set<Waypoint*, WaypointsManager::WaypointComparator>::const_iterator it = _waypoints.cbegin();
+	size_t n = 0;
+	FileOutputStream outfile(f);
+
+
+	if (!outfile.openedOk()) 
+		return false;
+
+
+	outfile.setPosition(0);
+	outfile.truncate();
+
+	if (minify) {
+		outfile << "{\"waypoints\":[";
+
+		while (it != _waypoints.cend()) {
+
+			outfile << "{";
+
+			outfile << "\"n\":" << String(n) << ",";
+			outfile << "\"t\":" << Util::toString((*it)->t) << ",";
+			outfile << "\"B\":" << String((*it)->B) << ",";
+			outfile << "\"x\":" << Util::toString((*it)->x) << ",";
+			outfile << "\"y\":" << Util::toString((*it)->y) << ",";
+			outfile << "\"alpha\":" << Util::toString((*it)->alpha) << ",";
+			outfile << "\"beta\":" << Util::toString((*it)->beta) << ",";
+			outfile << "\"name\":\"" << (*it)->name << "\"";
+
+			if (n < _waypoints.size()-1)
+				outfile << "},";
+			else
+				outfile << "}";
+
+			n++;
+			it++;
+		}
+
+		outfile << "]}";
+	}
+	else {
+		outfile << "{\n\t\"waypoints\": [\n";
+
+		while (it != _waypoints.cend()) {
+
+			outfile << "\t{\n";
+
+			outfile << "\t\t\"n\": " << String(n) << ",\n";
+			outfile << "\t\t\"t\": " << Util::toString((*it)->t) << ",\n";
+			outfile << "\t\t\"B\": " << String((*it)->B) << ",\n";
+			outfile << "\t\t\"x\": " << Util::toString((*it)->x) << ",\n";
+			outfile << "\t\t\"y\": " << Util::toString((*it)->y) << ",\n";
+			outfile << "\t\t\"alpha\": " << Util::toString((*it)->alpha) << ",\n";
+			outfile << "\t\t\"beta\": " << Util::toString((*it)->beta) << ",\n";
+			outfile << "\t\t\"name\": \"" << (*it)->name << "\"\n";
+
+			if (n < _waypoints.size() - 1)
+				outfile << "\t},\n";
+			else
+				outfile << "\t}\n";
+
+			n++;
+			it++;
+		}
+
+		outfile << "\t]\n}";
+	}
+
+	outfile.flush();
+
+	return true;
 }
 
-void WaypointsManager::loadWaypoints(File f) {
 
+bool WaypointsManager::loadWaypoints(File f) {
+	bool success;
+	DynamicObject* wpObj;
+	Waypoint* wp;
+
+	commitWaypoint();
+	clear();
+
+
+	var json = JSON::parse(f);
+
+
+
+	if (json.isObject()) {
+		auto* obj = json.getDynamicObject();
+
+		auto* wpArray = Util::getArrayFromJsonObject(obj, "waypoints");
+
+		if (!wpArray)
+			return false;
+
+		for (int i = 0; i < wpArray->size(); i++) {
+			if (wpArray->operator[](i).isObject()) {
+
+				
+
+				wpObj = wpArray->operator[](i).getDynamicObject();
+
+				wp = checkoutWaypoint(addNewWaypoint());
+
+				success = true;
+
+				success &= Util::getDoubleFromJsonObject(wpObj, "t", wp->t);
+				success &= Util::getFloatFromJsonObject(wpObj, "x", wp->x);
+				success &= Util::getFloatFromJsonObject(wpObj, "y", wp->y);
+				success &= Util::getFloatFromJsonObject(wpObj, "alpha", wp->alpha);
+				success &= Util::getFloatFromJsonObject(wpObj, "beta", wp->beta);
+				success &= Util::getStringFromJsonObject(wpObj, "name", wp->name);
+
+				wp = nullptr;
+
+				if (success)
+					commitWaypoint();
+				else
+					deleteCheckedOutWaypoint();
+			}
+		}
+
+		sendChangeMessage();
+
+		return true;
+	}
+	else
+		return false;
+	
 }

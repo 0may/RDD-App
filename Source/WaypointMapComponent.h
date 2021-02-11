@@ -35,7 +35,7 @@
                                                                     //[/Comments]
 */
 class WaypointMapComponent  : public juce::Component,
-                              public juce::ChangeListener
+                              public juce::ChangeBroadcaster
 {
 public:
     //==============================================================================
@@ -48,7 +48,10 @@ public:
 
     void drawWaypoint(juce::Graphics& g, rdd::Waypoint* wp, bool highlight);
 
-    void changeListenerCallback(ChangeBroadcaster* source) override;
+    bool waypointHit(Point<int> mousePosition, size_t& wpIdx);
+    inline float waypointHitDistance(Point<int> mousePosition, rdd::Waypoint* wp) {
+        return mapToScreen(wp->x, wp->y).getDistanceFrom(Point<float>((float)mousePosition.x, (float)mousePosition.y));
+    }
 
     Point<float> mapToScreen(float mapX, float mapY);
     Point<float> screenToMap(float screenX, float screenY);
@@ -81,6 +84,15 @@ private:
     float _wpSizeS, _wpSizeS2, _wpOffS, _wpOffS2;
     float _wpSizeL, _wpSizeL2, _wpOffL, _wpOffL2;
 
+    bool _wpMove, _wpRotateA, _wpRotateB;
+
+public:
+    enum ColourIds {
+        wpAlphaColourId,
+        wpBetaColourId,
+        trailsPastColourId,
+        trailsFutureColourId
+    };
     //[/UserVariables]
 
     //==============================================================================

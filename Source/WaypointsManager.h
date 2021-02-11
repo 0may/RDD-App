@@ -70,9 +70,9 @@ public:
 
 	bool clear(bool requireNoCheckOut = true);
 
-	void saveWaypoints(File f, bool minify = true);
+	bool saveWaypoints(File f, bool minify = true);
 
-	void loadWaypoints(File f);
+	bool loadWaypoints(File f);
 
 
 

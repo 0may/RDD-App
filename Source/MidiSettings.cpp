@@ -9,6 +9,7 @@
 */
 
 #include "MidiSettings.h"
+#include "Util.h"
 
 using namespace rdd;
 
@@ -91,37 +92,37 @@ bool MidiSettings::validateAndRead(var json) {
 
 		bool ret = true;
 
-		ret &= getIntFromJsonObject(obj, "channel", _channel);
-		ret &= getIntFromJsonObject(obj, "resend", _resend);
+		ret &= Util::getIntFromJsonObject(obj, "channel", _channel);
+		ret &= Util::getIntFromJsonObject(obj, "resend", _resend);
 
 		if (_resend < 0)
 			_resend = 0;
 
 
-		auto* objNotes = getChildObjectFromJsonObject(obj, "notes");
+		auto* objNotes = Util::getChildObjectFromJsonObject(obj, "notes");
 		if (objNotes != nullptr) {
-			ret &= getIntFromJsonObject(objNotes, "move_forward", _notes[MOVE_FORWARD]);
-			ret &= getIntFromJsonObject(objNotes, "move_backward", _notes[MOVE_BACKWARD]);
-			ret &= getIntFromJsonObject(objNotes, "strafe_left", _notes[STRAFE_LEFT]);
-			ret &= getIntFromJsonObject(objNotes, "strafe_right", _notes[STRAFE_RIGHT]);
-			ret &= getIntFromJsonObject(objNotes, "rotate_left", _notes[ROTATE_LEFT]);
-			ret &= getIntFromJsonObject(objNotes, "rotate_right", _notes[ROTATE_RIGHT]);
-			ret &= getIntFromJsonObject(objNotes, "speaker_up", _notes[SPEAKER_UP]);
-			ret &= getIntFromJsonObject(objNotes, "speaker_down", _notes[SPEAKER_DOWN]);
+			ret &= Util::getIntFromJsonObject(objNotes, "move_forward", _notes[MOVE_FORWARD]);
+			ret &= Util::getIntFromJsonObject(objNotes, "move_backward", _notes[MOVE_BACKWARD]);
+			ret &= Util::getIntFromJsonObject(objNotes, "strafe_left", _notes[STRAFE_LEFT]);
+			ret &= Util::getIntFromJsonObject(objNotes, "strafe_right", _notes[STRAFE_RIGHT]);
+			ret &= Util::getIntFromJsonObject(objNotes, "rotate_left", _notes[ROTATE_LEFT]);
+			ret &= Util::getIntFromJsonObject(objNotes, "rotate_right", _notes[ROTATE_RIGHT]);
+			ret &= Util::getIntFromJsonObject(objNotes, "speaker_up", _notes[SPEAKER_UP]);
+			ret &= Util::getIntFromJsonObject(objNotes, "speaker_down", _notes[SPEAKER_DOWN]);
 		}
 		else
 			ret = false;
 
-		auto* objCC = getChildObjectFromJsonObject(obj, "controlchange");
+		auto* objCC = Util::getChildObjectFromJsonObject(obj, "controlchange");
 		if (objCC != nullptr) {
-			ret &= getIntFromJsonObject(objCC, "move_speed", _cc[MOVE_SPEED]);
-			ret &= getIntFromJsonObject(objCC, "rotate_speed", _cc[ROTATE_SPEED]);
-			ret &= getIntFromJsonObject(objCC, "speaker_speed", _cc[SPEAKER_SPEED]);
-			ret &= getIntFromJsonObject(objCC, "speaker_position_q1", _cc[SPEAKER_POSITION_Q1]);
-			ret &= getIntFromJsonObject(objCC, "speaker_position_q2", _cc[SPEAKER_POSITION_Q2]);
-			ret &= getIntFromJsonObject(objCC, "speaker_position_q3", _cc[SPEAKER_POSITION_Q3]);
-			ret &= getIntFromJsonObject(objCC, "speaker_position_q4", _cc[SPEAKER_POSITION_Q4]);
-			ret &= getIntFromJsonObject(objCC, "speaker_position_reset", _cc[SPEAKER_POSITION_RESET]);
+			ret &= Util::getIntFromJsonObject(objCC, "move_speed", _cc[MOVE_SPEED]);
+			ret &= Util::getIntFromJsonObject(objCC, "rotate_speed", _cc[ROTATE_SPEED]);
+			ret &= Util::getIntFromJsonObject(objCC, "speaker_speed", _cc[SPEAKER_SPEED]);
+			ret &= Util::getIntFromJsonObject(objCC, "speaker_position_q1", _cc[SPEAKER_POSITION_Q1]);
+			ret &= Util::getIntFromJsonObject(objCC, "speaker_position_q2", _cc[SPEAKER_POSITION_Q2]);
+			ret &= Util::getIntFromJsonObject(objCC, "speaker_position_q3", _cc[SPEAKER_POSITION_Q3]);
+			ret &= Util::getIntFromJsonObject(objCC, "speaker_position_q4", _cc[SPEAKER_POSITION_Q4]);
+			ret &= Util::getIntFromJsonObject(objCC, "speaker_position_reset", _cc[SPEAKER_POSITION_RESET]);
 		}
 		else
 			ret = false;
@@ -133,34 +134,3 @@ bool MidiSettings::validateAndRead(var json) {
 		return false;
 }
 
-
-bool MidiSettings::getIntFromJsonObject(DynamicObject* obj, const String& id, int& buffer) {
-
-	if (obj->hasProperty(Identifier(id))) {
-		auto prop = obj->getProperty(Identifier(id));
-		if (prop.isInt()) {
-			buffer = prop.operator int();
-			return true;
-		}
-		else
-			return false;
-	}
-	else
-		return false;
-}		
-
-
-DynamicObject* MidiSettings::getChildObjectFromJsonObject(DynamicObject* obj, const String& id) {
-
-	if (obj->hasProperty(Identifier(id))) {
-		auto prop = obj->getProperty(Identifier(id));
-		if (prop.isObject()) {
-			return prop.getDynamicObject();
-		}
-		else
-			return nullptr;
-	}
-	else
-		return nullptr;
-
-}

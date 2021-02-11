@@ -19,6 +19,7 @@
 
 //[Headers] You can add your own extra header files here...
 #include "MainManager.h"
+#include "Util.h"
 //[/Headers]
 
 #include "WaypointEditComponent.h"
@@ -248,7 +249,6 @@ WaypointEditComponent::WaypointEditComponent ()
     setWaypoint(nullptr);
 
     _tTimeEdit->_timeInputListener->addChangeListener(this);
-    MainManager::instance().getWaypointsManager().addChangeListener(this);
 
     //[/Constructor]
 }
@@ -364,16 +364,27 @@ void WaypointEditComponent::setWaypoint(rdd::Waypoint* wp) {
         _time.setTime(_waypoint->t);
         _tTimeEdit->setTimeObject(&_time);
 
-        _xTextEditor->setText(String(_waypoint->x));
-        _yTextEditor->setText(String(_waypoint->y));
-        _alphaTextEditor->setText(String(_waypoint->alpha));
-        _betaTextEditor->setText(String(_waypoint->beta));
-        _nameTextEditor->setText(String(_waypoint->name));
+        _nameTextEditor->setText(_waypoint->name);
+
+        updateValues();
 
         this->setEnabled(true);
 
     }
 }
+
+
+void WaypointEditComponent::updateValues() {
+
+    if (_waypoint) {
+        _xTextEditor->setText(Util::toString(_waypoint->x));
+        _yTextEditor->setText(Util::toString(_waypoint->y));
+        _alphaTextEditor->setText(Util::toString(_waypoint->alpha));
+        _betaTextEditor->setText(Util::toString(_waypoint->beta));
+     //   _nameTextEditor->setText(String(_waypoint->name));
+    }
+}
+
 
 
 
@@ -402,10 +413,7 @@ String WaypointEditComponent::correctFloatInput(TextEditor* e) {
 
 void WaypointEditComponent::changeListenerCallback(ChangeBroadcaster* source) {
 
-    if (dynamic_cast<WaypointsManager*>(source)) {
-        setWaypoint(dynamic_cast<WaypointsManager*>(source)->getCheckedOutWaypoint());
-    }
-    else if (dynamic_cast<TimeInputListener*>(source) && _waypoint) {
+    if (dynamic_cast<TimeInputListener*>(source) && _waypoint) {
         _waypoint->t = _time.seconds();
     }
 

@@ -14,6 +14,7 @@
 #include "MidiController.h"
 #include "MidiSequenceManager.h"
 #include "WaypointsManager.h"
+#include "Map.h"
 #include "JuceHeader.h"
 
 namespace rdd {
@@ -27,8 +28,10 @@ namespace rdd {
 
 		static MainManager& instance();
 
-		MidiController& getMidiController();
-		WaypointsManager& getWaypointsManager();
+		MidiController& getMidiController()				{ return _midiController; };
+		inline WaypointsManager& getWaypointsManager()	{ return _waypointsManager; };
+		inline Map& getMap()							{ return _map; };
+
 		MidiSequenceManager& getMidiSequenceManager();
 		ApplicationCommandManager& getCommandManager();
 
@@ -51,6 +54,7 @@ namespace rdd {
 		WaypointsManager _waypointsManager;
 		MidiSequenceManager _midiSequenceManager;
 		ApplicationCommandManager _cmdManager;
+		Map _map;
 		File _assetsDirectory;
 	};
 

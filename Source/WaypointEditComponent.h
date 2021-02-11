@@ -49,6 +49,7 @@ public:
     //[UserMethods]     -- You can add your own custom methods in this section.
 
     void setWaypoint(rdd::Waypoint* wp);
+    void updateValues();
     void changeListenerCallback(ChangeBroadcaster* source) override;
     //[/UserMethods]
 
