@@ -38,7 +38,8 @@
 */
 class WaypointEditorComponent  : public juce::Component,
                                  public juce::ChangeListener,
-                                 public juce::Button::Listener
+                                 public juce::Button::Listener,
+                                 public juce::Slider::Listener
 {
 public:
     //==============================================================================
@@ -53,6 +54,7 @@ public:
     void paint (juce::Graphics& g) override;
     void resized() override;
     void buttonClicked (juce::Button* buttonThatWasClicked) override;
+    void sliderValueChanged (juce::Slider* sliderThatWasMoved) override;
 
     // Binary resources:
     static const char* minus_png;
@@ -74,6 +76,11 @@ private:
     std::unique_ptr<juce::TextButton> _buttonLoad;
     std::unique_ptr<juce::TextButton> _buttonSave;
     std::unique_ptr<juce::TextButton> _buttonSend;
+    std::unique_ptr<juce::Label> _waypointTableLabel;
+    std::unique_ptr<juce::Label> _waypointEditLabel;
+    std::unique_ptr<juce::Label> _waypointMapLabel;
+    std::unique_ptr<juce::Slider> _trailHideSlider;
+    std::unique_ptr<juce::Label> _trailHideLabel;
 
 
     //==============================================================================

@@ -66,7 +66,8 @@ WaypointMapComponent::WaypointMapComponent ()
 	//File mapImageFile(rdd::MainManager::instance().getAssetsDirectory().getChildFile("map/map.png"));
 	//_mapImg = PNGImageFormat::loadFrom(mapImageFile);
 
-	_mapImg = MainManager::instance().getMap().getMapImage();
+	_map = MainManager::instance().getMap();
+	_mapImg = _map.getMapImage();
 
 	calculateMapArea();
 
@@ -277,7 +278,7 @@ void WaypointMapComponent::mouseWheelMove (const juce::MouseEvent& e, const juce
 
 	float dy = wheel.deltaY;
 
-	if (dy > 0 && _mapZoom > 1.0f) {
+	if (dy < 0 && _mapZoom > 0.7f) {
 
 		_mapZoom /= 1.08f;
 
@@ -285,10 +286,10 @@ void WaypointMapComponent::mouseWheelMove (const juce::MouseEvent& e, const juce
 		_mapOffsetY = (_mapOffsetY - e.getPosition().y) / 1.08f + e.getPosition().y;
 
 
-		if (_mapZoom < 1.0f)
-			_mapZoom = 1.0f;
+		//if (_mapZoom < 1.0f)
+		//	_mapZoom = 1.0f;
 	}
-	else if (dy < 0 && _mapZoom < 4.0f) {
+	else if (dy > 0 && _mapZoom < 5.0f) {
 		_mapZoom *= 1.08f;
 
 		_mapOffsetX = (_mapOffsetX - e.getPosition().x) * 1.08f + e.getPosition().x;
@@ -328,6 +329,8 @@ void WaypointMapComponent::calculateMapArea() {
 		_mapDisplayY = 0.0f;
 		_mapDisplayX = (viewportW - _mapDisplayW)*0.5f;
 	}
+
+	_mapDisplayScaling = _mapDisplayW / (float)_mapImg.getWidth();
 }
 
 
@@ -411,17 +414,21 @@ bool WaypointMapComponent::waypointHit(Point<int> mousePosition, size_t& wpIdx) 
 
 Point<float> WaypointMapComponent::mapToScreen(float mapX, float mapY) {
 	return Point<float>(
-		mapX * _mapZoom + _mapOffsetX + _mapDisplayX,
-		mapY * _mapZoom + _mapOffsetY + _mapDisplayY
+		(mapX - _map.getOrigin().x) / _map.getResolution() * _mapZoom * _mapDisplayScaling + _mapOffsetX + _mapDisplayX,
+		(_mapImg.getHeight() - (mapY - _map.getOrigin().y)/_map.getResolution()) * _mapZoom * _mapDisplayScaling + _mapOffsetY + _mapDisplayY
 		);
 }
 
 
 
 Point<float> WaypointMapComponent::screenToMap(float screenX, float screenY) {
+	//return Point<float>(
+	//	(screenX - _mapOffsetX - _mapDisplayX) / (_mapZoom * _mapDisplayScaling),
+	//	(screenY - _mapOffsetY - _mapDisplayY) / (_mapZoom * _mapDisplayScaling)
+	//	);
 	return Point<float>(
-		(screenX - _mapOffsetX - _mapDisplayX) / _mapZoom,
-		(screenY - _mapOffsetY - _mapDisplayY) / _mapZoom
+		(screenX - _mapOffsetX - _mapDisplayX) / (_mapZoom * _mapDisplayScaling) *_map.getResolution() + _map.getOrigin().x,
+		(_mapImg.getHeight() - (screenY - _mapOffsetY - _mapDisplayY) / (_mapZoom * _mapDisplayScaling)) * _map.getResolution() + _map.getOrigin().y
 		);
 }
 

@@ -83,6 +83,49 @@ WaypointEditorComponent::WaypointEditorComponent ()
     _buttonSend->setButtonText (TRANS("Send"));
     _buttonSend->addListener (this);
 
+    _waypointTableLabel.reset (new juce::Label ("waypoint table label",
+                                                TRANS("Waypoints")));
+    addAndMakeVisible (_waypointTableLabel.get());
+    _waypointTableLabel->setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    _waypointTableLabel->setJustificationType (juce::Justification::centredLeft);
+    _waypointTableLabel->setEditable (false, false, false);
+    _waypointTableLabel->setColour (juce::TextEditor::textColourId, juce::Colours::black);
+    _waypointTableLabel->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
+
+    _waypointEditLabel.reset (new juce::Label ("waypoint edit label",
+                                               TRANS("Editor")));
+    addAndMakeVisible (_waypointEditLabel.get());
+    _waypointEditLabel->setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    _waypointEditLabel->setJustificationType (juce::Justification::centredLeft);
+    _waypointEditLabel->setEditable (false, false, false);
+    _waypointEditLabel->setColour (juce::TextEditor::textColourId, juce::Colours::black);
+    _waypointEditLabel->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
+
+    _waypointMapLabel.reset (new juce::Label ("waypoint map label",
+                                              TRANS("Map")));
+    addAndMakeVisible (_waypointMapLabel.get());
+    _waypointMapLabel->setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    _waypointMapLabel->setJustificationType (juce::Justification::centredLeft);
+    _waypointMapLabel->setEditable (false, false, false);
+    _waypointMapLabel->setColour (juce::TextEditor::textColourId, juce::Colours::black);
+    _waypointMapLabel->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
+
+    _trailHideSlider.reset (new juce::Slider ("trail hiding slider"));
+    addAndMakeVisible (_trailHideSlider.get());
+    _trailHideSlider->setRange (0, 10, 1);
+    _trailHideSlider->setSliderStyle (juce::Slider::LinearHorizontal);
+    _trailHideSlider->setTextBoxStyle (juce::Slider::TextBoxRight, false, 30, 20);
+    _trailHideSlider->addListener (this);
+
+    _trailHideLabel.reset (new juce::Label ("trail hiding label",
+                                            TRANS("Trail hiding")));
+    addAndMakeVisible (_trailHideLabel.get());
+    _trailHideLabel->setFont (juce::Font (15.00f, juce::Font::plain).withTypefaceStyle ("Regular"));
+    _trailHideLabel->setJustificationType (juce::Justification::centredLeft);
+    _trailHideLabel->setEditable (false, false, false);
+    _trailHideLabel->setColour (juce::TextEditor::textColourId, juce::Colours::black);
+    _trailHideLabel->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
+
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -114,6 +157,11 @@ WaypointEditorComponent::~WaypointEditorComponent()
     _buttonLoad = nullptr;
     _buttonSave = nullptr;
     _buttonSend = nullptr;
+    _waypointTableLabel = nullptr;
+    _waypointEditLabel = nullptr;
+    _waypointMapLabel = nullptr;
+    _trailHideSlider = nullptr;
+    _trailHideLabel = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -137,14 +185,19 @@ void WaypointEditorComponent::resized()
     //[UserPreResize] Add your own custom resize code here..
     //[/UserPreResize]
 
-    _waypointMapComponent->setBounds (2, 2, getWidth() - 306, getHeight() - 4);
+    _waypointMapComponent->setBounds (2, 28, getWidth() - 310, getHeight() - 56);
     _waypointEditComponent->setBounds (getWidth() - 2 - 298, getHeight() - 2 - 200, 298, 200);
-    _waypointTableComponent->setBounds (getWidth() - 2 - 298, 2, 298, getHeight() - 240);
-    _buttonDelete->setBounds (getWidth() - 2 - 24, 2 + (getHeight() - 240) - -5, 24, 24);
-    _buttonAdd->setBounds (getWidth() - 32 - 24, 2 + (getHeight() - 240) - -5, 24, 24);
-    _buttonLoad->setBounds ((getWidth() - 2 - 298) + 0, 2 + (getHeight() - 240) - -5, 50, 24);
-    _buttonSave->setBounds (((getWidth() - 2 - 298) + 0) + 50 - -5, (2 + (getHeight() - 240) - -5) + 0, 50, 24);
-    _buttonSend->setBounds ((((getWidth() - 2 - 298) + 0) + 50 - -5) + 50 - -5, ((2 + (getHeight() - 240) - -5) + 0) + 0, 50, 24);
+    _waypointTableComponent->setBounds (getWidth() - 2 - 298, 28, 298, getHeight() - 300);
+    _buttonDelete->setBounds (getWidth() - 2 - 24, 28 + (getHeight() - 300) - -5, 24, 24);
+    _buttonAdd->setBounds (getWidth() - 32 - 24, 28 + (getHeight() - 300) - -5, 24, 24);
+    _buttonLoad->setBounds ((getWidth() - 2 - 298) + 0, 28 + (getHeight() - 300) - -5, 50, 24);
+    _buttonSave->setBounds (((getWidth() - 2 - 298) + 0) + 50 - -5, (28 + (getHeight() - 300) - -5) + 0, 50, 24);
+    _buttonSend->setBounds ((((getWidth() - 2 - 298) + 0) + 50 - -5) + 50 - -5, ((28 + (getHeight() - 300) - -5) + 0) + 0, 50, 24);
+    _waypointTableLabel->setBounds ((getWidth() - 2 - 298) + 0, 28 + -26, 79, 24);
+    _waypointEditLabel->setBounds ((getWidth() - 2 - 298) + 2, (getHeight() - 2 - 200) + -26, 53, 24);
+    _waypointMapLabel->setBounds (2 + 0, 28 + -26, 38, 24);
+    _trailHideSlider->setBounds (2 + (getWidth() - 310) - 5 - 126, 28 + (getHeight() - 56) - -2, 126, 24);
+    _trailHideLabel->setBounds ((2 + (getWidth() - 310) - 5 - 126) + 0 - 80, (28 + (getHeight() - 56) - -2) + 0, 80, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -222,6 +275,21 @@ void WaypointEditorComponent::buttonClicked (juce::Button* buttonThatWasClicked)
     //[/UserbuttonClicked_Post]
 }
 
+void WaypointEditorComponent::sliderValueChanged (juce::Slider* sliderThatWasMoved)
+{
+    //[UsersliderValueChanged_Pre]
+    //[/UsersliderValueChanged_Pre]
+
+    if (sliderThatWasMoved == _trailHideSlider.get())
+    {
+        //[UserSliderCode__trailHideSlider] -- add your slider handling code here..
+        //[/UserSliderCode__trailHideSlider]
+    }
+
+    //[UsersliderValueChanged_Post]
+    //[/UsersliderValueChanged_Post]
+}
+
 
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
@@ -260,13 +328,13 @@ BEGIN_JUCER_METADATA
                  initialHeight="400">
   <BACKGROUND backgroundColour="ff323e44"/>
   <GENERICCOMPONENT name="waypoint map component" id="d65263966a94c1f6" memberName="_waypointMapComponent"
-                    virtualName="" explicitFocusOrder="0" pos="2 2 306M 4M" class="WaypointMapComponent"
+                    virtualName="" explicitFocusOrder="0" pos="2 28 310M 56M" class="WaypointMapComponent"
                     params=""/>
   <GENERICCOMPONENT name="new component" id="bf5ef8d35dbf4612" memberName="_waypointEditComponent"
                     virtualName="" explicitFocusOrder="0" pos="2Rr 2Rr 298 200" class="WaypointEditComponent"
                     params=""/>
   <GENERICCOMPONENT name="waypoints list" id="a77f7f5f159169f" memberName="_waypointTableComponent"
-                    virtualName="" explicitFocusOrder="0" pos="2Rr 2 298 240M" class="WaypointTableComponent"
+                    virtualName="" explicitFocusOrder="0" pos="2Rr 28 298 300M" class="WaypointTableComponent"
                     params=""/>
   <IMAGEBUTTON name="delete button" id="59cdf533dc1b3b86" memberName="_buttonDelete"
                virtualName="" explicitFocusOrder="0" pos="2Rr -5R 24 24" posRelativeY="a77f7f5f159169f"
@@ -294,6 +362,35 @@ BEGIN_JUCER_METADATA
               virtualName="" explicitFocusOrder="0" pos="-5R 0 50 24" posRelativeX="d92027cd0c2d684b"
               posRelativeY="d92027cd0c2d684b" tooltip="Send the current set of waypoints to the speaker platform"
               buttonText="Send" connectedEdges="0" needsCallback="1" radioGroupId="0"/>
+  <LABEL name="waypoint table label" id="27cf2f5b01a4f49c" memberName="_waypointTableLabel"
+         virtualName="" explicitFocusOrder="0" pos="0 -26 79 24" posRelativeX="a77f7f5f159169f"
+         posRelativeY="a77f7f5f159169f" edTextCol="ff000000" edBkgCol="0"
+         labelText="Waypoints" editableSingleClick="0" editableDoubleClick="0"
+         focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
+         kerning="0.0" bold="0" italic="0" justification="33"/>
+  <LABEL name="waypoint edit label" id="ba002db26aa2e533" memberName="_waypointEditLabel"
+         virtualName="" explicitFocusOrder="0" pos="2 -26 53 24" posRelativeX="bf5ef8d35dbf4612"
+         posRelativeY="bf5ef8d35dbf4612" edTextCol="ff000000" edBkgCol="0"
+         labelText="Editor" editableSingleClick="0" editableDoubleClick="0"
+         focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
+         kerning="0.0" bold="0" italic="0" justification="33"/>
+  <LABEL name="waypoint map label" id="9c3ddf7e3252d0a0" memberName="_waypointMapLabel"
+         virtualName="" explicitFocusOrder="0" pos="0 -26 38 24" posRelativeX="d65263966a94c1f6"
+         posRelativeY="d65263966a94c1f6" edTextCol="ff000000" edBkgCol="0"
+         labelText="Map" editableSingleClick="0" editableDoubleClick="0"
+         focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
+         kerning="0.0" bold="0" italic="0" justification="33"/>
+  <SLIDER name="trail hiding slider" id="febd189a10da8af6" memberName="_trailHideSlider"
+          virtualName="" explicitFocusOrder="0" pos="5Rr -2R 126 24" posRelativeX="d65263966a94c1f6"
+          posRelativeY="d65263966a94c1f6" min="0.0" max="10.0" int="1.0"
+          style="LinearHorizontal" textBoxPos="TextBoxRight" textBoxEditable="1"
+          textBoxWidth="30" textBoxHeight="20" skewFactor="1.0" needsCallback="1"/>
+  <LABEL name="trail hiding label" id="ae674b5dcfb89da4" memberName="_trailHideLabel"
+         virtualName="" explicitFocusOrder="0" pos="0r 0 80 24" posRelativeX="febd189a10da8af6"
+         posRelativeY="febd189a10da8af6" edTextCol="ff000000" edBkgCol="0"
+         labelText="Trail hiding" editableSingleClick="0" editableDoubleClick="0"
+         focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
+         kerning="0.0" bold="0" italic="0" justification="33"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

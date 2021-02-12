@@ -22,6 +22,7 @@
 //[Headers]     -- You can add your own extra header files here --
 #include <JuceHeader.h>
 #include "Waypoint.h"
+#include "Map.h"
 //[/Headers]
 
 
@@ -71,13 +72,14 @@ public:
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
-
+    rdd::Map _map;
 	Image _mapImg;
 	float _mapZoom;
 	float _mapOffsetX;
 	float _mapOffsetY;
 
 	float _mapDisplayX, _mapDisplayY, _mapDisplayW, _mapDisplayH;
+    float _mapDisplayScaling;
 
 	Point<int> _mousePosition;
 

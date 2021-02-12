@@ -26,7 +26,7 @@ namespace rdd {
 
         inline float getResolution() { return _resolution; }
 
-        inline Vector3D<float>& getOrigin();
+        inline Vector3D<float>& getOrigin() { return _origin; }
 
         float getOccupiedThresh();
 
