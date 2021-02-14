@@ -201,6 +201,10 @@ void TimeEditComponent::setTimeObject(rdd::Time* time) {
     _time = time;
     _timeInputListener->setTimeObject(_time);
 
+    update();
+}
+
+void TimeEditComponent::update() {
     if (_time == nullptr) {
 
         _hours->setText("");
@@ -222,6 +226,16 @@ void TimeEditComponent::setTimeObject(rdd::Time* time) {
 
         this->setEnabled(true);
     }
+}
+
+
+void TimeEditComponent::setEditable(bool editable) {
+
+    _hours->setEnabled(editable);
+    _mins->setEnabled(editable);
+    _secs->setEnabled(editable);
+    _millis->setEnabled(editable);
+
 }
 
 //[/MiscUserCode]

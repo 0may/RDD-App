@@ -10,23 +10,25 @@
 
 #include "WaypointsManager.h"
 #include "Util.h"
+#include "MainManager.h"
 
 
 
 WaypointsManager::WaypointsManager() {
 	_checkoutIterator = _waypoints.end();
-	_checkoutIdx = -1;
-	_isClearing = false;
+	_checkoutIdx = (size_t)-1;
+	_clearing = false;
+	_locked = false;
 }
 
 
 WaypointsManager::~WaypointsManager() {
-	clear(false);
+	clear();
 }
 
 
 size_t WaypointsManager::getNumWaypoints() const {
-	if (_isClearing)
+	if (_clearing)
 		return 0;
 	else
 		return _waypoints.size();
@@ -35,7 +37,7 @@ size_t WaypointsManager::getNumWaypoints() const {
 
 const rdd::Waypoint* WaypointsManager::getWaypoint(size_t idx) const {
 
-	if (_isClearing || idx >= _waypoints.size())
+	if (_clearing || idx >= _waypoints.size())
 		return nullptr;
 
 	set<Waypoint*, WaypointComparator>::const_iterator it = _waypoints.begin();
@@ -50,7 +52,7 @@ const rdd::Waypoint* WaypointsManager::getWaypoint(size_t idx) const {
 size_t WaypointsManager::addNewWaypoint() {
 
 
-	if (!isCheckedOut() && !_isClearing) {
+	if (!isCheckedOut() && !isLocked()) {
 
 		Waypoint* wp = new Waypoint();
 		size_t i = _waypoints.size();
@@ -80,7 +82,7 @@ size_t WaypointsManager::addNewWaypoint() {
 
 rdd::Waypoint* WaypointsManager::checkoutWaypoint(size_t idx) {
 
-	if (!isCheckedOut() && !_isClearing && idx < _waypoints.size()) {
+	if (!isCheckedOut() && !isLocked() && idx < _waypoints.size()) {
 
 		_checkoutIterator = _waypoints.begin();
 
@@ -100,7 +102,7 @@ rdd::Waypoint* WaypointsManager::checkoutWaypoint(size_t idx) {
 
 
 rdd::Waypoint* WaypointsManager::getCheckedOutWaypoint() {
-	if (isCheckedOut() && !_isClearing)
+	if (isCheckedOut())
 		return *_checkoutIterator;
 	else
 		return nullptr;
@@ -109,7 +111,7 @@ rdd::Waypoint* WaypointsManager::getCheckedOutWaypoint() {
 
 bool WaypointsManager::commitWaypoint() {
 
-	if (isCheckedOut() && !_isClearing) {
+	if (isCheckedOut() && !isLocked()) {
 		rdd::Waypoint* wp = *_checkoutIterator;
 
 		_waypoints.erase(_checkoutIterator);
@@ -139,7 +141,7 @@ size_t WaypointsManager::getCheckedOutIdx() {
 
 
 bool WaypointsManager::deleteCheckedOutWaypoint() {
-	if (isCheckedOut() && !_isClearing) {
+	if (isCheckedOut() && !isLocked()) {
 		delete (*_checkoutIterator);
 		_waypoints.erase(_checkoutIterator);
 		_checkoutIterator = _waypoints.end();
@@ -165,15 +167,11 @@ set<Waypoint*, WaypointsManager::WaypointComparator>::const_iterator WaypointsMa
 
 
 
-bool WaypointsManager::clear(bool requireNoCheckOut) {
+bool WaypointsManager::clear() {
 
-	if (requireNoCheckOut && isCheckedOut()) {
-		return false;
-	}
-	else {
-		_isClearing = true;
+	if (!isLocked() && lock(true)) {
 
-		commitWaypoint();
+		_clearing = true;
 
 		set<Waypoint*, WaypointComparator>::iterator it = _waypoints.begin();
 
@@ -187,9 +185,14 @@ bool WaypointsManager::clear(bool requireNoCheckOut) {
 		_checkoutIterator = _waypoints.end();
 		_checkoutIdx = -1;
 
-		_isClearing = false;
+		_clearing = false;
+
+		unlock();
 
 		return true;
+	}
+	else {
+		return false;
 	}
 
 
@@ -200,78 +203,84 @@ bool WaypointsManager::saveWaypoints(File f, bool minify) {
 	if (_waypoints.empty())
 		return false;
 
-	commitWaypoint();
-	
-	set<Waypoint*, WaypointsManager::WaypointComparator>::const_iterator it = _waypoints.cbegin();
-	size_t n = 0;
-	FileOutputStream outfile(f);
+	if (!isLocked() && lock(true)) {
 
 
-	if (!outfile.openedOk()) 
+		set<Waypoint*, WaypointsManager::WaypointComparator>::const_iterator it = _waypoints.cbegin();
+		size_t n = 0;
+		FileOutputStream outfile(f);
+
+
+		if (!outfile.openedOk())
+			return false;
+
+
+		outfile.setPosition(0);
+		outfile.truncate();
+
+		if (minify) {
+			outfile << "{\"waypoints\":[";
+
+			while (it != _waypoints.cend()) {
+
+				outfile << "{";
+
+				outfile << "\"n\":" << String(n) << ",";
+				outfile << "\"t\":" << Util::toString((*it)->t) << ",";
+				outfile << "\"B\":" << String((*it)->B) << ",";
+				outfile << "\"x\":" << Util::toString((*it)->x) << ",";
+				outfile << "\"y\":" << Util::toString((*it)->y) << ",";
+				outfile << "\"alpha\":" << Util::toString((*it)->alpha) << ",";
+				outfile << "\"beta\":" << Util::toString((*it)->beta) << ",";
+				outfile << "\"name\":\"" << (*it)->name << "\"";
+
+				if (n < _waypoints.size() - 1)
+					outfile << "},";
+				else
+					outfile << "}";
+
+				n++;
+				it++;
+			}
+
+			outfile << "]}";
+		}
+		else {
+			outfile << "{\n\t\"waypoints\": [\n";
+
+			while (it != _waypoints.cend()) {
+
+				outfile << "\t{\n";
+
+				outfile << "\t\t\"n\": " << String(n) << ",\n";
+				outfile << "\t\t\"t\": " << Util::toString((*it)->t) << ",\n";
+				outfile << "\t\t\"B\": " << String((*it)->B) << ",\n";
+				outfile << "\t\t\"x\": " << Util::toString((*it)->x) << ",\n";
+				outfile << "\t\t\"y\": " << Util::toString((*it)->y) << ",\n";
+				outfile << "\t\t\"alpha\": " << Util::toString((*it)->alpha) << ",\n";
+				outfile << "\t\t\"beta\": " << Util::toString((*it)->beta) << ",\n";
+				outfile << "\t\t\"name\": \"" << (*it)->name << "\"\n";
+
+				if (n < _waypoints.size() - 1)
+					outfile << "\t},\n";
+				else
+					outfile << "\t}\n";
+
+				n++;
+				it++;
+			}
+
+			outfile << "\t]\n}";
+		}
+
+		outfile.flush();
+
+		unlock();
+
+		return true;
+	}
+	else
 		return false;
-
-
-	outfile.setPosition(0);
-	outfile.truncate();
-
-	if (minify) {
-		outfile << "{\"waypoints\":[";
-
-		while (it != _waypoints.cend()) {
-
-			outfile << "{";
-
-			outfile << "\"n\":" << String(n) << ",";
-			outfile << "\"t\":" << Util::toString((*it)->t) << ",";
-			outfile << "\"B\":" << String((*it)->B) << ",";
-			outfile << "\"x\":" << Util::toString((*it)->x) << ",";
-			outfile << "\"y\":" << Util::toString((*it)->y) << ",";
-			outfile << "\"alpha\":" << Util::toString((*it)->alpha) << ",";
-			outfile << "\"beta\":" << Util::toString((*it)->beta) << ",";
-			outfile << "\"name\":\"" << (*it)->name << "\"";
-
-			if (n < _waypoints.size()-1)
-				outfile << "},";
-			else
-				outfile << "}";
-
-			n++;
-			it++;
-		}
-
-		outfile << "]}";
-	}
-	else {
-		outfile << "{\n\t\"waypoints\": [\n";
-
-		while (it != _waypoints.cend()) {
-
-			outfile << "\t{\n";
-
-			outfile << "\t\t\"n\": " << String(n) << ",\n";
-			outfile << "\t\t\"t\": " << Util::toString((*it)->t) << ",\n";
-			outfile << "\t\t\"B\": " << String((*it)->B) << ",\n";
-			outfile << "\t\t\"x\": " << Util::toString((*it)->x) << ",\n";
-			outfile << "\t\t\"y\": " << Util::toString((*it)->y) << ",\n";
-			outfile << "\t\t\"alpha\": " << Util::toString((*it)->alpha) << ",\n";
-			outfile << "\t\t\"beta\": " << Util::toString((*it)->beta) << ",\n";
-			outfile << "\t\t\"name\": \"" << (*it)->name << "\"\n";
-
-			if (n < _waypoints.size() - 1)
-				outfile << "\t},\n";
-			else
-				outfile << "\t}\n";
-
-			n++;
-			it++;
-		}
-
-		outfile << "\t]\n}";
-	}
-
-	outfile.flush();
-
-	return true;
 }
 
 
@@ -280,54 +289,84 @@ bool WaypointsManager::loadWaypoints(File f) {
 	DynamicObject* wpObj;
 	Waypoint* wp;
 
-	commitWaypoint();
-	clear();
+	if (clear() && lock(true)) {
+
+		var json = JSON::parse(f);
+
+		if (json.isObject()) {
+			auto* obj = json.getDynamicObject();
+
+			auto* wpArray = Util::getArrayFromJsonObject(obj, "waypoints");
+
+			if (!wpArray)
+				return false;
+
+			for (int i = 0; i < wpArray->size(); i++) {
+				if (wpArray->operator[](i).isObject()) {
 
 
-	var json = JSON::parse(f);
 
+					wpObj = wpArray->operator[](i).getDynamicObject();
 
+					wp = checkoutWaypoint(addNewWaypoint());
 
-	if (json.isObject()) {
-		auto* obj = json.getDynamicObject();
+					success = true;
 
-		auto* wpArray = Util::getArrayFromJsonObject(obj, "waypoints");
+					success &= Util::getDoubleFromJsonObject(wpObj, "t", wp->t);
+					success &= Util::getFloatFromJsonObject(wpObj, "x", wp->x);
+					success &= Util::getFloatFromJsonObject(wpObj, "y", wp->y);
+					success &= Util::getFloatFromJsonObject(wpObj, "alpha", wp->alpha);
+					success &= Util::getFloatFromJsonObject(wpObj, "beta", wp->beta);
+					success &= Util::getStringFromJsonObject(wpObj, "name", wp->name);
 
-		if (!wpArray)
-			return false;
+					wp = nullptr;
 
-		for (int i = 0; i < wpArray->size(); i++) {
-			if (wpArray->operator[](i).isObject()) {
-
-				
-
-				wpObj = wpArray->operator[](i).getDynamicObject();
-
-				wp = checkoutWaypoint(addNewWaypoint());
-
-				success = true;
-
-				success &= Util::getDoubleFromJsonObject(wpObj, "t", wp->t);
-				success &= Util::getFloatFromJsonObject(wpObj, "x", wp->x);
-				success &= Util::getFloatFromJsonObject(wpObj, "y", wp->y);
-				success &= Util::getFloatFromJsonObject(wpObj, "alpha", wp->alpha);
-				success &= Util::getFloatFromJsonObject(wpObj, "beta", wp->beta);
-				success &= Util::getStringFromJsonObject(wpObj, "name", wp->name);
-
-				wp = nullptr;
-
-				if (success)
-					commitWaypoint();
-				else
-					deleteCheckedOutWaypoint();
+					if (success)
+						commitWaypoint();
+					else
+						deleteCheckedOutWaypoint();
+				}
 			}
+
+			sendChangeMessage();
+
+			unlock();
+
+			return true;
 		}
-
-		sendChangeMessage();
-
-		return true;
+		else {
+			unlock();
+			return false;
+		}
 	}
 	else
 		return false;
 	
+}
+
+
+bool WaypointsManager::lock(bool autoCommit) {
+
+	if (_locked || (isCheckedOut() && !autoCommit))
+		return false;
+	else {
+
+		commitWaypoint();
+		_locked = true;
+
+		return true;
+	}
+}
+
+bool WaypointsManager::unlock() {
+	if (!_locked)
+		return false;
+	else {
+		_locked = false;
+		return true;
+	}
+}
+
+bool WaypointsManager::isLocked() const {
+	return _locked;
 }

@@ -22,6 +22,8 @@ MidiController::MidiController() {
 	_loggingEnabled = false;
 	_midiClock = 0;
 	_midiClockStarted = false;
+
+	_wpIdxResend.resend = 0;
 }
 
 
@@ -255,6 +257,33 @@ bool MidiController::sendParameter(MidiSettings::BotParameter param, uint8 value
 
 	return true;
 }
+
+
+bool MidiController::sendWaypointIndex(int idx) {
+	if (!_configured)
+		return false;
+
+	MidiMessage m = MidiMessage::pitchWheel(_midiSettings.getChannel(), idx);
+
+	for (size_t i = 0; i < _midiOutputs.size(); i++) {
+		_midiOutputs[i]->sendMessageNow(m);
+	}
+
+	if (_midiSettings.getNumResends() > 0) {
+		_wpIdxResend.resend = _midiSettings.getNumResends();
+		_wpIdxResend.msg = m;
+	}
+
+	if (_loggingEnabled) {
+		sprintf(_logMsg, "Midi Send: PitchBend(%d,%d)", m.getChannel(), idx);
+		Logger::writeToLog(_logMsg);
+	}
+
+	return true;
+}
+
+
+
 
 
 void MidiController::handleIncomingMidiMessage(MidiInput* /*source*/, const MidiMessage& message) {
@@ -533,5 +562,19 @@ void MidiController::timerCallback() {
 		}
 
 		itParamResend++;
+	}
+
+	if (_wpIdxResend.resend != 0) {
+		for (i = 0; i < _midiOutputs.size(); i++) {
+			_midiOutputs[i]->sendMessageNow(_wpIdxResend.msg);
+		}
+
+		if (_wpIdxResend.resend > 0)
+			_wpIdxResend.resend--;
+
+		if (_loggingEnabled) {
+			sprintf(_logMsg, "Midi Send: PitchBend(%d,%d)", _wpIdxResend.msg.getChannel(), _wpIdxResend.msg.getPitchWheelValue());
+			Logger::writeToLog(_logMsg);
+		}
 	}
 }

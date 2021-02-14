@@ -46,6 +46,8 @@ namespace rdd {
 		// value must be in the range of 0 - 127
 		bool sendParameter(MidiSettings::BotParameter param, uint8 value);
 
+		bool sendWaypointIndex(int idx);
+
 		void handleIncomingMidiMessage(MidiInput* source, const MidiMessage& message) override;
 
 		void changeListenerCallback(ChangeBroadcaster* source) override;
@@ -79,6 +81,7 @@ namespace rdd {
 		// maps to the MidiMessageResend items for the different commands and parameters
 		std::map<MidiSettings::BotCommand, MidiMessageResend> _mapCmdResend;
 		std::map<MidiSettings::BotParameter, MidiMessageResend> _mapParamResend;
+		MidiMessageResend _wpIdxResend;
 
 	};
 }

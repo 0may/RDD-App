@@ -11,11 +11,12 @@
 #pragma once
 
 
+#include <JuceHeader.h>
 #include "MidiController.h"
-#include "MidiSequenceManager.h"
+#include "WaypointsPlayer.h"
 #include "WaypointsManager.h"
 #include "Map.h"
-#include "JuceHeader.h"
+#include "MidiSequenceManager.h"
 
 namespace rdd {
 
@@ -28,9 +29,10 @@ namespace rdd {
 
 		static MainManager& instance();
 
-		MidiController& getMidiController()				{ return _midiController; };
-		inline WaypointsManager& getWaypointsManager()	{ return _waypointsManager; };
-		inline Map& getMap()							{ return _map; };
+		MidiController& getMidiController()		{ return _midiController; };
+		WaypointsManager& getWaypointsManager()	{ return _waypointsManager; };
+		WaypointsPlayer& getWaypointsPlayer() { return _waypointsPlayer; };
+		Map& getMap()							{ return _map; };
 
 		MidiSequenceManager& getMidiSequenceManager();
 		ApplicationCommandManager& getCommandManager();
@@ -52,6 +54,7 @@ namespace rdd {
 	private:
 		MidiController _midiController;
 		WaypointsManager _waypointsManager;
+		WaypointsPlayer _waypointsPlayer;
 		MidiSequenceManager _midiSequenceManager;
 		ApplicationCommandManager _cmdManager;
 		Map _map;

@@ -17,6 +17,10 @@
         <FILE id="AYnWKb" name="Util.h" compile="0" resource="0" file="Source/Util.h"/>
       </GROUP>
       <GROUP id="{9F2FE09C-A5F5-3A2B-096D-E8EE17613655}" name="Core">
+        <FILE id="HlvMiM" name="WaypointsPlayer.cpp" compile="1" resource="0"
+              file="Source/WaypointsPlayer.cpp"/>
+        <FILE id="BAmLjx" name="WaypointsPlayer.h" compile="0" resource="0"
+              file="Source/WaypointsPlayer.h"/>
         <FILE id="fujZdZ" name="Map.cpp" compile="1" resource="0" file="Source/Map.cpp"/>
         <FILE id="MIe7t8" name="Map.h" compile="0" resource="0" file="Source/Map.h"/>
         <FILE id="iiKG7C" name="Waypoint.cpp" compile="1" resource="0" file="Source/Waypoint.cpp"/>

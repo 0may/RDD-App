@@ -33,7 +33,7 @@ public:
 public:
 	WaypointsManager();
 
-	~WaypointsManager();
+	~WaypointsManager();  
 
 	/** Returns the number of waypoints stored in the manager */
 	size_t getNumWaypoints() const;
@@ -68,11 +68,20 @@ public:
 	set<Waypoint*, WaypointComparator>::const_iterator cbegin();
 	set<Waypoint*, WaypointComparator>::const_iterator cend();
 
-	bool clear(bool requireNoCheckOut = true);
+	bool clear();
 
 	bool saveWaypoints(File f, bool minify = true);
 
 	bool loadWaypoints(File f);
+
+	bool lock(bool autoCommit = true);
+
+	bool unlock();
+
+	bool isLocked() const;
+
+
+
 
 
 
@@ -80,9 +89,10 @@ private:
 	set<Waypoint*, WaypointComparator> _waypoints;
 
 	set<Waypoint*, WaypointComparator>::iterator _checkoutIterator;
-
 	size_t _checkoutIdx;
 
-	bool _isClearing;
+	bool _locked;
+	bool _clearing;
+
 
 };

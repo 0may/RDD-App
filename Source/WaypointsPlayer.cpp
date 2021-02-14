@@ -1,0 +1,118 @@
+/*
+  ==============================================================================
+
+    WaypointsPlayer.cpp
+    Created: 14 Feb 2021 1:59:21pm
+    Author:  omay
+
+  ==============================================================================
+*/
+
+#include "WaypointsPlayer.h"
+#include "MainManager.h"
+
+
+WaypointsPlayer::WaypointsPlayer() {
+	_playing = false;
+	_playingIdx = (size_t)-1;
+
+	_t0 = 0;
+	_t = 0;
+	_dt = 0;
+	_cbCnt = 0;
+
+}
+
+
+WaypointsPlayer::~WaypointsPlayer() {
+	if (isTimerRunning())
+		stopTimingThread();
+}
+
+
+void WaypointsPlayer::startTimingThread() {
+	startTimer(1);
+}
+
+
+bool WaypointsPlayer::play() {
+	if (isTimerRunning() && !_playing && _playingIdx != (size_t)-1) {
+		_cbCnt = 0;
+		startTimer(1);
+		_t0 = juce::Time::currentTimeMillis();
+		_playing = true;
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+
+bool WaypointsPlayer::pause() {
+	if (isTimerRunning() && _playing) {
+		_playing = false;
+		_t += _dt;
+		_dt = 0.0;
+		_cbCnt = 0;
+		sendChangeMessage();
+		return true;
+	}
+	else
+		return false;
+
+}
+
+
+bool WaypointsPlayer::reset() {
+	_t = 0;
+	_dt = 0;
+	_cbCnt = 0;
+
+	_playingIdx = 0;
+	_playingIterator = MainManager::instance().getWaypointsManager().cbegin();
+
+	sendChangeMessage();
+
+	return true;
+}
+
+
+
+bool WaypointsPlayer::isPlaying() {
+	return _playing;
+}
+
+
+void WaypointsPlayer::stopTimingThread() {
+	stopTimer();
+	_playingIdx = (size_t)-1;
+}
+
+
+
+
+
+void WaypointsPlayer::hiResTimerCallback() {
+
+	if (_playing) {
+		_dt = (juce::Time::currentTimeMillis() - _t0);
+
+		if (_playingIterator != MainManager::instance().getWaypointsManager().cend() 
+			&& (_t + _dt) * 0.001 >= (*_playingIterator)->t)
+		{
+
+			MainManager::instance().getMidiController().sendWaypointIndex((int)_playingIdx);
+			_playingIterator++;
+			_playingIdx++;
+		}
+
+
+		if (_cbCnt >= 50) {
+			_cbCnt = 0;
+			sendChangeMessage();
+		}
+
+		_cbCnt++;
+	}
+}

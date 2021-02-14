@@ -46,11 +46,14 @@ public:
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
-    
+
 
     friend class WaypointEditComponent;
 
     void setTimeObject(rdd::Time* time);
+    void update();
+
+    void setEditable(bool editable);
 
     //[/UserMethods]
 

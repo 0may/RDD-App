@@ -61,10 +61,19 @@ public:
     static const int minus_pngSize;
     static const char* plus_png;
     static const int plus_pngSize;
+    static const char* skip_b_png;
+    static const int skip_b_pngSize;
+    static const char* stop_png;
+    static const int stop_pngSize;
+    static const char* play_png;
+    static const int play_pngSize;
+    static const char* skip_f_png;
+    static const int skip_f_pngSize;
 
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
+    rdd::Time _playTime;
     //[/UserVariables]
 
     //==============================================================================
@@ -79,8 +88,13 @@ private:
     std::unique_ptr<juce::Label> _waypointTableLabel;
     std::unique_ptr<juce::Label> _waypointEditLabel;
     std::unique_ptr<juce::Label> _waypointMapLabel;
-    std::unique_ptr<juce::Slider> _trailHideSlider;
+    std::unique_ptr<juce::Slider> _trailsSlider;
     std::unique_ptr<juce::Label> _trailHideLabel;
+    std::unique_ptr<TimeEditComponent> _playTimeComponent;
+    std::unique_ptr<juce::ImageButton> _buttonSkipBack;
+    std::unique_ptr<juce::ImageButton> _buttonStop;
+    std::unique_ptr<juce::ImageButton> _buttonPlay;
+    std::unique_ptr<juce::ImageButton> _buttonSkipForward;
 
 
     //==============================================================================

@@ -30,7 +30,9 @@ MainManager::MainManager() {
 	}
 
 
+
 	File midiSettingsFile(_assetsDirectory.getChildFile("config/midiconfig.json"));
+
 
 	if (midiSettings.load(midiSettingsFile) && _midiController.config(midiSettings)) {
 
