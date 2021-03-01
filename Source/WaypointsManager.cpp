@@ -76,7 +76,7 @@ size_t WaypointsManager::addNewWaypoint() {
 		return i;
 	}
 	else
-		return -1;
+		return (size_t)-1;
 }
 
 
@@ -289,7 +289,7 @@ bool WaypointsManager::loadWaypoints(File f) {
 	DynamicObject* wpObj;
 	Waypoint* wp;
 
-	if (clear() && lock(true)) {
+	if (clear()) {
 
 		var json = JSON::parse(f);
 
@@ -330,12 +330,10 @@ bool WaypointsManager::loadWaypoints(File f) {
 
 			sendChangeMessage();
 
-			unlock();
 
 			return true;
 		}
 		else {
-			unlock();
 			return false;
 		}
 	}

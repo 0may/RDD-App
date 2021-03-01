@@ -37,9 +37,11 @@ void WaypointsPlayer::startTimingThread() {
 
 bool WaypointsPlayer::play() {
 	if (isTimerRunning() && !_playing && _playingIdx != (size_t)-1) {
+		MainManager::instance().getWaypointsManager().lock();
 		_cbCnt = 0;
 		startTimer(1);
 		_t0 = juce::Time::currentTimeMillis();
+		MainManager::instance().getMidiController().sendMidiMessage(MidiMessage::midiStart());
 		_playing = true;
 		return true;
 	}
@@ -52,8 +54,9 @@ bool WaypointsPlayer::play() {
 bool WaypointsPlayer::pause() {
 	if (isTimerRunning() && _playing) {
 		_playing = false;
+		MainManager::instance().getMidiController().sendMidiMessage(MidiMessage::midiStop());
 		_t += _dt;
-		_dt = 0.0;
+		_dt = 0;
 		_cbCnt = 0;
 		sendChangeMessage();
 		return true;
@@ -65,6 +68,9 @@ bool WaypointsPlayer::pause() {
 
 
 bool WaypointsPlayer::reset() {
+	MainManager::instance().getMidiController().sendMidiMessage(MidiMessage::songPositionPointer(0));
+
+	MainManager::instance().getWaypointsManager().unlock();
 	_t = 0;
 	_dt = 0;
 	_cbCnt = 0;
@@ -102,6 +108,7 @@ void WaypointsPlayer::hiResTimerCallback() {
 			&& (_t + _dt) * 0.001 >= (*_playingIterator)->t)
 		{
 
+			const MessageManagerLock mmLock;
 			MainManager::instance().getMidiController().sendWaypointIndex((int)_playingIdx);
 			_playingIterator++;
 			_playingIdx++;
@@ -110,6 +117,7 @@ void WaypointsPlayer::hiResTimerCallback() {
 
 		if (_cbCnt >= 50) {
 			_cbCnt = 0;
+			const MessageManagerLock mmLock;
 			sendChangeMessage();
 		}
 

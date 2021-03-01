@@ -48,6 +48,8 @@ namespace rdd {
 
 		bool sendWaypointIndex(int idx);
 
+		bool sendMidiMessage(const MidiMessage& msg);
+
 		void handleIncomingMidiMessage(MidiInput* source, const MidiMessage& message) override;
 
 		void changeListenerCallback(ChangeBroadcaster* source) override;

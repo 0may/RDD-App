@@ -17,7 +17,7 @@ TimeInputListener::TimeInputListener(rdd::Time* time)
     : _time(time)
 {
 
-    setColours(Colour(0xffffffff), Colour(0xffffff88), Colour(0xffff0000));
+    setColours(Colour(0xffffffff), Colour(0xffffffff)/*Colour(0xffffff88)*/, Colour(0xffff0000));
 
 }
 

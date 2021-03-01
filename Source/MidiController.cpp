@@ -259,6 +259,15 @@ bool MidiController::sendParameter(MidiSettings::BotParameter param, uint8 value
 }
 
 
+bool MidiController::sendMidiMessage(const MidiMessage& msg) {
+	for (size_t i = 0; i < _midiOutputs.size(); i++) {
+		_midiOutputs[i]->sendMessageNow(msg);
+	}
+
+	return true;
+}
+
+
 bool MidiController::sendWaypointIndex(int idx) {
 	if (!_configured)
 		return false;
@@ -309,6 +318,9 @@ void MidiController::handleIncomingMidiMessage(MidiInput* /*source*/, const Midi
 
 		if (_midiClockStarted)
 			_midiClock++;
+	}
+	else if (message.isSongPositionPointer()) {
+		_midiClock = message.getSongPositionPointerMidiBeat() * 6;
 	}
 }
 

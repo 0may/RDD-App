@@ -186,6 +186,7 @@ WaypointEditorComponent::WaypointEditorComponent ()
 
     MainManager::instance().getWaypointsManager().addChangeListener(this);
     MainManager::instance().getWaypointsPlayer().addChangeListener(this);
+    MainManager::instance().getWaypointsPlayer().addChangeListener(_waypointMapComponent.get());
     MainManager::instance().getWaypointsPlayer().startTimingThread();
     MainManager::instance().getWaypointsPlayer().reset();
 
@@ -379,6 +380,8 @@ void WaypointEditorComponent::sliderValueChanged (juce::Slider* sliderThatWasMov
     if (sliderThatWasMoved == _trailsSlider.get())
     {
         //[UserSliderCode__trailsSlider] -- add your slider handling code here..
+        _waypointMapComponent->setTrails((uint16)_trailsSlider->getValue());
+        _waypointMapComponent->repaint();
         //[/UserSliderCode__trailsSlider]
     }
 

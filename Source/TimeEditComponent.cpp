@@ -127,7 +127,7 @@ TimeEditComponent::TimeEditComponent ()
     //[Constructor] You can add your own custom stuff here..
 
     _timeInputListener = new TimeInputListener(nullptr);
-    _timeInputListener->setColours(_hours->findColour(TextEditor::textColourId), Colour(0xffccff0f), Colour(0xffff0000));
+    _timeInputListener->setColours(_hours->findColour(TextEditor::textColourId), _hours->findColour(TextEditor::textColourId), Colour(0xffff0000));
 
 
     _hours->setInputFilter(new TextEditor::LengthAndCharacterRestriction(3, "0123456789"), true);

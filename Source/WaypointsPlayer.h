@@ -35,6 +35,8 @@ namespace rdd {
 
 		double getPlayTime() { return (_t + _dt) * 0.001; };
 
+		size_t getCurrentWaypointIdx() { return _playingIdx - 1; };
+
 		void stopTimingThread();
 
 

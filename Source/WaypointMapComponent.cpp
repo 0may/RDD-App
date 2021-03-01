@@ -76,6 +76,7 @@ WaypointMapComponent::WaypointMapComponent ()
 	setColour(ColourIds::trailsPastColourId, Colour(0x4fa85c94));
 	setColour(ColourIds::trailsFutureColourId, Colour(0x4f42a2c8));
 
+	_wpTrails = 0;
     //[/Constructor]
 }
 
@@ -112,50 +113,92 @@ void WaypointMapComponent::paint (juce::Graphics& g)
 	);
 
 
-	// --- draw waypoints
+	WaypointsManager *wm = &MainManager::instance().getWaypointsManager();
 
+	if (wm->getNumWaypoints() == 0)  // return if list of waypoints is empty
+		return;
+
+	// compute trail start and end
+	size_t wpTrailStart = 0;
+	size_t wpTrailEnd = wm->getNumWaypoints()-1;
+
+	if (wm->isCheckedOut() && _wpTrails > 0) {
+		size_t coIdx = wm->getCheckedOutIdx();
+
+		if (coIdx >= _wpTrails)
+			wpTrailStart = coIdx - _wpTrails + 1;
+
+		if (coIdx + _wpTrails - 1 < wpTrailEnd)
+			wpTrailEnd = coIdx + _wpTrails - 1;
+	}
+
+
+	// --- draw waypoints
 	g.setFillType(FillType(Colour(0x00ffffff)));
 	Colour trailsColour = findColour(ColourIds::trailsPastColourId);
 
-	Waypoint* wpSelected = MainManager::instance().getWaypointsManager().getCheckedOutWaypoint();
-	Point<float> p, pPrev;
+
 
 	// iterate over all waypoints
 
-	set<Waypoint*, WaypointsManager::WaypointComparator>::const_iterator it = MainManager::instance().getWaypointsManager().cbegin();
+	set<Waypoint*, WaypointsManager::WaypointComparator>::const_iterator it = wm->cbegin();
+	size_t wpIdx = 0;      // waypoint index for trails
+	Point<float> p, pPrev; // screen coordinates of current and previous waypoint
 
-	if (it != MainManager::instance().getWaypointsManager().cend()) {  // if list of waypoints is not empty
 
-		// draw first waypoint
-		if (wpSelected && wpSelected == *it) {
-			drawWaypoint(g, *it, true);
-			trailsColour = findColour(ColourIds::trailsFutureColourId);
-		}
-		else
-			drawWaypoint(g, *it, false);
 
-		pPrev = mapToScreen((*it)->x, (*it)->y);
-		it++;
 
-		// draw all other waypoints and trails 
-		while (it != MainManager::instance().getWaypointsManager().cend()) {
+	//// draw first waypoint
+	//if (wpIdx >= wpTrailStart && wpIdx <= wpTrailEnd) {
+	//	if (wpIdx == wm->getCheckedOutIdx()) {
+	//		drawWaypoint(g, *it, true);
+	//		trailsColour = findColour(ColourIds::trailsFutureColourId);
+	//	}
+	//	else
+	//		drawWaypoint(g, *it, false);
+	//}
 
-			// draw trail from current to previous waypoint
+	//pPrev = mapToScreen((*it)->x, (*it)->y);
+	//it++;
+	//wpIdx++;
+
+	float animationAlpha = 1.0f;
+
+	// draw all other waypoints and trails
+	while (it != MainManager::instance().getWaypointsManager().cend()) {
+
+
+		if (wpIdx >= wpTrailStart && wpIdx <= wpTrailEnd) {
+
 			p = mapToScreen((*it)->x, (*it)->y);
-			g.setColour(trailsColour);
-			g.drawLine(pPrev.x, pPrev.y, p.x, p.y);
+
+			if (MainManager::instance().getWaypointsPlayer().isPlaying() && MainManager::instance().getWaypointsPlayer().getCurrentWaypointIdx() == wpIdx) {
+				animationAlpha = 0.3f * (float)cos(MainManager::instance().getWaypointsPlayer().getPlayTime()*8.0) + 0.7f;
+			}
+			else
+				animationAlpha = 1.0f;
+
+			if (wpIdx > wpTrailStart) {
+
+				// draw trail from current to previous waypoint
+				g.setColour(trailsColour.withMultipliedAlpha(animationAlpha));
+				g.drawLine(pPrev.x, pPrev.y, p.x, p.y);
+			}
 
 			// if a waypoint is selected, highlight it and change the trail color
-			if (wpSelected && wpSelected == *it) {
-				drawWaypoint(g, *it, true);
+			if (wpIdx == wm->getCheckedOutIdx()) {
+				drawWaypoint(g, *it, true, animationAlpha);
 				trailsColour = findColour(ColourIds::trailsFutureColourId);
 			}
 			else
-				drawWaypoint(g, *it, false);
+				drawWaypoint(g, *it, false, animationAlpha);
+
 
 			pPrev = p;
-			it++;
 		}
+
+		it++;
+		wpIdx++;
 	}
 
 
@@ -263,10 +306,20 @@ void WaypointMapComponent::mouseDoubleClick (const juce::MouseEvent& e)
 
 	MainManager::instance().getWaypointsManager().commitWaypoint();
 
-	size_t idxMin = (size_t)-1;
 
-	if (waypointHit(_mousePosition, idxMin)) {
-		MainManager::instance().getWaypointsManager().checkoutWaypoint(idxMin);
+	if (e.mods.isShiftDown()) {
+		Waypoint* wp = MainManager::instance().getWaypointsManager().checkoutWaypoint(MainManager::instance().getWaypointsManager().addNewWaypoint());
+		Point<float> p = screenToMap(_mousePosition.x, _mousePosition.y);
+		wp->x = p.x;
+		wp->y = p.y;
+		sendChangeMessage();
+	}
+	else {
+		size_t idxMin = (size_t)-1;
+
+		if (waypointHit(_mousePosition, idxMin)) {
+			MainManager::instance().getWaypointsManager().checkoutWaypoint(idxMin);
+		}
 	}
 
     //[/UserCode_mouseDoubleClick]
@@ -336,13 +389,13 @@ void WaypointMapComponent::calculateMapArea() {
 
 
 
-void WaypointMapComponent::drawWaypoint(juce::Graphics& g, Waypoint* wp, bool highlight) {
+void WaypointMapComponent::drawWaypoint(juce::Graphics& g, Waypoint* wp, bool highlight, float opaqueness) {
 	Point<float> a, b;
 	Point<float> p = mapToScreen(wp->x, wp->y);
 
 
 	if (highlight) {
-		g.setColour(findColour(ColourIds::wpAlphaColourId));
+		g.setColour(findColour(ColourIds::wpAlphaColourId).withMultipliedAlpha(opaqueness));
 		g.drawEllipse(p.x - _wpOffL, p.y - _wpOffL, _wpSizeL, _wpSizeL, 2);
 
 		a = Util::polarToCartesian(wp->alpha * float_Pi / 180.0f, _wpOffL, true);
@@ -350,21 +403,21 @@ void WaypointMapComponent::drawWaypoint(juce::Graphics& g, Waypoint* wp, bool hi
 		g.drawLine(p.x + a.x, p.y + a.y, p.x + b.x, p.y + b.y, 2);
 
 
-		g.setColour(findColour(ColourIds::wpBetaColourId));
+		g.setColour(findColour(ColourIds::wpBetaColourId).withMultipliedAlpha(opaqueness));
 		g.drawEllipse(p.x - _wpOffL2, p.y - _wpOffL2, _wpSizeL2, _wpSizeL2, 2);
 
 		b = Util::polarToCartesian(wp->beta * float_Pi / 180.0f, _wpOffL2, true);
 		g.drawLine(p.x, p.y, p.x + b.x, p.y + b.y, 2);
 	}
 	else {
-		g.setColour(findColour(ColourIds::wpAlphaColourId).withAlpha(0.9f));
+		g.setColour(findColour(ColourIds::wpAlphaColourId).withAlpha(0.9f).withMultipliedAlpha(opaqueness));
 		g.drawEllipse(p.x - _wpOffS, p.y - _wpOffS, _wpSizeS, _wpSizeS, 1);
 
 		a = Util::polarToCartesian(wp->alpha * float_Pi / 180.0f, _wpOffS, true);
 		b = Util::polarToCartesian(wp->alpha * float_Pi / 180.0f, _wpOffS + _wpOffS2, true);
 		g.drawLine(p.x + a.x, p.y + a.y, p.x + b.x, p.y + b.y, 1);
 
-		g.setColour(findColour(ColourIds::wpBetaColourId).withAlpha(0.9f));
+		g.setColour(findColour(ColourIds::wpBetaColourId).withAlpha(0.9f).withMultipliedAlpha(opaqueness));
 		g.drawEllipse(p.x - _wpOffS2, p.y - _wpOffS2, _wpSizeS2, _wpSizeS2, 1);
 
 		b = Util::polarToCartesian(wp->beta * float_Pi / 180.0f, _wpOffS2, true);
@@ -433,6 +486,19 @@ Point<float> WaypointMapComponent::screenToMap(float screenX, float screenY) {
 }
 
 
+void WaypointMapComponent::setTrails(uint16 trails) {
+	_wpTrails = trails;
+}
+
+
+
+void WaypointMapComponent::changeListenerCallback(ChangeBroadcaster* source) {
+	if (dynamic_cast<WaypointsPlayer*>(source)) {
+		repaint();
+	}
+}
+
+
 //[/MiscUserCode]
 
 
@@ -446,7 +512,7 @@ Point<float> WaypointMapComponent::screenToMap(float screenX, float screenY) {
 BEGIN_JUCER_METADATA
 
 <JUCER_COMPONENT documentType="Component" className="WaypointMapComponent" componentName=""
-                 parentClasses="public juce::Component, public juce::ChangeBroadcaster"
+                 parentClasses="public juce::Component, public juce::ChangeBroadcaster, public juce::ChangeListener"
                  constructorParams="" variableInitialisers="" snapPixels="8" snapActive="1"
                  snapShown="1" overlayOpacity="0.330" fixedSize="0" initialWidth="600"
                  initialHeight="400">

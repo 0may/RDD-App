@@ -36,7 +36,8 @@
                                                                     //[/Comments]
 */
 class WaypointMapComponent  : public juce::Component,
-                              public juce::ChangeBroadcaster
+                              public juce::ChangeBroadcaster,
+                              public juce::ChangeListener
 {
 public:
     //==============================================================================
@@ -47,7 +48,7 @@ public:
     //[UserMethods]     -- You can add your own custom methods in this section.
 	void calculateMapArea();
 
-    void drawWaypoint(juce::Graphics& g, rdd::Waypoint* wp, bool highlight);
+    void drawWaypoint(juce::Graphics& g, rdd::Waypoint* wp, bool highlight, float opaqueness = 1.0f);
 
     bool waypointHit(Point<int> mousePosition, size_t& wpIdx);
     inline float waypointHitDistance(Point<int> mousePosition, rdd::Waypoint* wp) {
@@ -56,7 +57,9 @@ public:
 
     Point<float> mapToScreen(float mapX, float mapY);
     Point<float> screenToMap(float screenX, float screenY);
+    void setTrails(uint16 trails);
 
+    void changeListenerCallback(ChangeBroadcaster* source) override;
 
     //[/UserMethods]
 
@@ -87,6 +90,8 @@ private:
     float _wpSizeL, _wpSizeL2, _wpOffL, _wpOffL2;
 
     bool _wpMove, _wpRotateA, _wpRotateB;
+
+    uint16 _wpTrails;
 
 public:
     enum ColourIds {

@@ -66,6 +66,9 @@ private:
     //[UserVariables]   -- You can add your own custom variables in this section.
     rdd::Time* _time;
     TimeInputListener* _timeInputListener;
+
+
+private:
     //[/UserVariables]
 
     //==============================================================================
