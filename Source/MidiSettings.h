@@ -53,11 +53,16 @@ namespace rdd {
 
 		int getChannel() { return _channel; }
 
-		inline int getNote(BotCommand cmd) { return _notes.find(cmd)->second; }
+		int getNote(BotCommand cmd) { return _notes.find(cmd)->second; }
 
-		inline int getCC(BotParameter param) { return _cc.find(param)->second; }
+		int getCC(BotParameter param) { return _cc.find(param)->second; }
 
-		inline int getNumResends() { return _resend; }
+		int getNumResends() { return _resend; }
+
+		bool setChannel(int channel);
+		bool setNote(BotCommand cmd, int note);
+		bool setCC(BotParameter param, int cc);
+		bool setNumResends(int resends);
 
 		String toString();
 

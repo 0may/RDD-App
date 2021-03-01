@@ -54,6 +54,51 @@ bool MidiSettings::load(const File& file) {
 }
 
 
+bool MidiSettings::setChannel(int channel) {
+	if (channel >= 1 && channel <= 16) {
+		_channel = channel;
+		return true;
+	}
+	else
+		return false;
+}
+
+
+bool MidiSettings::setNote(BotCommand cmd, int note) {
+	if (note >= 1 && note <= 127) {
+		_notes[cmd] = note;
+		return true;
+	}
+	else
+		return false;
+}
+
+
+bool MidiSettings::setCC(BotParameter param, int cc) {
+	if (cc >= 1 && cc <= 127) {
+		_cc[param] = cc;
+		return true;
+	}
+	else
+		return false;
+}
+
+
+bool MidiSettings::setNumResends(int resends) {
+	if (resends >= 0 && resends <= 5) {
+		_resend = resends;
+		return true;
+	}
+	else
+		return false;
+}
+
+
+
+
+
+
+
 String MidiSettings::toString() {
 	String s = "MidiSettings:\n";
 

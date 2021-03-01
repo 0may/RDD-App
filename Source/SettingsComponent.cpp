@@ -7,21 +7,21 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 5.4.7
+  Created with Projucer version: 6.0.6
 
   ------------------------------------------------------------------------------
 
   The Projucer is part of the JUCE library.
-  Copyright (c) 2017 - ROLI Ltd.
+  Copyright (c) 2020 - Raw Material Software Limited.
 
   ==============================================================================
 */
 
 //[Headers] You can add your own extra header files here...
+#include "MainManager.h"
 //[/Headers]
 
 #include "SettingsComponent.h"
-#include "MainManager.h"
 
 
 //[MiscUserDefs] You can add your own user definitions and misc code here...
@@ -32,6 +32,12 @@ SettingsComponent::SettingsComponent ()
 {
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]
+
+    _midiSettingsComponent.reset (new MidiSettingsComponent());
+    addAndMakeVisible (_midiSettingsComponent.get());
+    _midiSettingsComponent->setName ("new component");
+
+    _midiSettingsComponent->setBounds (248, 0, 600, 500);
 
 
     //[UserPreSize]
@@ -56,6 +62,7 @@ SettingsComponent::~SettingsComponent()
     //[Destructor_pre]. You can add your own custom destruction code here..
     //[/Destructor_pre]
 
+    _midiSettingsComponent = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -63,12 +70,12 @@ SettingsComponent::~SettingsComponent()
 }
 
 //==============================================================================
-void SettingsComponent::paint (Graphics& g)
+void SettingsComponent::paint (juce::Graphics& g)
 {
     //[UserPrePaint] Add your own custom painting code here..
     //[/UserPrePaint]
 
-    g.fillAll (Colour (0xff323e44));
+    g.fillAll (juce::Colour (0xff323e44));
 
     //[UserPaint] Add your own custom painting code here..
     //[/UserPaint]
@@ -77,35 +84,12 @@ void SettingsComponent::paint (Graphics& g)
 void SettingsComponent::resized()
 {
     //[UserPreResize] Add your own custom resize code here..
-
-	// compute sum of child components' heights and maximum of child components' widths
-	// to set as bounds of this component
-
-	int w = 300;
-	int h = 0;
-
-	_midiInputComponent.resized();
-
-	h += _midiInputComponent.getBounds().getHeight();
-
-	if (_midiInputComponent.getBounds().getWidth() > w)
-		w =  _midiInputComponent.getBounds().getWidth();
-
-
-	_midiOutputComponent.resized();
-
-	h += _midiOutputComponent.getBounds().getHeight();
-
-	if (_midiOutputComponent.getBounds().getWidth() > w)
-		w = _midiOutputComponent.getBounds().getWidth();
-
-	setBounds(0, 0, w, h);
-
     //[/UserPreResize]
 
     //[UserResized] Add your own custom resize handling here..
 
 	// now position the child components
+    setBounds(0, 0, _midiSettingsComponent->getWidth(), _midiInputComponent.getHeight() + _midiOutputComponent.getHeight() + _midiSettingsComponent->getHeight());
 
 	auto area = getLocalBounds();
 
@@ -114,6 +98,7 @@ void SettingsComponent::resized()
 	_midiOutputComponent.setBounds(area.removeFromTop(_midiOutputComponent.getBounds().getHeight()));
 
 
+    _midiSettingsComponent->setBounds(area.removeFromTop(500));
     //[/UserResized]
 }
 
@@ -137,6 +122,9 @@ BEGIN_JUCER_METADATA
                  snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
                  fixedSize="0" initialWidth="600" initialHeight="400">
   <BACKGROUND backgroundColour="ff323e44"/>
+  <GENERICCOMPONENT name="new component" id="40bc1408f763c95c" memberName="_midiSettingsComponent"
+                    virtualName="" explicitFocusOrder="0" pos="248 0 600 500" class="MidiSettingsComponent"
+                    params=""/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA
