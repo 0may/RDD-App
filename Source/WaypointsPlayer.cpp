@@ -41,7 +41,7 @@ bool WaypointsPlayer::play() {
 		_cbCnt = 0;
 		startTimer(1);
 		_t0 = juce::Time::currentTimeMillis();
-		MainManager::instance().getMidiController().sendMidiMessage(MidiMessage::midiStart());
+		//MainManager::instance().getMidiController().sendMidiMessage(MidiMessage::midiStart());
 		_playing = true;
 		return true;
 	}
@@ -54,7 +54,7 @@ bool WaypointsPlayer::play() {
 bool WaypointsPlayer::pause() {
 	if (isTimerRunning() && _playing) {
 		_playing = false;
-		MainManager::instance().getMidiController().sendMidiMessage(MidiMessage::midiStop());
+		//MainManager::instance().getMidiController().sendMidiMessage(MidiMessage::midiStop());
 		_t += _dt;
 		_dt = 0;
 		_cbCnt = 0;
@@ -68,7 +68,7 @@ bool WaypointsPlayer::pause() {
 
 
 bool WaypointsPlayer::reset() {
-	MainManager::instance().getMidiController().sendMidiMessage(MidiMessage::songPositionPointer(0));
+	//MainManager::instance().getMidiController().sendMidiMessage(MidiMessage::songPositionPointer(0));
 
 	MainManager::instance().getWaypointsManager().unlock();
 	_t = 0;
