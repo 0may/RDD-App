@@ -35,6 +35,10 @@ MidiInputDeviceSelectorComponent::MidiInputDeviceSelectorComponent ()
 
     //[/Constructor_pre]
 
+    juce__groupComponent.reset (new juce::GroupComponent ("new group",
+                                                          TRANS("Midi Sync Input")));
+    addAndMakeVisible (juce__groupComponent.get());
+
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -52,6 +56,7 @@ MidiInputDeviceSelectorComponent::~MidiInputDeviceSelectorComponent()
     //[Destructor_pre]. You can add your own custom destruction code here..
     //[/Destructor_pre]
 
+    juce__groupComponent = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -73,7 +78,6 @@ void MidiInputDeviceSelectorComponent::paint (juce::Graphics& g)
     g.fillAll (juce::Colour (0xff323e44));
 
     //[UserPaint] Add your own custom painting code here..
-	addAndMakeVisible(_label);
     //[/UserPaint]
 }
 
@@ -86,7 +90,6 @@ void MidiInputDeviceSelectorComponent::resized()
 
 	setSize(300, 20 + (1 + (int)_buttons.size())*30);
 
-	_label.setBounds(10, y, getWidth() - 20, 20);
 
 	for (std::map<String, ToggleButton*>::iterator it = _buttons.begin(); it != _buttons.end(); it++) {
 		y += 30;
@@ -95,6 +98,7 @@ void MidiInputDeviceSelectorComponent::resized()
 
     //[/UserPreResize]
 
+    juce__groupComponent->setBounds (0, 0, proportionOfWidth (1.0000f), proportionOfHeight (1.0000f));
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -183,6 +187,8 @@ BEGIN_JUCER_METADATA
                  snapShown="1" overlayOpacity="0.330" fixedSize="0" initialWidth="300"
                  initialHeight="200">
   <BACKGROUND backgroundColour="ff323e44"/>
+  <GROUPCOMPONENT name="new group" id="5e91a9747def8c13" memberName="juce__groupComponent"
+                  virtualName="" explicitFocusOrder="0" pos="0 0 100% 100%" title="Midi Sync Input"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

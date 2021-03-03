@@ -75,6 +75,10 @@
                 resource="0" file="Source/MidiOutputDeviceSelectorComponent.h"/>
         </GROUP>
         <GROUP id="{6BFD9E49-D2FE-BA1B-40F1-B45D7872FACC}" name="Other">
+          <FILE id="jFK0cP" name="MainMenuComponent.cpp" compile="1" resource="0"
+                file="Source/MainMenuComponent.cpp"/>
+          <FILE id="NbXnYA" name="MainMenuComponent.h" compile="0" resource="0"
+                file="Source/MainMenuComponent.h"/>
           <FILE id="JKBL70" name="TabsComponent.cpp" compile="1" resource="0"
                 file="Source/TabsComponent.cpp"/>
           <FILE id="en5AGm" name="TabsComponent.h" compile="0" resource="0" file="Source/TabsComponent.h"/>

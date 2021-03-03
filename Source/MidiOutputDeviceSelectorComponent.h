@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 6.0.3
+  Created with Projucer version: 6.0.6
 
   ------------------------------------------------------------------------------
 
@@ -59,10 +59,10 @@ private:
 	AudioDeviceManager _deviceManager;
 	std::set<String> _selectedDeviceIdentifiers;
 	std::map<String, ToggleButton*> _buttons;
-	Label _label{ {}, "Select MIDI output device(s)" };
     //[/UserVariables]
 
     //==============================================================================
+    std::unique_ptr<juce::GroupComponent> juce__groupComponent;
 
 
     //==============================================================================

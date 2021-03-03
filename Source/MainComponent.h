@@ -9,12 +9,8 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "LogComponent.h"
+#include "MainMenuComponent.h"
 #include "TabsComponent.h"
-#include "MidiSettings.h"
-#include "MidiController.h"
-#include "MidiInputDeviceSelectorComponent.h"
-#include "MidiOutputDeviceSelectorComponent.h"
 
 //==============================================================================
 /*
@@ -36,8 +32,8 @@ private:
     //==============================================================================
     // Your private member variables go here...
 
-    LogComponent	_logComponent;
-    TabsComponent	_tabsComponent;
+    TabsComponent _tabsComponent;
+    unique_ptr<MainMenuComponent> _menuComponent;
 
 	//MidiInputDeviceSelectorComponent _midiInputComponent;
 	//MidiOutputDeviceSelectorComponent _midiOutputComponent;

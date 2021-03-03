@@ -7,7 +7,7 @@
   the "//[xyz]" and "//[/xyz]" sections will be retained when the file is loaded
   and re-saved.
 
-  Created with Projucer version: 6.0.3
+  Created with Projucer version: 6.0.6
 
   ------------------------------------------------------------------------------
 
@@ -34,6 +34,10 @@ MidiOutputDeviceSelectorComponent::MidiOutputDeviceSelectorComponent ()
 
     //[/Constructor_pre]
 
+    juce__groupComponent.reset (new juce::GroupComponent ("new group",
+                                                          TRANS("Midi Command Output")));
+    addAndMakeVisible (juce__groupComponent.get());
+
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -51,6 +55,7 @@ MidiOutputDeviceSelectorComponent::~MidiOutputDeviceSelectorComponent()
     //[Destructor_pre]. You can add your own custom destruction code here..
     //[/Destructor_pre]
 
+    juce__groupComponent = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -71,7 +76,6 @@ void MidiOutputDeviceSelectorComponent::paint (juce::Graphics& g)
     g.fillAll (juce::Colour (0xff323e44));
 
     //[UserPaint] Add your own custom painting code here..
-	addAndMakeVisible(_label);
 
     //[/UserPaint]
 }
@@ -83,14 +87,13 @@ void MidiOutputDeviceSelectorComponent::resized()
 
 	setSize(300, 20 + (1 + (int)_buttons.size()) * 30);
 
-	_label.setBounds(10, y, getWidth() - 20, 20);
-
 	for (std::map<String, ToggleButton*>::iterator it = _buttons.begin(); it != _buttons.end(); it++) {
 		y += 30;
 		it->second->setBounds(10, y, getWidth() - 20, 20);
 	}
     //[/UserPreResize]
 
+    juce__groupComponent->setBounds (0, 0, proportionOfWidth (1.0000f), proportionOfHeight (1.0000f));
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -171,6 +174,8 @@ BEGIN_JUCER_METADATA
                  snapShown="1" overlayOpacity="0.330" fixedSize="0" initialWidth="300"
                  initialHeight="200">
   <BACKGROUND backgroundColour="ff323e44"/>
+  <GROUPCOMPONENT name="new group" id="2107a0eac1dbc858" memberName="juce__groupComponent"
+                  virtualName="" explicitFocusOrder="0" pos="0 0 100% 100%" title="Midi Command Output"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

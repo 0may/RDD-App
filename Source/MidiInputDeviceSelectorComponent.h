@@ -60,12 +60,12 @@ private:
 	AudioDeviceManager _deviceManager;
 	std::set<String> _selectedDeviceIdentifiers;
 	std::map<String, ToggleButton*> _buttons;
-	Label _label{ {}, "Select MIDI input device(s)" };
 
 
     //[/UserVariables]
 
     //==============================================================================
+    std::unique_ptr<juce::GroupComponent> juce__groupComponent;
 
 
     //==============================================================================

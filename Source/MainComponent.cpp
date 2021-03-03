@@ -13,9 +13,7 @@
 //==============================================================================
 MainComponent::MainComponent()
 {
-	Logger::setCurrentLogger(&_logComponent);
 
-	setSize(1600, 900);
 
 	// init MainManager
 	rdd::MainManager::instance();
@@ -25,6 +23,9 @@ MainComponent::MainComponent()
 
 	addKeyListener(keyMappings);
 
+	_menuComponent.reset(new MainMenuComponent());
+	
+	setSize(1600, 900);
 }
 
 MainComponent::~MainComponent()
@@ -32,6 +33,7 @@ MainComponent::~MainComponent()
 	Logger::setCurrentLogger(nullptr);
 
 	removeKeyListener(rdd::MainManager::instance().getCommandManager().getKeyMappings());
+	_menuComponent = nullptr;
 }
 
 //==============================================================================
@@ -45,8 +47,8 @@ void MainComponent::paint (Graphics& g)
     //g.drawText ("Hello World!", getLocalBounds(), Justification::centred, true);
     
 
+	addAndMakeVisible(_menuComponent.get());
 	addAndMakeVisible(_tabsComponent);
-	addAndMakeVisible(_logComponent);
 }
 
 void MainComponent::resized()
@@ -58,7 +60,7 @@ void MainComponent::resized()
 
 	auto area = getLocalBounds();
 
-	_logComponent.setBounds(area.removeFromRight(300));
+	_menuComponent->setBounds(area.removeFromTop(LookAndFeel::getDefaultLookAndFeel().getDefaultMenuBarHeight()));
 	_tabsComponent.setBounds(area);
 
     
