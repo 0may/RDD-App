@@ -25,7 +25,7 @@ public:
 
     enum CommandIDs
     {
-        quit = 1,
+        quit = 1010,
         logWindow
     };
 
@@ -58,6 +58,8 @@ private:
 
 
     std::unique_ptr<MenuBarComponent> _menuBar;
+    std::unique_ptr<TextButton> _robotSelectButton;
+    std::unique_ptr<TextButton> _logWindowButton;
 
     std::unique_ptr <DocumentWindow> _logWindow;
     LogComponent _logComponent;

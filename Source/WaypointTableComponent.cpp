@@ -13,6 +13,7 @@
 #include <JuceHeader.h>
 #include "WaypointTableComponent.h"
 #include "MainManager.h"
+#include "RobotsManager.h"
 #include "TimeEditComponent.h"
 #include "WaypointEditComponent.h"
 
@@ -46,7 +47,7 @@ WaypointTableComponent::~WaypointTableComponent()
 // This is overloaded from TableListBoxModel, and must return the total number of rows in our table
 int WaypointTableComponent::getNumRows()
 {
-	return MainManager::instance().getWaypointsManager().getNumWaypoints();
+	return RobotsManager::instance().getSelectedRobot()->waypointsManager.getNumWaypoints();
 }
 
 // This is overloaded from TableListBoxModel, and should fill in the background of the whole row
@@ -54,8 +55,8 @@ void WaypointTableComponent::paintRowBackground(Graphics& g, int rowNumber, int 
 {
 	auto alternateColour = getLookAndFeel().findColour(ListBox::backgroundColourId)
 		.interpolatedWith(getLookAndFeel().findColour(ListBox::textColourId), 0.03f);
-	if (MainManager::instance().getWaypointsManager().isCheckedOut()
-		&& rowNumber == (int)MainManager::instance().getWaypointsManager().getCheckedOutIdx())
+	if (RobotsManager::instance().getSelectedRobot()->waypointsManager.isCheckedOut()
+		&& rowNumber == (int)RobotsManager::instance().getSelectedRobot()->waypointsManager.getCheckedOutIdx())
 	{
 		g.fillAll(Colour(0xffa45c94));
 	}
@@ -72,7 +73,7 @@ void WaypointTableComponent::paintCell(Graphics& g, int rowNumber, int columnId,
 	g.setColour(getLookAndFeel().findColour(ListBox::textColourId));
 	g.setFont(font);
 
-	const Waypoint* wp = MainManager::instance().getWaypointsManager().getWaypoint((size_t)rowNumber);
+	const Waypoint* wp = RobotsManager::instance().getSelectedRobot()->waypointsManager.getWaypoint((size_t)rowNumber);
 
 	if (wp) {
 		if (columnId == 1) {
@@ -146,7 +147,7 @@ void WaypointTableComponent::selectedRowsChanged(int lastRowSelected) {
 
 void WaypointTableComponent::cellClicked(int rowNumber, int columnId, const MouseEvent&) {
 
-	WaypointsManager* wm = &MainManager::instance().getWaypointsManager();
+	WaypointsManager* wm = &RobotsManager::instance().getSelectedRobot()->waypointsManager;
 
 	if (rowNumber == (int)wm->getCheckedOutIdx()) {
 		wm->commitWaypoint();
@@ -163,7 +164,7 @@ void WaypointTableComponent::cellClicked(int rowNumber, int columnId, const Mous
 
 
 void WaypointTableComponent::backgroundClicked(const MouseEvent&) {
-	WaypointsManager* wm = &MainManager::instance().getWaypointsManager();
+	WaypointsManager* wm = &RobotsManager::instance().getSelectedRobot()->waypointsManager;
 
 	if (wm->isCheckedOut())
 		wm->commitWaypoint();

@@ -51,20 +51,22 @@ namespace rdd {
 
 		bool load(const File& file);
 
-		int getChannel() { return _channel; }
+		bool save(File f) const;
 
-		int getNote(BotCommand cmd) { return _notes.find(cmd)->second; }
+		int getChannel() const { return _channel; }
 
-		int getCC(BotParameter param) { return _cc.find(param)->second; }
+		int getNote(BotCommand cmd) const { return _notes.find(cmd)->second; }
 
-		int getNumResends() { return _resend; }
+		int getCC(BotParameter param) const { return _cc.find(param)->second; }
+
+		int getNumResends() const { return _resend; }
 
 		bool setChannel(int channel);
 		bool setNote(BotCommand cmd, int note);
 		bool setCC(BotParameter param, int cc);
 		bool setNumResends(int resends);
 
-		String toString();
+		String toString() const;
 
 
 	protected:

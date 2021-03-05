@@ -10,6 +10,7 @@
 
 #include "WaypointsPlayer.h"
 #include "MainManager.h"
+#include "RobotsManager.h"
 
 
 WaypointsPlayer::WaypointsPlayer() {
@@ -21,6 +22,7 @@ WaypointsPlayer::WaypointsPlayer() {
 	_dt = 0;
 	_cbCnt = 0;
 
+	_waypointsManager = nullptr;
 }
 
 
@@ -30,14 +32,19 @@ WaypointsPlayer::~WaypointsPlayer() {
 }
 
 
+void WaypointsPlayer::setWaypointsManager(WaypointsManager* wpm) {
+
+	_waypointsManager = wpm;
+}
+
 void WaypointsPlayer::startTimingThread() {
 	startTimer(1);
 }
 
 
 bool WaypointsPlayer::play() {
-	if (isTimerRunning() && !_playing && _playingIdx != (size_t)-1) {
-		MainManager::instance().getWaypointsManager().lock();
+	if (_waypointsManager && isTimerRunning() && !_playing && _playingIdx != (size_t)-1) {
+		_waypointsManager->lock();
 		_cbCnt = 0;
 		startTimer(1);
 		_t0 = juce::Time::currentTimeMillis();
@@ -70,17 +77,21 @@ bool WaypointsPlayer::pause() {
 bool WaypointsPlayer::reset() {
 	//MainManager::instance().getMidiController().sendMidiMessage(MidiMessage::songPositionPointer(0));
 
-	MainManager::instance().getWaypointsManager().unlock();
-	_t = 0;
-	_dt = 0;
-	_cbCnt = 0;
+	if (_waypointsManager) {
+		_waypointsManager->unlock();
+		_t = 0;
+		_dt = 0;
+		_cbCnt = 0;
 
-	_playingIdx = 0;
-	_playingIterator = MainManager::instance().getWaypointsManager().cbegin();
+		_playingIdx = 0;
+		_playingIterator = _waypointsManager->cbegin();
 
-	sendChangeMessage();
+		sendChangeMessage();
 
-	return true;
+		return true;
+	}
+	else
+		return false;
 }
 
 
@@ -104,12 +115,12 @@ void WaypointsPlayer::hiResTimerCallback() {
 	if (_playing) {
 		_dt = (juce::Time::currentTimeMillis() - _t0);
 
-		if (_playingIterator != MainManager::instance().getWaypointsManager().cend() 
+		if (_waypointsManager && _playingIterator != _waypointsManager->cend()
 			&& (_t + _dt) * 0.001 >= (*_playingIterator)->t)
 		{
 
 			const MessageManagerLock mmLock;
-			MainManager::instance().getMidiController().sendWaypointIndex((int)_playingIdx);
+			MainManager::instance().getMidiController().sendWaypointIndex((int)_playingIdx, RobotsManager::instance().getSelectedRobot()->midiSettings);
 			_playingIterator++;
 			_playingIdx++;
 		}

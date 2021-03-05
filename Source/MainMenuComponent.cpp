@@ -11,6 +11,7 @@
 #include <JuceHeader.h>
 #include "MainMenuComponent.h"
 #include "MainManager.h"
+#include "RobotsManager.h"
 
 //==============================================================================
 MainMenuComponent::MainMenuComponent()
@@ -18,6 +19,26 @@ MainMenuComponent::MainMenuComponent()
 
     _menuBar.reset(new MenuBarComponent(this));
     addAndMakeVisible(_menuBar.get());
+    
+    
+    _robotSelectButton.reset(new TextButton("Robot select button", "Click to select the next robot"));
+    _robotSelectButton->setButtonText("Robot 1");
+    _robotSelectButton->onClick = [this]() { 
+        RobotsManager::instance().select((RobotsManager::instance().getSelectedIdx() + 1) % RobotsManager::instance().numRobots());
+        _robotSelectButton->setButtonText("Robot " + String(RobotsManager::instance().getSelectedIdx() + 1)); 
+    };
+    addAndMakeVisible(_robotSelectButton.get());
+    
+    _logWindowButton.reset(new TextButton("Log window button", "Click to toggle log window"));
+    _logWindowButton->setButtonText("Log Window");
+    _logWindowButton->onClick = [this]() {
+        toggleLogWindow();
+    };
+    addAndMakeVisible(_logWindowButton.get());
+
+
+
+    
     setApplicationCommandManagerToWatch(&MainManager::instance().getCommandManager());
     MainManager::instance().getCommandManager().registerAllCommandsForTarget(this);
 
@@ -25,6 +46,8 @@ MainMenuComponent::MainMenuComponent()
     addKeyListener(MainManager::instance().getCommandManager().getKeyMappings());
 
     _showLogger = false;
+
+    //toggleLogWindow();
 
     setSize(500, 500);
 }
@@ -42,10 +65,11 @@ void MainMenuComponent::resized()
 {
     // This method is where you should set the bounds of any child
     // components that your component contains..
-    auto b = getLocalBounds();
+    auto b = getLocalBounds().removeFromTop(LookAndFeel::getDefaultLookAndFeel().getDefaultMenuBarHeight());
 
-    _menuBar->setBounds(getLocalBounds().removeFromTop(LookAndFeel::getDefaultLookAndFeel()
-        .getDefaultMenuBarHeight()));
+    _robotSelectButton->setBounds(b.removeFromRight(100));
+    _logWindowButton->setBounds(b.removeFromRight(100));
+    _menuBar->setBounds(b);
 
 }
 
@@ -132,8 +156,9 @@ void MainMenuComponent::toggleLogWindow() {
         Logger::setCurrentLogger(&_logComponent);
         MainManager::instance().getMidiController().enableLogging(true);
 
-        _logWindow.reset(new DocumentWindow("Document Window", Colour(0x000000), DocumentWindow::allButtons));
+        _logWindow.reset(new DocumentWindow("Document Window", Colour(0x000000), DocumentWindow::minimiseButton + DocumentWindow::maximiseButton));
         _logWindow->setContentNonOwned(&_logComponent, false);
+       
 
         Rectangle<int> area(0, 0, 300, 400);
 
@@ -146,7 +171,7 @@ void MainMenuComponent::toggleLogWindow() {
         _logWindow->setBounds(result);
 
         _logWindow->setResizable(true, false);
-        _logWindow->setUsingNativeTitleBar(true);
+        _logWindow->setUsingNativeTitleBar(false);
         _logWindow->setVisible(true);
     }
     else {

@@ -99,7 +99,7 @@ bool MidiSettings::setNumResends(int resends) {
 
 
 
-String MidiSettings::toString() {
+String MidiSettings::toString() const {
 	String s = "MidiSettings:\n";
 
 	s += " channel:            " + String(_channel) + "\n";
@@ -179,3 +179,50 @@ bool MidiSettings::validateAndRead(var json) {
 		return false;
 }
 
+
+
+bool MidiSettings::save(File f) const {
+	FileOutputStream outfile(f);
+
+
+	if (!outfile.openedOk())
+		return false;
+
+
+	outfile.setPosition(0);
+	outfile.truncate();
+
+	outfile << "{\n";
+
+	outfile << "\t\"channel\": " << String(getChannel()) << ",\n";
+
+	outfile << "\t\"notes\": {\n";
+	outfile << "\t\t\"move_forward\": " << String(getNote(BotCommand::MOVE_FORWARD)) << ",\n";
+	outfile << "\t\t\"move_backward\": " << String(getNote(BotCommand::MOVE_BACKWARD)) << ",\n";
+	outfile << "\t\t\"strafe_left\": " << String(getNote(BotCommand::STRAFE_LEFT)) << ",\n";
+	outfile << "\t\t\"strafe_right\": " << String(getNote(BotCommand::STRAFE_RIGHT)) << ",\n";
+	outfile << "\t\t\"rotate_left\": " << String(getNote(BotCommand::ROTATE_LEFT)) << ",\n";
+	outfile << "\t\t\"rotate_right\": " << String(getNote(BotCommand::ROTATE_RIGHT)) << ",\n";
+	outfile << "\t\t\"speaker_up\": " << String(getNote(BotCommand::SPEAKER_UP)) << ",\n";
+	outfile << "\t\t\"speaker_down\": " << String(getNote(BotCommand::SPEAKER_DOWN)) << "\n";
+	outfile << "\t},\n";
+
+	outfile << "\t\"controlchange\": {\n";
+	outfile << "\t\t\"move_speed\": " << String(getCC(BotParameter::MOVE_SPEED)) << ",\n";
+	outfile << "\t\t\"rotate_speed\": " << String(getCC(BotParameter::ROTATE_SPEED)) << ",\n";
+	outfile << "\t\t\"speaker_speed\": " << String(getCC(BotParameter::SPEAKER_SPEED)) << ",\n";
+	outfile << "\t\t\"speaker_position_q1\": " << String(getCC(BotParameter::SPEAKER_POSITION_Q1)) << ",\n";
+	outfile << "\t\t\"speaker_position_q2\": " << String(getCC(BotParameter::SPEAKER_POSITION_Q2)) << ",\n";
+	outfile << "\t\t\"speaker_position_q3\": " << String(getCC(BotParameter::SPEAKER_POSITION_Q3)) << ",\n";
+	outfile << "\t\t\"speaker_position_q4\": " << String(getCC(BotParameter::SPEAKER_POSITION_Q4)) << ",\n";
+	outfile << "\t\t\"speaker_position_reset\": " << String(getCC(BotParameter::SPEAKER_POSITION_RESET)) << "\n";
+	outfile << "\t},\n";
+
+	outfile << "\t\"resend\": " << String(getNumResends()) << "\n";
+
+	outfile << "}";
+
+	outfile.flush();
+
+	return true;
+}

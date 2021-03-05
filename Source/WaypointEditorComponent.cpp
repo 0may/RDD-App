@@ -19,6 +19,7 @@
 
 //[Headers] You can add your own extra header files here...
 #include "MainManager.h"
+#include "RobotsManager.h"
 //[/Headers]
 
 #include "WaypointEditorComponent.h"
@@ -184,11 +185,9 @@ WaypointEditorComponent::WaypointEditorComponent ()
     _waypointEditComponent->addChangeListener(this);
     _waypointMapComponent->addChangeListener(this);
 
-    MainManager::instance().getWaypointsManager().addChangeListener(this);
-    MainManager::instance().getWaypointsPlayer().addChangeListener(this);
-    MainManager::instance().getWaypointsPlayer().addChangeListener(_waypointMapComponent.get());
-    MainManager::instance().getWaypointsPlayer().startTimingThread();
-    MainManager::instance().getWaypointsPlayer().reset();
+
+    //MainManager::instance().getWaypointsPlayer().startTimingThread();
+    //MainManager::instance().getWaypointsPlayer().reset();
 
     //[/Constructor]
 }
@@ -230,6 +229,7 @@ void WaypointEditorComponent::paint (juce::Graphics& g)
 
     g.fillAll (juce::Colour (0xff323e44));
 
+    
     //[UserPaint] Add your own custom painting code here..
     //[/UserPaint]
 }
@@ -269,15 +269,15 @@ void WaypointEditorComponent::buttonClicked (juce::Button* buttonThatWasClicked)
     if (buttonThatWasClicked == _buttonDelete.get())
     {
         //[UserButtonCode__buttonDelete] -- add your button handler code here..
-        MainManager::instance().getWaypointsManager().deleteCheckedOutWaypoint();
+        RobotsManager::instance().getSelectedRobot()->waypointsManager.deleteCheckedOutWaypoint();
         _waypointTableComponent->updateTable();
         //[/UserButtonCode__buttonDelete]
     }
     else if (buttonThatWasClicked == _buttonAdd.get())
     {
         //[UserButtonCode__buttonAdd] -- add your button handler code here..
-        MainManager::instance().getWaypointsManager().commitWaypoint();
-        MainManager::instance().getWaypointsManager().checkoutWaypoint(MainManager::instance().getWaypointsManager().addNewWaypoint());
+        RobotsManager::instance().getSelectedRobot()->waypointsManager.commitWaypoint();
+        RobotsManager::instance().getSelectedRobot()->waypointsManager.checkoutWaypoint(RobotsManager::instance().getSelectedRobot()->waypointsManager.addNewWaypoint());
         _waypointTableComponent->updateTable();
         //[/UserButtonCode__buttonAdd]
     }
@@ -294,7 +294,7 @@ void WaypointEditorComponent::buttonClicked (juce::Button* buttonThatWasClicked)
         if (fc.browseForFileToOpen()) {
             File f(fc.getResult());
 
-            if (!MainManager::instance().getWaypointsManager().loadWaypoints(f)) {
+            if (!RobotsManager::instance().getSelectedRobot()->waypointsManager.loadWaypoints(f)) {
                 AlertWindow::showMessageBox(AlertWindow::WarningIcon, "Error", "Failed to load waypoints from file\n" + f.getFullPathName(), "Quit");
             }
             else {
@@ -316,7 +316,7 @@ void WaypointEditorComponent::buttonClicked (juce::Button* buttonThatWasClicked)
         if (fc.browseForFileToSave(true)) {
             File f(fc.getResult());
 
-            if (!MainManager::instance().getWaypointsManager().saveWaypoints(f, false)) {
+            if (!RobotsManager::instance().getSelectedRobot()->waypointsManager.saveWaypoints(f, false)) {
                 AlertWindow::showMessageBox(AlertWindow::WarningIcon, "Error", "Failed to save waypoints to file\n" + f.getFullPathName(), "Quit");
             }
         }
@@ -337,8 +337,8 @@ void WaypointEditorComponent::buttonClicked (juce::Button* buttonThatWasClicked)
     else if (buttonThatWasClicked == _buttonStop.get())
     {
         //[UserButtonCode__buttonStop] -- add your button handler code here..
-        MainManager::instance().getWaypointsPlayer().pause();
-        MainManager::instance().getWaypointsPlayer().reset();
+        RobotsManager::instance().getSelectedRobot()->waypointsPlayer.pause();
+        RobotsManager::instance().getSelectedRobot()->waypointsPlayer.reset();
 
         if (_buttonPlay->getToggleState() == true)
             _buttonPlay->setToggleState(false, NotificationType::dontSendNotification);
@@ -353,10 +353,10 @@ void WaypointEditorComponent::buttonClicked (juce::Button* buttonThatWasClicked)
             _playTimeComponent->setEditable(false);
 
             //MainManager::instance().getWaypointsPlayer().reset();
-            MainManager::instance().getWaypointsPlayer().play();
+            RobotsManager::instance().getSelectedRobot()->waypointsPlayer.play();
         }
         else {
-            MainManager::instance().getWaypointsPlayer().pause();
+            RobotsManager::instance().getSelectedRobot()->waypointsPlayer.pause();
 
             _playTimeComponent->setEditable(false);
         }
@@ -394,9 +394,12 @@ void WaypointEditorComponent::sliderValueChanged (juce::Slider* sliderThatWasMov
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
 
 void WaypointEditorComponent::changeListenerCallback(ChangeBroadcaster* source) {
+    RobotsManager* rm = dynamic_cast<RobotsManager*>(source);
+    
     if (dynamic_cast<WaypointsManager*>(source)) {
         _waypointEditComponent->setWaypoint(dynamic_cast<WaypointsManager*>(source)->getCheckedOutWaypoint());
         _waypointMapComponent->repaint();
+        _waypointTableComponent->updateTable();
     }
     else if (dynamic_cast<WaypointEditComponent*>(source)) {
         _waypointTableComponent->updateTable();
@@ -404,11 +407,22 @@ void WaypointEditorComponent::changeListenerCallback(ChangeBroadcaster* source) 
     }
     else if (dynamic_cast<WaypointMapComponent*>(source)) {
         _waypointEditComponent->updateValues();
+        _waypointTableComponent->updateTable();
+        _waypointMapComponent->repaint();
     }
     else if (dynamic_cast<WaypointsPlayer*>(source)) {
         _playTime.setTime(dynamic_cast<WaypointsPlayer*>(source)->getPlayTime());
         _playTimeComponent->update();
     }
+    else if (rm) {
+        RobotsManager::instance().getSelectedRobot()->waypointsManager.addChangeListener(this);
+        RobotsManager::instance().getSelectedRobot()->waypointsPlayer.addChangeListener(this);
+        RobotsManager::instance().getSelectedRobot()->waypointsPlayer.addChangeListener(_waypointMapComponent.get());
+        _waypointMapComponent->repaint();
+        _waypointTableComponent->repaint();
+        _waypointEditComponent->repaint();
+    }
+
 }
 
 

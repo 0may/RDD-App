@@ -14,11 +14,12 @@
 #include "XYInputComponent.h"
 #include "AngleInputComponent.h"
 #include "MainManager.h"
+#include "RobotsManager.h"
 
 using namespace rdd;
 
 MidiController::MidiController() {
-	_configured = false;
+	//_configured = false;
 	_loggingEnabled = false;
 	_midiClock = 0;
 	_midiClockStarted = false;
@@ -31,13 +32,13 @@ MidiController::~MidiController() {
 
 }
 
-
-bool MidiController::config(const MidiSettings& settings) {
-	_configured = true;
-	_midiSettings = settings;
-
-	return true;
-}
+//
+//bool MidiController::config(const MidiSettings& settings) {
+//	_configured = true;
+//	_midiSettings = settings;
+//
+//	return true;
+//}
 
 
 
@@ -112,13 +113,13 @@ bool MidiController::removeMidiOutput(String midiOutputIdentifier) {
 }
 
 
-bool MidiController::startCommand(MidiSettings::BotCommand cmd, uint8 velocity) {
+bool MidiController::startCommand(MidiSettings::BotCommand cmd, uint8 velocity, const MidiSettings& settings) {
 	
-	if (!_configured)
-		return false;
+	//if (!_configured)
+	//	return false;
 
 
-	MidiMessage m = MidiMessage::noteOn(_midiSettings.getChannel(), _midiSettings.getNote(cmd), velocity);
+	MidiMessage m = MidiMessage::noteOn(settings.getChannel(), settings.getNote(cmd), velocity);
 	
 	//MainManager::instance().midiSequenceManager().receiveMidiMessage(m);
 
@@ -127,17 +128,17 @@ bool MidiController::startCommand(MidiSettings::BotCommand cmd, uint8 velocity) 
 	}
 
 	// update resend control items
-	if (_midiSettings.getNumResends() > 0) {
+	if (settings.getNumResends() > 0) {
 
 		std::map<MidiSettings::BotCommand, MidiMessageResend>::iterator it = _mapCmdResend.find(cmd);
 
 		if (it != _mapCmdResend.end()) {
-			it->second.resend = _midiSettings.getNumResends();
+			it->second.resend = settings.getNumResends();
 			it->second.msg = m;
 		}
 		else {
 			MidiMessageResend r;
-			r.resend = _midiSettings.getNumResends();
+			r.resend = settings.getNumResends();
 			r.msg = m;
 			_mapCmdResend.insert(std::pair<MidiSettings::BotCommand, MidiMessageResend>(cmd, r));
 		}
@@ -152,12 +153,12 @@ bool MidiController::startCommand(MidiSettings::BotCommand cmd, uint8 velocity) 
 }
 
 
-bool MidiController::stopCommand(MidiSettings::BotCommand cmd) {
+bool MidiController::stopCommand(MidiSettings::BotCommand cmd, const MidiSettings& settings) {
 
-	if (!_configured)
-		return false;
+	//if (!_configured)
+	//	return false;
 
-	MidiMessage m = MidiMessage::noteOff(_midiSettings.getChannel(), _midiSettings.getNote(cmd));
+	MidiMessage m = MidiMessage::noteOff(settings.getChannel(), settings.getNote(cmd));
 
 	//MainManager::instance().midiSequenceManager().receiveMidiMessage(m);
 
@@ -166,17 +167,17 @@ bool MidiController::stopCommand(MidiSettings::BotCommand cmd) {
 	}
 
 	// update resend control items
-	if (_midiSettings.getNumResends() > 0) {
+	if (settings.getNumResends() > 0) {
 
 		std::map<MidiSettings::BotCommand, MidiMessageResend>::iterator it = _mapCmdResend.find(cmd);
 
 		if (it != _mapCmdResend.end()) {
-			it->second.resend = _midiSettings.getNumResends();
+			it->second.resend = settings.getNumResends();
 			it->second.msg = m;
 		}
 		else {
 			MidiMessageResend r;
-			r.resend = _midiSettings.getNumResends();
+			r.resend = settings.getNumResends();
 			r.msg = m;
 			_mapCmdResend.insert(std::pair<MidiSettings::BotCommand, MidiMessageResend>(cmd, r));
 		}
@@ -191,12 +192,12 @@ bool MidiController::stopCommand(MidiSettings::BotCommand cmd) {
 }
 
 
-bool MidiController::sendParameter(MidiSettings::BotParameter param, uint8 value) {
+bool MidiController::sendParameter(MidiSettings::BotParameter param, uint8 value, const MidiSettings& settings) {
 
-	if (!_configured)
-		return false;
+	//if (!_configured)
+	//	return false;
 
-	MidiMessage m = MidiMessage::controllerEvent(_midiSettings.getChannel(), _midiSettings.getCC(param), value);
+	MidiMessage m = MidiMessage::controllerEvent(settings.getChannel(), settings.getCC(param), value);
 
 	//MainManager::instance().midiSequenceManager().receiveMidiMessage(m);
 
@@ -206,7 +207,7 @@ bool MidiController::sendParameter(MidiSettings::BotParameter param, uint8 value
 
 
 	// update resend control items
-	if (_midiSettings.getNumResends() > 0) {
+	if (settings.getNumResends() > 0) {
 		std::map<MidiSettings::BotParameter, MidiMessageResend>::iterator it;
 
 
@@ -223,12 +224,12 @@ bool MidiController::sendParameter(MidiSettings::BotParameter param, uint8 value
 			it = _mapParamResend.find(MidiSettings::SPEAKER_POSITION_Q1);
 
 			if (it != _mapParamResend.end()) {
-				it->second.resend = _midiSettings.getNumResends();
+				it->second.resend = settings.getNumResends();
 				it->second.msg = m;
 			}
 			else {
 				MidiMessageResend r;
-				r.resend = _midiSettings.getNumResends();
+				r.resend = settings.getNumResends();
 				r.msg = m;
 				_mapParamResend.insert(std::pair<MidiSettings::BotParameter, MidiMessageResend>(MidiSettings::SPEAKER_POSITION_Q1, r));
 			}
@@ -238,12 +239,12 @@ bool MidiController::sendParameter(MidiSettings::BotParameter param, uint8 value
 			it = _mapParamResend.find(param);		
 			
 			if (it != _mapParamResend.end()) {
-				it->second.resend = _midiSettings.getNumResends();
+				it->second.resend = settings.getNumResends();
 				it->second.msg = m;
 			}
 			else {
 				MidiMessageResend r;
-				r.resend = _midiSettings.getNumResends();
+				r.resend = settings.getNumResends();
 				r.msg = m;
 				_mapParamResend.insert(std::pair<MidiSettings::BotParameter, MidiMessageResend>(param, r));
 			}
@@ -268,18 +269,18 @@ bool MidiController::sendMidiMessage(const MidiMessage& msg) {
 }
 
 
-bool MidiController::sendWaypointIndex(int idx) {
-	if (!_configured)
-		return false;
+bool MidiController::sendWaypointIndex(int idx, const MidiSettings& settings) {
+	//if (!_configured)
+	//	return false;
 
-	MidiMessage m = MidiMessage::pitchWheel(_midiSettings.getChannel(), idx);
+	MidiMessage m = MidiMessage::pitchWheel(settings.getChannel(), idx);
 
 	for (size_t i = 0; i < _midiOutputs.size(); i++) {
 		_midiOutputs[i]->sendMessageNow(m);
 	}
 
-	if (_midiSettings.getNumResends() > 0) {
-		_wpIdxResend.resend = _midiSettings.getNumResends();
+	if (settings.getNumResends() > 0) {
+		_wpIdxResend.resend = settings.getNumResends();
 		_wpIdxResend.msg = m;
 	}
 
@@ -379,35 +380,35 @@ void MidiController::changeListenerCallback(ChangeBroadcaster* source) {
 				auto input = xyInput->getMappedInput();
 
 				if (input.x < 0.0f) {
-					startCommand(rdd::MidiSettings::STRAFE_LEFT, (uint8)(abs(input.x)*127.0 + 0.5));
+					startCommand(rdd::MidiSettings::STRAFE_LEFT, (uint8)(abs(input.x)*127.0 + 0.5), RobotsManager::instance().getSelectedRobot()->midiSettings);
 				}
 				else if (input.x > 0.0f) {
-					startCommand(rdd::MidiSettings::STRAFE_RIGHT, (uint8)(input.x*127.0 + 0.5));
+					startCommand(rdd::MidiSettings::STRAFE_RIGHT, (uint8)(input.x*127.0 + 0.5), RobotsManager::instance().getSelectedRobot()->midiSettings);
 				}
 				else {
 
 					auto inputPrev = xyInput->getMappedInputPrevious();
 
 					if (inputPrev.x < 0.0f)
-						stopCommand(rdd::MidiSettings::STRAFE_LEFT);
+						stopCommand(rdd::MidiSettings::STRAFE_LEFT, RobotsManager::instance().getSelectedRobot()->midiSettings);
 					else if (inputPrev.x > 0.0f)
-						stopCommand(rdd::MidiSettings::STRAFE_RIGHT);
+						stopCommand(rdd::MidiSettings::STRAFE_RIGHT, RobotsManager::instance().getSelectedRobot()->midiSettings);
 				}
 
 				if (input.y < 0.0f) {
-					startCommand(rdd::MidiSettings::MOVE_FORWARD, (uint8)(abs(input.y)*127.0 + 0.5));
+					startCommand(rdd::MidiSettings::MOVE_FORWARD, (uint8)(abs(input.y)*127.0 + 0.5), RobotsManager::instance().getSelectedRobot()->midiSettings);
 				}
 				else if (input.y > 0.0f) {
-					startCommand(rdd::MidiSettings::MOVE_BACKWARD, (uint8)(input.y*127.0 + 0.5));
+					startCommand(rdd::MidiSettings::MOVE_BACKWARD, (uint8)(input.y*127.0 + 0.5), RobotsManager::instance().getSelectedRobot()->midiSettings);
 				}
 				else {
 
 					auto inputPrev = xyInput->getMappedInputPrevious();
 
 					if (inputPrev.y < 0.0f)
-						stopCommand(rdd::MidiSettings::MOVE_FORWARD);
+						stopCommand(rdd::MidiSettings::MOVE_FORWARD, RobotsManager::instance().getSelectedRobot()->midiSettings);
 					else if (inputPrev.y > 0.0f)
-						stopCommand(rdd::MidiSettings::MOVE_BACKWARD);
+						stopCommand(rdd::MidiSettings::MOVE_BACKWARD, RobotsManager::instance().getSelectedRobot()->midiSettings);
 				}
 
 			}
@@ -416,14 +417,14 @@ void MidiController::changeListenerCallback(ChangeBroadcaster* source) {
 				auto inputPrev = xyInput->getMappedInputPrevious();
 
 				if (inputPrev.x < 0.0f)
-					stopCommand(rdd::MidiSettings::STRAFE_LEFT);
+					stopCommand(rdd::MidiSettings::STRAFE_LEFT, RobotsManager::instance().getSelectedRobot()->midiSettings);
 				else if (inputPrev.x > 0.0f)
-					stopCommand(rdd::MidiSettings::STRAFE_RIGHT);
+					stopCommand(rdd::MidiSettings::STRAFE_RIGHT, RobotsManager::instance().getSelectedRobot()->midiSettings);
 
 				if (inputPrev.y < 0.0f)
-					stopCommand(rdd::MidiSettings::MOVE_FORWARD);
+					stopCommand(rdd::MidiSettings::MOVE_FORWARD, RobotsManager::instance().getSelectedRobot()->midiSettings);
 				else if (inputPrev.y > 0.0f)
-					stopCommand(rdd::MidiSettings::MOVE_BACKWARD);
+					stopCommand(rdd::MidiSettings::MOVE_BACKWARD, RobotsManager::instance().getSelectedRobot()->midiSettings);
 			}
 		}
 		else if (xyInput->getIdentifier() == "Rotation") {
@@ -433,28 +434,28 @@ void MidiController::changeListenerCallback(ChangeBroadcaster* source) {
 				auto input = xyInput->getMappedInput();
 
 				if (input.x < 0.0f) {
-					startCommand(rdd::MidiSettings::ROTATE_LEFT, (uint8)(abs(input.x)*127.0 + 0.5));
+					startCommand(rdd::MidiSettings::ROTATE_LEFT, (uint8)(abs(input.x)*127.0 + 0.5), RobotsManager::instance().getSelectedRobot()->midiSettings);
 				}
 				else if (input.x > 0.0f) {
-					startCommand(rdd::MidiSettings::ROTATE_RIGHT, (uint8)(input.x*127.0 + 0.5));
+					startCommand(rdd::MidiSettings::ROTATE_RIGHT, (uint8)(input.x*127.0 + 0.5), RobotsManager::instance().getSelectedRobot()->midiSettings);
 				}
 				else {
 
 					auto inputPrev = xyInput->getMappedInputPrevious();
 
 					if (inputPrev.x < 0.0f)
-						stopCommand(rdd::MidiSettings::ROTATE_LEFT);
+						stopCommand(rdd::MidiSettings::ROTATE_LEFT, RobotsManager::instance().getSelectedRobot()->midiSettings);
 					else if (inputPrev.x > 0.0f)
-						stopCommand(rdd::MidiSettings::ROTATE_RIGHT);
+						stopCommand(rdd::MidiSettings::ROTATE_RIGHT, RobotsManager::instance().getSelectedRobot()->midiSettings);
 				}
 			}
 			else {
 				auto inputPrev = xyInput->getMappedInputPrevious();
 
 				if (inputPrev.x < 0.0f)
-					stopCommand(rdd::MidiSettings::ROTATE_LEFT);
+					stopCommand(rdd::MidiSettings::ROTATE_LEFT, RobotsManager::instance().getSelectedRobot()->midiSettings);
 				else if (inputPrev.x > 0.0f)
-					stopCommand(rdd::MidiSettings::ROTATE_RIGHT);
+					stopCommand(rdd::MidiSettings::ROTATE_RIGHT, RobotsManager::instance().getSelectedRobot()->midiSettings);
 			}
 		}
 
@@ -465,27 +466,27 @@ void MidiController::changeListenerCallback(ChangeBroadcaster* source) {
 				auto input = xyInput->getMappedInput();
 
 				if (input.y < 0.0f) {
-					startCommand(rdd::MidiSettings::SPEAKER_UP, (uint8)(abs(input.y)*127.0 + 0.5));
+					startCommand(rdd::MidiSettings::SPEAKER_UP, (uint8)(abs(input.y)*127.0 + 0.5), RobotsManager::instance().getSelectedRobot()->midiSettings);
 				}
 				else if (input.y > 0.0f) {
-					startCommand(rdd::MidiSettings::SPEAKER_DOWN, (uint8)(input.y*127.0 + 0.5));
+					startCommand(rdd::MidiSettings::SPEAKER_DOWN, (uint8)(input.y*127.0 + 0.5), RobotsManager::instance().getSelectedRobot()->midiSettings);
 				}
 				else {
 					auto inputPrev = xyInput->getMappedInputPrevious();
 
 					if (inputPrev.y < 0.0f)
-						stopCommand(rdd::MidiSettings::SPEAKER_UP);
+						stopCommand(rdd::MidiSettings::SPEAKER_UP, RobotsManager::instance().getSelectedRobot()->midiSettings);
 					else if (inputPrev.y > 0.0f)
-						stopCommand(rdd::MidiSettings::SPEAKER_DOWN);
+						stopCommand(rdd::MidiSettings::SPEAKER_DOWN, RobotsManager::instance().getSelectedRobot()->midiSettings);
 				}
 			}
 			else {
 				auto inputPrev = xyInput->getMappedInputPrevious();
 
 				if (inputPrev.y < 0.0f)
-					stopCommand(rdd::MidiSettings::SPEAKER_UP);
+					stopCommand(rdd::MidiSettings::SPEAKER_UP, RobotsManager::instance().getSelectedRobot()->midiSettings);
 				else if (inputPrev.y > 0.0f)
-					stopCommand(rdd::MidiSettings::SPEAKER_DOWN);
+					stopCommand(rdd::MidiSettings::SPEAKER_DOWN, RobotsManager::instance().getSelectedRobot()->midiSettings);
 			}
 		}
 	}
@@ -498,16 +499,16 @@ void MidiController::changeListenerCallback(ChangeBroadcaster* source) {
 		auto input = angleInput->getMappedAngle();
 
 		if (input <= -128.0f) {
-			sendParameter(rdd::MidiSettings::SPEAKER_POSITION_Q4, (uint8)(abs(input) - 128.0));
+			sendParameter(rdd::MidiSettings::SPEAKER_POSITION_Q4, (uint8)(abs(input) - 128.0), RobotsManager::instance().getSelectedRobot()->midiSettings);
 		}
 		else if (input < 0.0f) {
-			sendParameter(rdd::MidiSettings::SPEAKER_POSITION_Q3, (uint8)(abs(input)));
+			sendParameter(rdd::MidiSettings::SPEAKER_POSITION_Q3, (uint8)(abs(input)), RobotsManager::instance().getSelectedRobot()->midiSettings);
 		}
 		else if (input < 128.0f) {
-			sendParameter(rdd::MidiSettings::SPEAKER_POSITION_Q1, (uint8)(input));
+			sendParameter(rdd::MidiSettings::SPEAKER_POSITION_Q1, (uint8)(input), RobotsManager::instance().getSelectedRobot()->midiSettings);
 		}
 		else {  // (input >= 128.0f)
-			sendParameter(rdd::MidiSettings::SPEAKER_POSITION_Q2, (uint8)(input - 128.0));
+			sendParameter(rdd::MidiSettings::SPEAKER_POSITION_Q2, (uint8)(input - 128.0), RobotsManager::instance().getSelectedRobot()->midiSettings);
 		}
 	}
 

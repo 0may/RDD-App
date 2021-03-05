@@ -19,6 +19,7 @@
 
 //[Headers] You can add your own extra header files here...
 #include "MainManager.h"
+#include "RobotsManager.h"
 //[/Headers]
 
 #include "ManualControlComponent.h"
@@ -379,19 +380,19 @@ void ManualControlComponent::sliderValueChanged (juce::Slider* sliderThatWasMove
     if (sliderThatWasMoved == _sliderSpkVelocity.get())
     {
         //[UserSliderCode__sliderSpkVelocity] -- add your slider handling code here..
-		rdd::MainManager::instance().getMidiController().sendParameter(rdd::MidiSettings::SPEAKER_SPEED, (uint8)_sliderSpkVelocity->getValue());
+		rdd::MainManager::instance().getMidiController().sendParameter(rdd::MidiSettings::SPEAKER_SPEED, (uint8)_sliderSpkVelocity->getValue(), RobotsManager::instance().getSelectedRobot()->midiSettings);
         //[/UserSliderCode__sliderSpkVelocity]
     }
     else if (sliderThatWasMoved == _sliderRotationVelocity.get())
     {
         //[UserSliderCode__sliderRotationVelocity] -- add your slider handling code here..
-		rdd::MainManager::instance().getMidiController().sendParameter(rdd::MidiSettings::ROTATE_SPEED, (uint8)_sliderRotationVelocity->getValue());
+		rdd::MainManager::instance().getMidiController().sendParameter(rdd::MidiSettings::ROTATE_SPEED, (uint8)_sliderRotationVelocity->getValue(), RobotsManager::instance().getSelectedRobot()->midiSettings);
         //[/UserSliderCode__sliderRotationVelocity]
     }
     else if (sliderThatWasMoved == _sliderTranslationVelocity.get())
     {
         //[UserSliderCode__sliderTranslationVelocity] -- add your slider handling code here..
-		rdd::MainManager::instance().getMidiController().sendParameter(rdd::MidiSettings::MOVE_SPEED, (uint8)_sliderTranslationVelocity->getValue());
+		rdd::MainManager::instance().getMidiController().sendParameter(rdd::MidiSettings::MOVE_SPEED, (uint8)_sliderTranslationVelocity->getValue(), RobotsManager::instance().getSelectedRobot()->midiSettings);
         //[/UserSliderCode__sliderTranslationVelocity]
     }
 
@@ -407,7 +408,7 @@ void ManualControlComponent::buttonClicked (juce::Button* buttonThatWasClicked)
     if (buttonThatWasClicked == _buttonSpkPositionReset.get())
     {
         //[UserButtonCode__buttonSpkPositionReset] -- add your button handler code here..
-		rdd::MainManager::instance().getMidiController().sendParameter(rdd::MidiSettings::SPEAKER_POSITION_RESET, 1);
+		rdd::MainManager::instance().getMidiController().sendParameter(rdd::MidiSettings::SPEAKER_POSITION_RESET, 1, RobotsManager::instance().getSelectedRobot()->midiSettings);
         //[/UserButtonCode__buttonSpkPositionReset]
     }
 
@@ -498,11 +499,11 @@ bool ManualControlComponent::perform(const InvocationInfo &info) {
 
 		if (info.isKeyDown && _moveFB == 0) {
 			_moveFB = -1;
-			rdd::MainManager::instance().getMidiController().startCommand(rdd::MidiSettings::MOVE_FORWARD, 127);
+			rdd::MainManager::instance().getMidiController().startCommand(rdd::MidiSettings::MOVE_FORWARD, 127, RobotsManager::instance().getSelectedRobot()->midiSettings);
 			//rdd::MainManager::instance().commandManager().commandStatusChanged();
 		}
 		else if ((!info.isKeyDown) && _moveFB == -1) {
-			rdd::MainManager::instance().getMidiController().stopCommand(rdd::MidiSettings::MOVE_FORWARD);
+			rdd::MainManager::instance().getMidiController().stopCommand(rdd::MidiSettings::MOVE_FORWARD, RobotsManager::instance().getSelectedRobot()->midiSettings);
 			_moveFB = 0;
 			//rdd::MainManager::instance().commandManager().commandStatusChanged();
 		}
@@ -513,11 +514,11 @@ bool ManualControlComponent::perform(const InvocationInfo &info) {
 
 		if (info.isKeyDown && _moveFB == 0) {
 			_moveFB = 1;
-			rdd::MainManager::instance().getMidiController().startCommand(rdd::MidiSettings::MOVE_BACKWARD, 127);
+			rdd::MainManager::instance().getMidiController().startCommand(rdd::MidiSettings::MOVE_BACKWARD, 127, RobotsManager::instance().getSelectedRobot()->midiSettings);
 			//rdd::MainManager::instance().commandManager().commandStatusChanged();
 		}
 		else if (!info.isKeyDown && _moveFB == 1) {
-			rdd::MainManager::instance().getMidiController().stopCommand(rdd::MidiSettings::MOVE_BACKWARD);
+			rdd::MainManager::instance().getMidiController().stopCommand(rdd::MidiSettings::MOVE_BACKWARD, RobotsManager::instance().getSelectedRobot()->midiSettings);
 			_moveFB = 0;
 			//rdd::MainManager::instance().commandManager().commandStatusChanged();
 		}
@@ -528,11 +529,11 @@ bool ManualControlComponent::perform(const InvocationInfo &info) {
 
 		if (info.isKeyDown && _moveLR == 0) {
 			_moveLR = -1;
-			rdd::MainManager::instance().getMidiController().startCommand(rdd::MidiSettings::STRAFE_LEFT, 127);
+			rdd::MainManager::instance().getMidiController().startCommand(rdd::MidiSettings::STRAFE_LEFT, 127, RobotsManager::instance().getSelectedRobot()->midiSettings);
 			//rdd::MainManager::instance().commandManager().commandStatusChanged();
 		}
 		else if (!info.isKeyDown && _moveLR == -1) {
-			rdd::MainManager::instance().getMidiController().stopCommand(rdd::MidiSettings::STRAFE_LEFT);
+			rdd::MainManager::instance().getMidiController().stopCommand(rdd::MidiSettings::STRAFE_LEFT, RobotsManager::instance().getSelectedRobot()->midiSettings);
 			_moveLR = 0;
 			//rdd::MainManager::instance().commandManager().commandStatusChanged();
 		}
@@ -543,11 +544,11 @@ bool ManualControlComponent::perform(const InvocationInfo &info) {
 
 		if (info.isKeyDown && _moveLR == 0) {
 			_moveLR = 1;
-			rdd::MainManager::instance().getMidiController().startCommand(rdd::MidiSettings::STRAFE_RIGHT, 127);
+			rdd::MainManager::instance().getMidiController().startCommand(rdd::MidiSettings::STRAFE_RIGHT, 127, RobotsManager::instance().getSelectedRobot()->midiSettings);
 			//rdd::MainManager::instance().commandManager().commandStatusChanged();
 		}
 		else if (!info.isKeyDown && _moveLR == 1) {
-			rdd::MainManager::instance().getMidiController().stopCommand(rdd::MidiSettings::STRAFE_RIGHT);
+			rdd::MainManager::instance().getMidiController().stopCommand(rdd::MidiSettings::STRAFE_RIGHT, RobotsManager::instance().getSelectedRobot()->midiSettings);
 			_moveLR = 0;
 			//rdd::MainManager::instance().commandManager().commandStatusChanged();
 		}
@@ -558,11 +559,11 @@ bool ManualControlComponent::perform(const InvocationInfo &info) {
 
 		if (info.isKeyDown && _rotateLR == 0) {
 			_rotateLR = -1;
-			rdd::MainManager::instance().getMidiController().startCommand(rdd::MidiSettings::ROTATE_LEFT, 127);
+			rdd::MainManager::instance().getMidiController().startCommand(rdd::MidiSettings::ROTATE_LEFT, 127, RobotsManager::instance().getSelectedRobot()->midiSettings);
 			//rdd::MainManager::instance().commandManager().commandStatusChanged();
 		}
 		else if (!info.isKeyDown && _rotateLR == -1) {
-			rdd::MainManager::instance().getMidiController().stopCommand(rdd::MidiSettings::ROTATE_LEFT);
+			rdd::MainManager::instance().getMidiController().stopCommand(rdd::MidiSettings::ROTATE_LEFT, RobotsManager::instance().getSelectedRobot()->midiSettings);
 			_rotateLR = 0;
 			//rdd::MainManager::instance().commandManager().commandStatusChanged();
 		}
@@ -573,11 +574,11 @@ bool ManualControlComponent::perform(const InvocationInfo &info) {
 
 		if (info.isKeyDown && _rotateLR == 0) {
 			_rotateLR = 1;
-			rdd::MainManager::instance().getMidiController().startCommand(rdd::MidiSettings::ROTATE_RIGHT, 127);
+			rdd::MainManager::instance().getMidiController().startCommand(rdd::MidiSettings::ROTATE_RIGHT, 127, RobotsManager::instance().getSelectedRobot()->midiSettings);
 			//rdd::MainManager::instance().commandManager().commandStatusChanged();
 		}
 		else if (!info.isKeyDown && _rotateLR == 1) {
-			rdd::MainManager::instance().getMidiController().stopCommand(rdd::MidiSettings::ROTATE_RIGHT);
+			rdd::MainManager::instance().getMidiController().stopCommand(rdd::MidiSettings::ROTATE_RIGHT, RobotsManager::instance().getSelectedRobot()->midiSettings);
 			_rotateLR = 0;
 			//rdd::MainManager::instance().commandManager().commandStatusChanged();
 		}
@@ -588,11 +589,11 @@ bool ManualControlComponent::perform(const InvocationInfo &info) {
 
 		if (info.isKeyDown && _speakerUD == 0) {
 			_speakerUD = -1;
-			rdd::MainManager::instance().getMidiController().startCommand(rdd::MidiSettings::SPEAKER_UP, 127);
+			rdd::MainManager::instance().getMidiController().startCommand(rdd::MidiSettings::SPEAKER_UP, 127, RobotsManager::instance().getSelectedRobot()->midiSettings);
 			//rdd::MainManager::instance().commandManager().commandStatusChanged();
 		}
 		else if (!info.isKeyDown && _speakerUD == -1) {
-			rdd::MainManager::instance().getMidiController().stopCommand(rdd::MidiSettings::SPEAKER_UP);
+			rdd::MainManager::instance().getMidiController().stopCommand(rdd::MidiSettings::SPEAKER_UP, RobotsManager::instance().getSelectedRobot()->midiSettings);
 			_speakerUD = 0;
 			//rdd::MainManager::instance().commandManager().commandStatusChanged();
 		}
@@ -603,11 +604,11 @@ bool ManualControlComponent::perform(const InvocationInfo &info) {
 
 		if (info.isKeyDown && _speakerUD == 0) {
 			_speakerUD = 1;
-			rdd::MainManager::instance().getMidiController().startCommand(rdd::MidiSettings::SPEAKER_DOWN, 127);
+			rdd::MainManager::instance().getMidiController().startCommand(rdd::MidiSettings::SPEAKER_DOWN, 127, RobotsManager::instance().getSelectedRobot()->midiSettings);
 			//rdd::MainManager::instance().commandManager().commandStatusChanged();
 		}
 		else if (!info.isKeyDown && _speakerUD == 1) {
-			rdd::MainManager::instance().getMidiController().stopCommand(rdd::MidiSettings::SPEAKER_DOWN);
+			rdd::MainManager::instance().getMidiController().stopCommand(rdd::MidiSettings::SPEAKER_DOWN, RobotsManager::instance().getSelectedRobot()->midiSettings);
 			_speakerUD = 0;
 			//rdd::MainManager::instance().commandManager().commandStatusChanged();
 		}

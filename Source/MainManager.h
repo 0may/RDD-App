@@ -30,16 +30,16 @@ namespace rdd {
 		static MainManager& instance();
 
 		MidiController& getMidiController()		{ return _midiController; };
-		WaypointsManager& getWaypointsManager()	{ return _waypointsManager; };
-		WaypointsPlayer& getWaypointsPlayer() { return _waypointsPlayer; };
+		//WaypointsManager& getWaypointsManager()	{ return _waypointsManager; };
+		//WaypointsPlayer& getWaypointsPlayer() { return _waypointsPlayer; };
 		Map& getMap()							{ return _map; };
 
 		MidiSequenceManager& getMidiSequenceManager();
 		ApplicationCommandManager& getCommandManager();
 
-		const File getAssetsDirectory() const;
-		void setAssetsDirectory(String path);
-		void setAssetsDirectory(File path);
+		const File getProjectDirectory() const;
+		void setProjectDirectory(String path);
+		void setProjectDirectory(File path);
 
 	private:
 		MainManager();
@@ -53,12 +53,12 @@ namespace rdd {
 
 	private:
 		MidiController _midiController;
-		WaypointsManager _waypointsManager;
-		WaypointsPlayer _waypointsPlayer;
+		//WaypointsManager _waypointsManager;
+		//WaypointsPlayer _waypointsPlayer;
 		MidiSequenceManager _midiSequenceManager;
 		ApplicationCommandManager _cmdManager;
 		Map _map;
-		File _assetsDirectory;
+		File _projectDirectory;
 	};
 
 

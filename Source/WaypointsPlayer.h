@@ -23,6 +23,8 @@ namespace rdd {
 
 		~WaypointsPlayer();
 
+		void setWaypointsManager(WaypointsManager* wpm);
+
 		void startTimingThread();
 
 		bool play();
@@ -45,6 +47,8 @@ namespace rdd {
 	private:
 		bool _playing;
 
+
+		WaypointsManager* _waypointsManager;
 		set<Waypoint*, WaypointsManager::WaypointComparator>::iterator _playingIterator;
 		size_t _playingIdx;
 

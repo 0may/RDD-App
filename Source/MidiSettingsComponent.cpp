@@ -18,6 +18,7 @@
 */
 
 //[Headers] You can add your own extra header files here...
+#include "RobotsManager.h"
 //[/Headers]
 
 #include "MidiSettingsComponent.h"
@@ -392,7 +393,8 @@ MidiSettingsComponent::MidiSettingsComponent ()
 
 
     //[Constructor] You can add your own custom stuff here..
-    _midiSettings = nullptr;
+    this->setMidiSettings(nullptr);
+    rdd::RobotsManager::instance().addChangeListener(this);
     //[/Constructor]
 }
 
@@ -613,6 +615,8 @@ void MidiSettingsComponent::setMidiSettings(rdd::MidiSettings* midiSettings) {
     _midiSettings = midiSettings;
 
     if (_midiSettings) {
+        this->setEnabled(true);
+
         _sliderChannel->setValue(_midiSettings->getChannel(), NotificationType::dontSendNotification);
         _sliderResend->setValue(_midiSettings->getNumResends(), NotificationType::dontSendNotification);
 
@@ -634,7 +638,29 @@ void MidiSettingsComponent::setMidiSettings(rdd::MidiSettings* midiSettings) {
         _sliderSpeakerPosQ4->setValue(_midiSettings->getCC(rdd::MidiSettings::BotParameter::SPEAKER_POSITION_Q4), NotificationType::dontSendNotification);
         _sliderSpeakerPosRst->setValue(_midiSettings->getCC(rdd::MidiSettings::BotParameter::SPEAKER_POSITION_RESET), NotificationType::dontSendNotification);
     }
+    else
+        this->setEnabled(false);
+
+    repaint();
 }
+
+
+
+void MidiSettingsComponent::changeListenerCallback(ChangeBroadcaster* source) {
+    rdd::RobotsManager* rm = dynamic_cast<RobotsManager*>(source);
+
+    if (rm) {
+        RobotsManager::Robot* robot = rm->getSelectedRobot();
+
+        if (robot) {
+            this->setMidiSettings(&robot->midiSettings);
+        }
+        else
+            this->setMidiSettings(nullptr);
+    }
+}
+
+
 //[/MiscUserCode]
 
 
@@ -648,9 +674,10 @@ void MidiSettingsComponent::setMidiSettings(rdd::MidiSettings* midiSettings) {
 BEGIN_JUCER_METADATA
 
 <JUCER_COMPONENT documentType="Component" className="MidiSettingsComponent" componentName=""
-                 parentClasses="public juce::Component" constructorParams="" variableInitialisers=""
-                 snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
-                 fixedSize="1" initialWidth="580" initialHeight="497">
+                 parentClasses="public juce::Component, public juce::ChangeListener"
+                 constructorParams="" variableInitialisers="" snapPixels="8" snapActive="1"
+                 snapShown="1" overlayOpacity="0.330" fixedSize="1" initialWidth="580"
+                 initialHeight="497">
   <BACKGROUND backgroundColour="ff323e44"/>
   <LABEL name="channel label" id="f791933f38ac713f" memberName="_labelChannel"
          virtualName="" explicitFocusOrder="0" pos="20 21 88 24" edTextCol="ff000000"

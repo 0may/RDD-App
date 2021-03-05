@@ -21,31 +21,31 @@ MainManager::MainManager() {
 
 	//File midiSettingsFile(File::getCurrentWorkingDirectory().getChildFile("../../midiconfig.json"));
 
-	setAssetsDirectory(File::getCurrentWorkingDirectory().getChildFile("../../Assets/"));
+	setProjectDirectory(File::getCurrentWorkingDirectory().getChildFile("../../ExampleProject/"));
 	//setAssetsDirectory("Assets/");
 
 
-	if (!_map.loadMap(_assetsDirectory.getChildFile("map/map.yaml").getFullPathName())) {
-		AlertWindow::showMessageBox(AlertWindow::WarningIcon, "Warning", "Failed to load map from file\n" + _assetsDirectory.getChildFile("map/map.yaml").getFullPathName(), "Quit");
+	if (!_map.loadMap(_projectDirectory.getChildFile("map/map.yaml").getFullPathName())) {
+		AlertWindow::showMessageBox(AlertWindow::WarningIcon, "Warning", "Failed to load map from file\n" + _projectDirectory.getChildFile("map/map.yaml").getFullPathName(), "Quit");
 	}
 
 
 
-	File midiSettingsFile(_assetsDirectory.getChildFile("config/midiconfig.json"));
+	/*File midiSettingsFile(_projectDirectory.getChildFile("config/midiconfig.json"));*/
 
 
-	if (midiSettings.load(midiSettingsFile) && _midiController.config(midiSettings)) {
+	//if (midiSettings.load(midiSettingsFile) && _midiController.config(midiSettings)) {
 
 		_midiController.enableLogging(true);
 
 		_midiController.startTimer(150);
-	}
-	else {
+	//}
+	//else {
 
-		AlertWindow::showMessageBox(AlertWindow::WarningIcon, "Error", "Failed to load MIDI settings from file 'midiconfig.json'", "Quit");
+	//	AlertWindow::showMessageBox(AlertWindow::WarningIcon, "Error", "Failed to load MIDI settings from file 'midiconfig.json'", "Quit");
 
-		JUCEApplication::getInstance()->systemRequestedQuit();
-	}
+	//	JUCEApplication::getInstance()->systemRequestedQuit();
+	//}
 }
 
 
@@ -70,16 +70,16 @@ ApplicationCommandManager& MainManager::getCommandManager() {
 }
 
 
-const File MainManager::getAssetsDirectory() const {
-	return _assetsDirectory;
+const File MainManager::getProjectDirectory() const {
+	return _projectDirectory;
 }
 
 
-void MainManager::setAssetsDirectory(String path) {
-	_assetsDirectory = File(path).getFullPathName();
+void MainManager::setProjectDirectory(String path) {
+	_projectDirectory = File(path).getFullPathName();
 }
 
 
-void MainManager::setAssetsDirectory(File path) {
-	_assetsDirectory = path.getFullPathName();
+void MainManager::setProjectDirectory(File path) {
+	_projectDirectory = path.getFullPathName();
 }

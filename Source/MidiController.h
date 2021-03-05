@@ -28,7 +28,7 @@ namespace rdd {
 		virtual ~MidiController();
 
 
-		bool config(const MidiSettings& settings);
+		//bool config(const MidiSettings& settings);
 
 		void enableLogging(bool enable);
 
@@ -40,13 +40,13 @@ namespace rdd {
 		
 
 		// velocity must be in the range of 0 - 127
-		bool startCommand(MidiSettings::BotCommand cmd, uint8 velocity);
-		bool stopCommand(MidiSettings::BotCommand cmd);
+		bool startCommand(MidiSettings::BotCommand cmd, uint8 velocity, const MidiSettings& settings);
+		bool stopCommand(MidiSettings::BotCommand cmd, const MidiSettings& settings);
 
 		// value must be in the range of 0 - 127
-		bool sendParameter(MidiSettings::BotParameter param, uint8 value);
+		bool sendParameter(MidiSettings::BotParameter param, uint8 value, const MidiSettings& settings);
 
-		bool sendWaypointIndex(int idx);
+		bool sendWaypointIndex(int idx, const MidiSettings& settings);
 
 		bool sendMidiMessage(const MidiMessage& msg);
 
@@ -58,7 +58,7 @@ namespace rdd {
 
 
 	protected:
-		MidiSettings _midiSettings;
+		//MidiSettings _midiSettings;
 		AudioDeviceManager _deviceManager;
 
 		std::set<String> _midiInputIdentifiers;
@@ -67,7 +67,7 @@ namespace rdd {
 		bool _loggingEnabled;
 		char _logMsg[32];
 
-		bool _configured;
+		//bool _configured;
 
 
 

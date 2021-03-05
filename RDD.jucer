@@ -17,6 +17,9 @@
         <FILE id="AYnWKb" name="Util.h" compile="0" resource="0" file="Source/Util.h"/>
       </GROUP>
       <GROUP id="{9F2FE09C-A5F5-3A2B-096D-E8EE17613655}" name="Core">
+        <FILE id="eOJd4i" name="RobotsManager.cpp" compile="1" resource="0"
+              file="Source/RobotsManager.cpp"/>
+        <FILE id="xVgyHt" name="RobotsManager.h" compile="0" resource="0" file="Source/RobotsManager.h"/>
         <FILE id="HlvMiM" name="WaypointsPlayer.cpp" compile="1" resource="0"
               file="Source/WaypointsPlayer.cpp"/>
         <FILE id="BAmLjx" name="WaypointsPlayer.h" compile="0" resource="0"

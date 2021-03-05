@@ -35,6 +35,7 @@
                                                                     //[/Comments]
 */
 class MidiSettingsComponent  : public juce::Component,
+                               public juce::ChangeListener,
                                public juce::Slider::Listener
 {
 public:
@@ -45,6 +46,8 @@ public:
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
     void setMidiSettings(rdd::MidiSettings* midiSettings);
+
+    void changeListenerCallback(ChangeBroadcaster* source) override;
     //[/UserMethods]
 
     void paint (juce::Graphics& g) override;

@@ -10,6 +10,10 @@
 
 #include <JuceHeader.h>
 #include "MainComponent.h"
+#include "MainManager.h"
+#include "RobotsManager.h"
+
+using namespace rdd;
 
 //==============================================================================
 class MovingSpeakersGUIApplication  : public JUCEApplication
@@ -27,7 +31,44 @@ public:
     {
         // This method is where you should put your application's initialisation code..
 
-        mainWindow.reset (new MainWindow (getApplicationName()));
+
+
+
+
+
+        // init MainManager
+        MainManager::instance();
+
+        // init RobotsManager
+        RobotsManager::instance();
+
+
+        RobotsManager::instance().addRobot();
+
+
+        int rNo = 2;
+
+        while (MainManager::instance().getProjectDirectory().getChildFile("robot" + String(rNo) + "/midiconfig.json").existsAsFile()) {
+            RobotsManager::instance().addRobot();
+            rNo++;
+        }
+
+          
+        if (RobotsManager::instance().numRobots() == 0) {
+
+            AlertWindow::showMessageBox(AlertWindow::WarningIcon, "Error", "Failed to create or load robot MIDI settings in project directory '" + MainManager::instance().getProjectDirectory().getFullPathName() + "'", "Quit");
+
+            systemRequestedQuit();
+        }
+
+
+
+
+        mainWindow.reset(new MainWindow(getApplicationName()));
+
+
+        rdd::RobotsManager::instance().select(0);
+
     }
 
     void shutdown() override

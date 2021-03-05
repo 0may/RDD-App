@@ -8,15 +8,12 @@
 
 #include "MainComponent.h"
 #include "MainManager.h"
-#include "JuceHeader.h"
+#include "RobotsManager.h"
+#include <JuceHeader.h>
 
 //==============================================================================
 MainComponent::MainComponent()
 {
-
-
-	// init MainManager
-	rdd::MainManager::instance();
 
 	auto* keyMappings = rdd::MainManager::instance().getCommandManager().getKeyMappings();
 	keyMappings->resetToDefaultMappings();

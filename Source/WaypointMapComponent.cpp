@@ -22,6 +22,7 @@
 #include "WaypointEditComponent.h"
 #include "Util.h"
 #include <math.h>
+#include "RobotsManager.h"
 //[/Headers]
 
 #include "WaypointMapComponent.h"
@@ -77,6 +78,7 @@ WaypointMapComponent::WaypointMapComponent ()
 	setColour(ColourIds::trailsFutureColourId, Colour(0x4f42a2c8));
 
 	_wpTrails = 0;
+
     //[/Constructor]
 }
 
@@ -113,7 +115,7 @@ void WaypointMapComponent::paint (juce::Graphics& g)
 	);
 
 
-	WaypointsManager *wm = &MainManager::instance().getWaypointsManager();
+	WaypointsManager *wm = &RobotsManager::instance().getSelectedRobot()->waypointsManager;
 
 	if (wm->getNumWaypoints() == 0)  // return if list of waypoints is empty
 		return;
@@ -165,15 +167,15 @@ void WaypointMapComponent::paint (juce::Graphics& g)
 	float animationAlpha = 1.0f;
 
 	// draw all other waypoints and trails
-	while (it != MainManager::instance().getWaypointsManager().cend()) {
+	while (it != RobotsManager::instance().getSelectedRobot()->waypointsManager.cend()) {
 
 
 		if (wpIdx >= wpTrailStart && wpIdx <= wpTrailEnd) {
 
 			p = mapToScreen((*it)->x, (*it)->y);
 
-			if (MainManager::instance().getWaypointsPlayer().isPlaying() && MainManager::instance().getWaypointsPlayer().getCurrentWaypointIdx() == wpIdx) {
-				animationAlpha = 0.3f * (float)cos(MainManager::instance().getWaypointsPlayer().getPlayTime()*8.0) + 0.7f;
+			if (RobotsManager::instance().getSelectedRobot()->waypointsPlayer.isPlaying() && RobotsManager::instance().getSelectedRobot()->waypointsPlayer.getCurrentWaypointIdx() == wpIdx) {
+				animationAlpha = 0.3f * (float)cos(RobotsManager::instance().getSelectedRobot()->waypointsPlayer.getPlayTime()*8.0) + 0.7f;
 			}
 			else
 				animationAlpha = 1.0f;
@@ -224,7 +226,7 @@ void WaypointMapComponent::mouseDown (const juce::MouseEvent& e)
 
 	size_t idxMin = (size_t)-1;
 
-	if (waypointHit(_mousePosition, idxMin) && idxMin == MainManager::instance().getWaypointsManager().getCheckedOutIdx()) {
+	if (waypointHit(_mousePosition, idxMin) && idxMin == RobotsManager::instance().getSelectedRobot()->waypointsManager.getCheckedOutIdx()) {
 
 		if (e.mods.isCtrlDown()) {
 			_wpRotateA = true;
@@ -246,7 +248,7 @@ void WaypointMapComponent::mouseDrag (const juce::MouseEvent& e)
     //[UserCode_mouseDrag] -- Add your code here...
 	auto pos = e.getPosition();
 
-	Waypoint* wpSelected = MainManager::instance().getWaypointsManager().getCheckedOutWaypoint();
+	Waypoint* wpSelected = RobotsManager::instance().getSelectedRobot()->waypointsManager.getCheckedOutWaypoint();
 
 	if (wpSelected && _wpMove) {
 		// move selected waypoint
@@ -304,11 +306,11 @@ void WaypointMapComponent::mouseDoubleClick (const juce::MouseEvent& e)
 
 	_mousePosition = e.getPosition();
 
-	MainManager::instance().getWaypointsManager().commitWaypoint();
+	RobotsManager::instance().getSelectedRobot()->waypointsManager.commitWaypoint();
 
 
 	if (e.mods.isShiftDown()) {
-		Waypoint* wp = MainManager::instance().getWaypointsManager().checkoutWaypoint(MainManager::instance().getWaypointsManager().addNewWaypoint());
+		Waypoint* wp = RobotsManager::instance().getSelectedRobot()->waypointsManager.checkoutWaypoint(RobotsManager::instance().getSelectedRobot()->waypointsManager.addNewWaypoint());
 		Point<float> p = screenToMap(_mousePosition.x, _mousePosition.y);
 		wp->x = p.x;
 		wp->y = p.y;
@@ -318,7 +320,7 @@ void WaypointMapComponent::mouseDoubleClick (const juce::MouseEvent& e)
 		size_t idxMin = (size_t)-1;
 
 		if (waypointHit(_mousePosition, idxMin)) {
-			MainManager::instance().getWaypointsManager().checkoutWaypoint(idxMin);
+			RobotsManager::instance().getSelectedRobot()->waypointsManager.checkoutWaypoint(idxMin);
 		}
 	}
 
@@ -433,15 +435,15 @@ bool WaypointMapComponent::waypointHit(Point<int> mousePosition, size_t& wpIdx) 
 	float d, dMin = 1000000.0f;
 	size_t idx = 0, idxMin = (size_t)-1;
 
-	Waypoint* wpSelected = MainManager::instance().getWaypointsManager().getCheckedOutWaypoint();
+	Waypoint* wpSelected = RobotsManager::instance().getSelectedRobot()->waypointsManager.getCheckedOutWaypoint();
 
 	if (wpSelected && waypointHitDistance(mousePosition, wpSelected) <= _wpSizeS) {
-		wpIdx = MainManager::instance().getWaypointsManager().getCheckedOutIdx();
+		wpIdx = RobotsManager::instance().getSelectedRobot()->waypointsManager.getCheckedOutIdx();
 		return true;
 	}
 
-	for (set<Waypoint*, WaypointsManager::WaypointComparator>::const_iterator it = MainManager::instance().getWaypointsManager().cbegin();
-		it != MainManager::instance().getWaypointsManager().cend();
+	for (set<Waypoint*, WaypointsManager::WaypointComparator>::const_iterator it = RobotsManager::instance().getSelectedRobot()->waypointsManager.cbegin();
+		it != RobotsManager::instance().getSelectedRobot()->waypointsManager.cend();
 		it++)
 	{
 		d = waypointHitDistance(mousePosition, *it);
