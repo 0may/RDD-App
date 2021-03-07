@@ -304,16 +304,26 @@ void MidiController::handleIncomingMidiMessage(MidiInput* /*source*/, const Midi
 		//Logger::writeToLog("Midi Start received");
 		_midiClock = 0;
 		_midiClockStarted = true;
+
+		for (size_t i = 0; i < RobotsManager::instance().numRobots(); i++)
+			RobotsManager::instance().getRobots()[i]->waypointsPlayer.play();
+
 	}
 	else if (message.isMidiStop()) {
 
 		_midiClockStarted = false;
 		//Logger::writeToLog("Midi Stop received");
+
+		for (size_t i = 0; i < RobotsManager::instance().numRobots(); i++)
+			RobotsManager::instance().getRobots()[i]->waypointsPlayer.pause();
 	} 
 	else if (message.isMidiContinue()) {
 
 		_midiClockStarted = true;
 		//Logger::writeToLog("Midi Continue received");
+
+		for (size_t i = 0; i < RobotsManager::instance().numRobots(); i++)
+			RobotsManager::instance().getRobots()[i]->waypointsPlayer.play();
 	}
 	else if (message.isMidiClock()) {
 
@@ -321,7 +331,13 @@ void MidiController::handleIncomingMidiMessage(MidiInput* /*source*/, const Midi
 			_midiClock++;
 	}
 	else if (message.isSongPositionPointer()) {
-		_midiClock = message.getSongPositionPointerMidiBeat() * 6;
+		_midiClock = (uint64_t)message.getSongPositionPointerMidiBeat() * 6;
+		
+		if (message.getSongPositionPointerMidiBeat() == 0) {
+
+			for (size_t i = 0; i < RobotsManager::instance().numRobots(); i++)
+				RobotsManager::instance().getRobots()[i]->waypointsPlayer.reset();
+		}
 	}
 }
 

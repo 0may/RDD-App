@@ -119,7 +119,7 @@ bool WaypointsManager::commitWaypoint() {
 
 		_checkoutIterator = _waypoints.end();
 
-		_checkoutIdx = -1;
+		_checkoutIdx = (size_t)-1;
 
 		sendChangeMessage();
 
@@ -145,7 +145,7 @@ bool WaypointsManager::deleteCheckedOutWaypoint() {
 		delete (*_checkoutIterator);
 		_waypoints.erase(_checkoutIterator);
 		_checkoutIterator = _waypoints.end();
-		_checkoutIdx = -1;
+		_checkoutIdx = (size_t)-1;
 
 		sendChangeMessage();
 
@@ -183,7 +183,7 @@ bool WaypointsManager::clear() {
 		_waypoints.clear();
 
 		_checkoutIterator = _waypoints.end();
-		_checkoutIdx = -1;
+		_checkoutIdx = (size_t)-1;
 
 		_clearing = false;
 

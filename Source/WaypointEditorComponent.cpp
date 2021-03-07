@@ -127,52 +127,12 @@ WaypointEditorComponent::WaypointEditorComponent ()
     _trailHideLabel->setColour (juce::TextEditor::textColourId, juce::Colours::black);
     _trailHideLabel->setColour (juce::TextEditor::backgroundColourId, juce::Colour (0x00000000));
 
-    _playTimeComponent.reset (new TimeEditComponent());
-    addAndMakeVisible (_playTimeComponent.get());
-    _playTimeComponent->setName ("play time component");
+    _waypointPlayerComponent.reset (new WaypointPlayerComponent());
+    addAndMakeVisible (_waypointPlayerComponent.get());
+    _waypointPlayerComponent->setName ("player component");
 
-    _buttonSkipBack.reset (new juce::ImageButton ("skip back button"));
-    addAndMakeVisible (_buttonSkipBack.get());
-    _buttonSkipBack->setButtonText (TRANS("skip back"));
-    _buttonSkipBack->addListener (this);
-
-    _buttonSkipBack->setImages (false, true, true,
-                                juce::ImageCache::getFromMemory (skip_b_png, skip_b_pngSize), 1.000f, juce::Colour (0x00000000),
-                                juce::ImageCache::getFromMemory (skip_b_png, skip_b_pngSize), 1.000f, juce::Colour (0xffababab),
-                                juce::ImageCache::getFromMemory (skip_b_png, skip_b_pngSize), 1.000f, juce::Colour (0xffa45c94));
-    _buttonStop.reset (new juce::ImageButton ("stop button"));
-    addAndMakeVisible (_buttonStop.get());
-    _buttonStop->setButtonText (TRANS("stop"));
-    _buttonStop->addListener (this);
-
-    _buttonStop->setImages (false, true, true,
-                            juce::ImageCache::getFromMemory (stop_png, stop_pngSize), 1.000f, juce::Colour (0x00000000),
-                            juce::ImageCache::getFromMemory (stop_png, stop_pngSize), 1.000f, juce::Colour (0xffababab),
-                            juce::ImageCache::getFromMemory (stop_png, stop_pngSize), 1.000f, juce::Colour (0xffa45c94));
-    _buttonPlay.reset (new juce::ImageButton ("play button"));
-    addAndMakeVisible (_buttonPlay.get());
-    _buttonPlay->setButtonText (TRANS("play"));
-    _buttonPlay->addListener (this);
-
-    _buttonPlay->setImages (false, true, true,
-                            juce::ImageCache::getFromMemory (play_png, play_pngSize), 1.000f, juce::Colour (0x00000000),
-                            juce::ImageCache::getFromMemory (play_png, play_pngSize), 1.000f, juce::Colour (0xffababab),
-                            juce::ImageCache::getFromMemory (play_png, play_pngSize), 1.000f, juce::Colour (0xffa45c94));
-    _buttonSkipForward.reset (new juce::ImageButton ("skip forward button"));
-    addAndMakeVisible (_buttonSkipForward.get());
-    _buttonSkipForward->setButtonText (TRANS("stop"));
-    _buttonSkipForward->addListener (this);
-
-    _buttonSkipForward->setImages (false, true, true,
-                                   juce::ImageCache::getFromMemory (skip_f_png, skip_f_pngSize), 1.000f, juce::Colour (0x00000000),
-                                   juce::ImageCache::getFromMemory (skip_f_png, skip_f_pngSize), 1.000f, juce::Colour (0xffababab),
-                                   juce::ImageCache::getFromMemory (skip_f_png, skip_f_pngSize), 1.000f, juce::Colour (0xffa45c94));
 
     //[UserPreSize]
-
-
-    _buttonPlay->setClickingTogglesState(true);
-
     //[/UserPreSize]
 
     setSize (600, 400);
@@ -180,10 +140,13 @@ WaypointEditorComponent::WaypointEditorComponent ()
 
     //[Constructor] You can add your own custom stuff here..
 
-    _playTimeComponent->setTimeObject(&_playTime);
-
     _waypointEditComponent->addChangeListener(this);
     _waypointMapComponent->addChangeListener(this);
+    RobotsManager::instance().getSelectedRobot()->waypointsPlayer.addChangeListener(_waypointMapComponent.get());
+    RobotsManager::instance().getSelectedRobot()->waypointsPlayer.addChangeListener(_waypointPlayerComponent.get());
+
+
+    RobotsManager::instance().addChangeListener(this);
 
 
     //MainManager::instance().getWaypointsPlayer().startTimingThread();
@@ -210,11 +173,7 @@ WaypointEditorComponent::~WaypointEditorComponent()
     _waypointMapLabel = nullptr;
     _trailsSlider = nullptr;
     _trailHideLabel = nullptr;
-    _playTimeComponent = nullptr;
-    _buttonSkipBack = nullptr;
-    _buttonStop = nullptr;
-    _buttonPlay = nullptr;
-    _buttonSkipForward = nullptr;
+    _waypointPlayerComponent = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -229,7 +188,6 @@ void WaypointEditorComponent::paint (juce::Graphics& g)
 
     g.fillAll (juce::Colour (0xff323e44));
 
-    
     //[UserPaint] Add your own custom painting code here..
     //[/UserPaint]
 }
@@ -252,11 +210,7 @@ void WaypointEditorComponent::resized()
     _waypointMapLabel->setBounds (2 + 0, 28 + -26, 38, 24);
     _trailsSlider->setBounds (2 + (getWidth() - 310) - 5 - 126, 28 + (getHeight() - 56) - -2, 126, 24);
     _trailHideLabel->setBounds ((2 + (getWidth() - 310) - 5 - 126) + 0 - 44, (28 + (getHeight() - 56) - -2) + 0, 44, 24);
-    _playTimeComponent->setBounds (((((2 + 5) + 24 - -4) + 24 - -4) + 24 - -4) + 24 - -15, 28 + (getHeight() - 56) - -2, 112, 24);
-    _buttonSkipBack->setBounds (2 + 5, 28 + (getHeight() - 56) - -2, 24, 24);
-    _buttonStop->setBounds ((2 + 5) + 24 - -4, 28 + (getHeight() - 56) - -2, 24, 24);
-    _buttonPlay->setBounds (((2 + 5) + 24 - -4) + 24 - -4, 28 + (getHeight() - 56) - -2, 24, 24);
-    _buttonSkipForward->setBounds ((((2 + 5) + 24 - -4) + 24 - -4) + 24 - -4, 28 + (getHeight() - 56) - -2, 24, 24);
+    _waypointPlayerComponent->setBounds (5, 28 + (getHeight() - 56) - -2, 208, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -329,44 +283,6 @@ void WaypointEditorComponent::buttonClicked (juce::Button* buttonThatWasClicked)
         //[UserButtonCode__buttonSend] -- add your button handler code here..
         //[/UserButtonCode__buttonSend]
     }
-    else if (buttonThatWasClicked == _buttonSkipBack.get())
-    {
-        //[UserButtonCode__buttonSkipBack] -- add your button handler code here..
-        //[/UserButtonCode__buttonSkipBack]
-    }
-    else if (buttonThatWasClicked == _buttonStop.get())
-    {
-        //[UserButtonCode__buttonStop] -- add your button handler code here..
-        RobotsManager::instance().getSelectedRobot()->waypointsPlayer.pause();
-        RobotsManager::instance().getSelectedRobot()->waypointsPlayer.reset();
-
-        if (_buttonPlay->getToggleState() == true)
-            _buttonPlay->setToggleState(false, NotificationType::dontSendNotification);
-        //[/UserButtonCode__buttonStop]
-    }
-    else if (buttonThatWasClicked == _buttonPlay.get())
-    {
-        //[UserButtonCode__buttonPlay] -- add your button handler code here..
-
-        if (_buttonPlay->getToggleState()) {
-
-            _playTimeComponent->setEditable(false);
-
-            //MainManager::instance().getWaypointsPlayer().reset();
-            RobotsManager::instance().getSelectedRobot()->waypointsPlayer.play();
-        }
-        else {
-            RobotsManager::instance().getSelectedRobot()->waypointsPlayer.pause();
-
-            _playTimeComponent->setEditable(false);
-        }
-        //[/UserButtonCode__buttonPlay]
-    }
-    else if (buttonThatWasClicked == _buttonSkipForward.get())
-    {
-        //[UserButtonCode__buttonSkipForward] -- add your button handler code here..
-        //[/UserButtonCode__buttonSkipForward]
-    }
 
     //[UserbuttonClicked_Post]
     //[/UserbuttonClicked_Post]
@@ -395,7 +311,7 @@ void WaypointEditorComponent::sliderValueChanged (juce::Slider* sliderThatWasMov
 
 void WaypointEditorComponent::changeListenerCallback(ChangeBroadcaster* source) {
     RobotsManager* rm = dynamic_cast<RobotsManager*>(source);
-    
+
     if (dynamic_cast<WaypointsManager*>(source)) {
         _waypointEditComponent->setWaypoint(dynamic_cast<WaypointsManager*>(source)->getCheckedOutWaypoint());
         _waypointMapComponent->repaint();
@@ -410,14 +326,19 @@ void WaypointEditorComponent::changeListenerCallback(ChangeBroadcaster* source) 
         _waypointTableComponent->updateTable();
         _waypointMapComponent->repaint();
     }
-    else if (dynamic_cast<WaypointsPlayer*>(source)) {
-        _playTime.setTime(dynamic_cast<WaypointsPlayer*>(source)->getPlayTime());
-        _playTimeComponent->update();
-    }
     else if (rm) {
+        if (RobotsManager::instance().getPreviouslySelectedIdx() < RobotsManager::instance().numRobots()) {
+            RobotsManager::instance().getRobot(RobotsManager::instance().getPreviouslySelectedIdx())->waypointsManager.removeChangeListener(this);
+            RobotsManager::instance().getRobot(RobotsManager::instance().getPreviouslySelectedIdx())->waypointsPlayer.removeChangeListener(_waypointMapComponent.get());
+            RobotsManager::instance().getRobot(RobotsManager::instance().getPreviouslySelectedIdx())->waypointsPlayer.removeChangeListener(_waypointPlayerComponent.get());
+        }
         RobotsManager::instance().getSelectedRobot()->waypointsManager.addChangeListener(this);
-        RobotsManager::instance().getSelectedRobot()->waypointsPlayer.addChangeListener(this);
         RobotsManager::instance().getSelectedRobot()->waypointsPlayer.addChangeListener(_waypointMapComponent.get());
+        RobotsManager::instance().getSelectedRobot()->waypointsPlayer.addChangeListener(_waypointPlayerComponent.get());
+
+        _waypointPlayerComponent->update();
+
+        _waypointPlayerComponent->repaint();
         _waypointMapComponent->repaint();
         _waypointTableComponent->repaint();
         _waypointEditComponent->repaint();
@@ -508,37 +429,9 @@ BEGIN_JUCER_METADATA
          labelText="Trails" editableSingleClick="0" editableDoubleClick="0"
          focusDiscardsChanges="0" fontname="Default font" fontsize="15.0"
          kerning="0.0" bold="0" italic="0" justification="33"/>
-  <GENERICCOMPONENT name="play time component" id="3a9758dff8dc15b" memberName="_playTimeComponent"
-                    virtualName="" explicitFocusOrder="0" pos="-15R -2R 112 24" posRelativeX="f71e9a6ccf1784e"
-                    posRelativeY="d65263966a94c1f6" class="TimeEditComponent" params=""/>
-  <IMAGEBUTTON name="skip back button" id="67b2579411eda22d" memberName="_buttonSkipBack"
-               virtualName="" explicitFocusOrder="0" pos="5 -2R 24 24" posRelativeX="d65263966a94c1f6"
-               posRelativeY="d65263966a94c1f6" buttonText="skip back" connectedEdges="0"
-               needsCallback="1" radioGroupId="0" keepProportions="1" resourceNormal="skip_b_png"
-               opacityNormal="1.0" colourNormal="0" resourceOver="skip_b_png"
-               opacityOver="1.0" colourOver="ffababab" resourceDown="skip_b_png"
-               opacityDown="1.0" colourDown="ffa45c94"/>
-  <IMAGEBUTTON name="stop button" id="60da11a2f25f4ffa" memberName="_buttonStop"
-               virtualName="" explicitFocusOrder="0" pos="-4R -2R 24 24" posRelativeX="67b2579411eda22d"
-               posRelativeY="d65263966a94c1f6" buttonText="stop" connectedEdges="0"
-               needsCallback="1" radioGroupId="0" keepProportions="1" resourceNormal="stop_png"
-               opacityNormal="1.0" colourNormal="0" resourceOver="stop_png"
-               opacityOver="1.0" colourOver="ffababab" resourceDown="stop_png"
-               opacityDown="1.0" colourDown="ffa45c94"/>
-  <IMAGEBUTTON name="play button" id="5cad63f18ab60b03" memberName="_buttonPlay"
-               virtualName="" explicitFocusOrder="0" pos="-4R -2R 24 24" posRelativeX="60da11a2f25f4ffa"
-               posRelativeY="d65263966a94c1f6" buttonText="play" connectedEdges="0"
-               needsCallback="1" radioGroupId="0" keepProportions="1" resourceNormal="play_png"
-               opacityNormal="1.0" colourNormal="0" resourceOver="play_png"
-               opacityOver="1.0" colourOver="ffababab" resourceDown="play_png"
-               opacityDown="1.0" colourDown="ffa45c94"/>
-  <IMAGEBUTTON name="skip forward button" id="f71e9a6ccf1784e" memberName="_buttonSkipForward"
-               virtualName="" explicitFocusOrder="0" pos="-4R -2R 24 24" posRelativeX="5cad63f18ab60b03"
-               posRelativeY="d65263966a94c1f6" buttonText="stop" connectedEdges="0"
-               needsCallback="1" radioGroupId="0" keepProportions="1" resourceNormal="skip_f_png"
-               opacityNormal="1.0" colourNormal="0" resourceOver="skip_f_png"
-               opacityOver="1.0" colourOver="ffababab" resourceDown="skip_f_png"
-               opacityDown="1.0" colourDown="ffa45c94"/>
+  <GENERICCOMPONENT name="player component" id="27ec1df0e5cab1b4" memberName="_waypointPlayerComponent"
+                    virtualName="" explicitFocusOrder="0" pos="5 -2R 208 24" posRelativeY="d65263966a94c1f6"
+                    class="WaypointPlayerComponent" params=""/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

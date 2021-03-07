@@ -12,6 +12,7 @@
 
 #include <JuceHeader.h>
 #include "WaypointsManager.h"
+#include "MidiSettings.h"
 
 namespace rdd {
 
@@ -24,6 +25,7 @@ namespace rdd {
 		~WaypointsPlayer();
 
 		void setWaypointsManager(WaypointsManager* wpm);
+		void setMidiSettings(MidiSettings* midiSettings);
 
 		void startTimingThread();
 
@@ -49,6 +51,7 @@ namespace rdd {
 
 
 		WaypointsManager* _waypointsManager;
+		MidiSettings* _midiSettings;
 		set<Waypoint*, WaypointsManager::WaypointComparator>::iterator _playingIterator;
 		size_t _playingIdx;
 

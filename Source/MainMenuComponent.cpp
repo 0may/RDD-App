@@ -156,18 +156,18 @@ void MainMenuComponent::toggleLogWindow() {
         Logger::setCurrentLogger(&_logComponent);
         MainManager::instance().getMidiController().enableLogging(true);
 
-        _logWindow.reset(new DocumentWindow("Document Window", Colour(0x000000), DocumentWindow::minimiseButton + DocumentWindow::maximiseButton));
+        _logWindow.reset(new DocumentWindow("Log", Colour(0x000000), DocumentWindow::minimiseButton + DocumentWindow::maximiseButton));
         _logWindow->setContentNonOwned(&_logComponent, false);
        
 
-        Rectangle<int> area(0, 0, 300, 400);
+        Rectangle<int> area(0, 0, 300, 600);
 
         RectanglePlacement placement(RectanglePlacement::xLeft
             | RectanglePlacement::yTop
             | RectanglePlacement::doNotResize);
 
         auto result = placement.appliedTo(area, Desktop::getInstance().getDisplays()
-            .getPrimaryDisplay()->userArea.reduced(20));
+            .getPrimaryDisplay()->userArea.reduced(20).removeFromRight(300));
         _logWindow->setBounds(result);
 
         _logWindow->setResizable(true, false);

@@ -44,6 +44,7 @@ namespace rdd {
 		Robot* getSelectedRobot() { return (_selectedIdx < _robots.size() ? _robots[_selectedIdx] : nullptr); };
 
 		size_t getSelectedIdx() { return _selectedIdx; };
+		size_t getPreviouslySelectedIdx() { return _selectedIdxPrevious; };
 
 		bool select(size_t robotIdx);
 
@@ -64,6 +65,7 @@ namespace rdd {
 		std::vector<Robot*> _robots;
 
 		size_t _selectedIdx;
+		size_t _selectedIdxPrevious;
 
 
 

@@ -47,7 +47,7 @@ WaypointTableComponent::~WaypointTableComponent()
 // This is overloaded from TableListBoxModel, and must return the total number of rows in our table
 int WaypointTableComponent::getNumRows()
 {
-	return RobotsManager::instance().getSelectedRobot()->waypointsManager.getNumWaypoints();
+	return (int)RobotsManager::instance().getSelectedRobot()->waypointsManager.getNumWaypoints();
 }
 
 // This is overloaded from TableListBoxModel, and should fill in the background of the whole row

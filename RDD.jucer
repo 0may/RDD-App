@@ -115,6 +115,10 @@
                 file="Source/XYInputComponent.h"/>
         </GROUP>
         <GROUP id="{0E2F53ED-6BAF-DDDA-BB53-B03C9B38FE38}" name="WaypointEditor">
+          <FILE id="anjxwv" name="WaypointPlayerComponent.cpp" compile="1" resource="0"
+                file="Source/WaypointPlayerComponent.cpp"/>
+          <FILE id="umGD7q" name="WaypointPlayerComponent.h" compile="0" resource="0"
+                file="Source/WaypointPlayerComponent.h"/>
           <FILE id="uBgpcm" name="WaypointTableComponent.cpp" compile="1" resource="0"
                 file="Source/WaypointTableComponent.cpp"/>
           <FILE id="z7slCo" name="WaypointTableComponent.h" compile="0" resource="0"

@@ -23,6 +23,7 @@ WaypointsPlayer::WaypointsPlayer() {
 	_cbCnt = 0;
 
 	_waypointsManager = nullptr;
+	_midiSettings = nullptr;
 }
 
 
@@ -37,13 +38,23 @@ void WaypointsPlayer::setWaypointsManager(WaypointsManager* wpm) {
 	_waypointsManager = wpm;
 }
 
+
+void WaypointsPlayer::setMidiSettings(MidiSettings* midiSettings) {
+	_midiSettings = midiSettings;
+}
+
+
 void WaypointsPlayer::startTimingThread() {
 	startTimer(1);
 }
 
 
 bool WaypointsPlayer::play() {
-	if (_waypointsManager && isTimerRunning() && !_playing && _playingIdx != (size_t)-1) {
+	if (_waypointsManager && isTimerRunning() && !_playing) {
+
+		if (_playingIdx == (size_t)-1)
+			reset();
+
 		_waypointsManager->lock();
 		_cbCnt = 0;
 		startTimer(1);
@@ -120,7 +131,9 @@ void WaypointsPlayer::hiResTimerCallback() {
 		{
 
 			const MessageManagerLock mmLock;
-			MainManager::instance().getMidiController().sendWaypointIndex((int)_playingIdx, RobotsManager::instance().getSelectedRobot()->midiSettings);
+			if (_midiSettings)
+				MainManager::instance().getMidiController().sendWaypointIndex((int)_playingIdx, *_midiSettings);
+
 			_playingIterator++;
 			_playingIdx++;
 		}

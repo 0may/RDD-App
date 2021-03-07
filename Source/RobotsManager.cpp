@@ -17,6 +17,7 @@ using namespace rdd;
 RobotsManager::RobotsManager() {
 
     _selectedIdx = (size_t)-1;
+    _selectedIdxPrevious = (size_t)-1;
 
 }
 
@@ -35,6 +36,7 @@ RobotsManager& RobotsManager::instance() {
 
 bool  RobotsManager::select(size_t robotIdx) {
     if (robotIdx < _robots.size()) {
+        _selectedIdxPrevious = _selectedIdx;
         _selectedIdx = robotIdx;
         sendChangeMessage();
         return true;
@@ -76,7 +78,7 @@ bool RobotsManager::addRobot() {
     }
 
     r->waypointsPlayer.setWaypointsManager(&r->waypointsManager);
-    r->waypointsPlayer.startTimingThread();
+    r->waypointsPlayer.setMidiSettings(&r->midiSettings);
 
     _robots.push_back(r);
 

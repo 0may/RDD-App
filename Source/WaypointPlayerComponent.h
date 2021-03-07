@@ -21,10 +21,8 @@
 
 //[Headers]     -- You can add your own extra header files here --
 #include <JuceHeader.h>
-#include "WaypointMapComponent.h"
-#include "WaypointEditComponent.h"
-#include "WaypointTableComponent.h"
-#include "WaypointPlayerComponent.h"
+#include "TimeEditComponent.h"
+#include "Time.h"
 //[/Headers]
 
 
@@ -37,64 +35,48 @@
     Describe your class and how it works here!
                                                                     //[/Comments]
 */
-class WaypointEditorComponent  : public juce::Component,
+class WaypointPlayerComponent  : public juce::Component,
                                  public juce::ChangeListener,
-                                 public juce::Button::Listener,
-                                 public juce::Slider::Listener
+                                 public juce::Button::Listener
 {
 public:
     //==============================================================================
-    WaypointEditorComponent ();
-    ~WaypointEditorComponent() override;
+    WaypointPlayerComponent ();
+    ~WaypointPlayerComponent() override;
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
+    void update();
     void changeListenerCallback(ChangeBroadcaster* source) override;
     //[/UserMethods]
 
     void paint (juce::Graphics& g) override;
     void resized() override;
     void buttonClicked (juce::Button* buttonThatWasClicked) override;
-    void sliderValueChanged (juce::Slider* sliderThatWasMoved) override;
 
     // Binary resources:
-    static const char* minus_png;
-    static const int minus_pngSize;
-    static const char* plus_png;
-    static const int plus_pngSize;
-    static const char* skip_b_png;
-    static const int skip_b_pngSize;
     static const char* stop_png;
     static const int stop_pngSize;
+    static const char* rec_png;
+    static const int rec_pngSize;
     static const char* play_png;
     static const int play_pngSize;
-    static const char* skip_f_png;
-    static const int skip_f_pngSize;
 
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
+    rdd::Time _playTime;
     //[/UserVariables]
 
     //==============================================================================
-    std::unique_ptr<WaypointMapComponent> _waypointMapComponent;
-    std::unique_ptr<WaypointEditComponent> _waypointEditComponent;
-    std::unique_ptr<WaypointTableComponent> _waypointTableComponent;
-    std::unique_ptr<juce::ImageButton> _buttonDelete;
-    std::unique_ptr<juce::ImageButton> _buttonAdd;
-    std::unique_ptr<juce::TextButton> _buttonLoad;
-    std::unique_ptr<juce::TextButton> _buttonSave;
-    std::unique_ptr<juce::TextButton> _buttonSend;
-    std::unique_ptr<juce::Label> _waypointTableLabel;
-    std::unique_ptr<juce::Label> _waypointEditLabel;
-    std::unique_ptr<juce::Label> _waypointMapLabel;
-    std::unique_ptr<juce::Slider> _trailsSlider;
-    std::unique_ptr<juce::Label> _trailHideLabel;
-    std::unique_ptr<WaypointPlayerComponent> _waypointPlayerComponent;
+    std::unique_ptr<juce::ImageButton> _buttonStop;
+    std::unique_ptr<juce::ImageButton> _buttonArm;
+    std::unique_ptr<juce::ImageButton> _buttonPlay;
+    std::unique_ptr<TimeEditComponent> _playtimeComponent;
 
 
     //==============================================================================
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WaypointEditorComponent)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WaypointPlayerComponent)
 };
 
 //[EndFile] You can add extra defines here...
