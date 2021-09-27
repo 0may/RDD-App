@@ -587,31 +587,61 @@ bool ManualControlComponent::perform(const InvocationInfo &info) {
 	}
 	else if (info.commandID == 1006) { // rotate speaker up command  #TODO: fix bug with speaker commands only reacting to key presses after slider use
 
-		if (info.isKeyDown && _speakerUD == 0) {
-			_speakerUD = -1;
-			rdd::MainManager::instance().getMidiController().startCommand(rdd::MidiSettings::SPEAKER_UP, 127, RobotsManager::instance().getSelectedRobot()->midiSettings);
-			//rdd::MainManager::instance().commandManager().commandStatusChanged();
-		}
-		else if (!info.isKeyDown && _speakerUD == -1) {
-			rdd::MainManager::instance().getMidiController().stopCommand(rdd::MidiSettings::SPEAKER_UP, RobotsManager::instance().getSelectedRobot()->midiSettings);
-			_speakerUD = 0;
-			//rdd::MainManager::instance().commandManager().commandStatusChanged();
-		}
+        if (!RobotsManager::instance().getSelectedRobot()->midiSettings.isSpeakerRotationInverted()) {
+
+            if (info.isKeyDown && _speakerUD == 0) {
+                _speakerUD = -1;
+                rdd::MainManager::instance().getMidiController().startCommand(rdd::MidiSettings::SPEAKER_UP, 127, RobotsManager::instance().getSelectedRobot()->midiSettings);
+                //rdd::MainManager::instance().commandManager().commandStatusChanged();
+            }
+            else if (!info.isKeyDown && _speakerUD == -1) {
+                rdd::MainManager::instance().getMidiController().stopCommand(rdd::MidiSettings::SPEAKER_UP, RobotsManager::instance().getSelectedRobot()->midiSettings);
+                _speakerUD = 0;
+                //rdd::MainManager::instance().commandManager().commandStatusChanged();
+            }
+        }
+        else {
+            if (info.isKeyDown && _speakerUD == 0) {
+                _speakerUD = -1;
+                rdd::MainManager::instance().getMidiController().startCommand(rdd::MidiSettings::SPEAKER_DOWN, 127, RobotsManager::instance().getSelectedRobot()->midiSettings);
+                //rdd::MainManager::instance().commandManager().commandStatusChanged();
+            }
+            else if (!info.isKeyDown && _speakerUD == -1) {
+                rdd::MainManager::instance().getMidiController().stopCommand(rdd::MidiSettings::SPEAKER_DOWN, RobotsManager::instance().getSelectedRobot()->midiSettings);
+                _speakerUD = 0;
+                //rdd::MainManager::instance().commandManager().commandStatusChanged();
+            }
+        }
 
 		return true;
 	}
 	else if (info.commandID == 1007) { // rotate speaker down command
 
-		if (info.isKeyDown && _speakerUD == 0) {
-			_speakerUD = 1;
-			rdd::MainManager::instance().getMidiController().startCommand(rdd::MidiSettings::SPEAKER_DOWN, 127, RobotsManager::instance().getSelectedRobot()->midiSettings);
-			//rdd::MainManager::instance().commandManager().commandStatusChanged();
-		}
-		else if (!info.isKeyDown && _speakerUD == 1) {
-			rdd::MainManager::instance().getMidiController().stopCommand(rdd::MidiSettings::SPEAKER_DOWN, RobotsManager::instance().getSelectedRobot()->midiSettings);
-			_speakerUD = 0;
-			//rdd::MainManager::instance().commandManager().commandStatusChanged();
-		}
+        if (!RobotsManager::instance().getSelectedRobot()->midiSettings.isSpeakerRotationInverted()) {
+
+            if (info.isKeyDown && _speakerUD == 0) {
+                _speakerUD = 1;
+                rdd::MainManager::instance().getMidiController().startCommand(rdd::MidiSettings::SPEAKER_DOWN, 127, RobotsManager::instance().getSelectedRobot()->midiSettings);
+                //rdd::MainManager::instance().commandManager().commandStatusChanged();
+            }
+            else if (!info.isKeyDown && _speakerUD == 1) {
+                rdd::MainManager::instance().getMidiController().stopCommand(rdd::MidiSettings::SPEAKER_DOWN, RobotsManager::instance().getSelectedRobot()->midiSettings);
+                _speakerUD = 0;
+                //rdd::MainManager::instance().commandManager().commandStatusChanged();
+            }
+        }
+        else {
+            if (info.isKeyDown && _speakerUD == 0) {
+                _speakerUD = 1;
+                rdd::MainManager::instance().getMidiController().startCommand(rdd::MidiSettings::SPEAKER_UP, 127, RobotsManager::instance().getSelectedRobot()->midiSettings);
+                //rdd::MainManager::instance().commandManager().commandStatusChanged();
+            }
+            else if (!info.isKeyDown && _speakerUD == 1) {
+                rdd::MainManager::instance().getMidiController().stopCommand(rdd::MidiSettings::SPEAKER_UP, RobotsManager::instance().getSelectedRobot()->midiSettings);
+                _speakerUD = 0;
+                //rdd::MainManager::instance().commandManager().commandStatusChanged();
+            }
+        }
 
 		return true;
 	}

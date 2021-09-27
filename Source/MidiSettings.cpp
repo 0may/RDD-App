@@ -38,6 +38,7 @@ MidiSettings::MidiSettings()
 	_cc[SPEAKER_POSITION_RESET] = 37;
 
 	_resend = 0;
+	_invertSpeakerRotation = false;
 }
 
 
@@ -95,6 +96,9 @@ bool MidiSettings::setNumResends(int resends) {
 
 
 
+void MidiSettings::setInvertSpeakerRotation(bool invert) {
+	_invertSpeakerRotation = invert;
+}
 
 
 
@@ -124,6 +128,7 @@ String MidiSettings::toString() const {
 
 
 	s += " resend:             " + String(_resend) + "\n";
+	s += " invert speaker:     " + (_invertSpeakerRotation ? String(1) : String(0)) + "\n";
 
 	return s;
 }
@@ -139,6 +144,9 @@ bool MidiSettings::validateAndRead(var json) {
 
 		ret &= Util::getIntFromJsonObject(obj, "channel", _channel);
 		ret &= Util::getIntFromJsonObject(obj, "resend", _resend);
+		int invert = 0;
+		ret &= Util::getIntFromJsonObject(obj, "invert_speaker", invert);
+		_invertSpeakerRotation = (invert != 0);
 
 		if (_resend < 0)
 			_resend = 0;
@@ -218,7 +226,8 @@ bool MidiSettings::save(File f) const {
 	outfile << "\t\t\"speaker_position_reset\": " << String(getCC(BotParameter::SPEAKER_POSITION_RESET)) << "\n";
 	outfile << "\t},\n";
 
-	outfile << "\t\"resend\": " << String(getNumResends()) << "\n";
+	outfile << "\t\"resend\": " << String(getNumResends()) << ",\n";
+	outfile << "\t\"invert_speaker\": " << (_invertSpeakerRotation ? String(1) : String(0)) << "\n";
 
 	outfile << "}";
 

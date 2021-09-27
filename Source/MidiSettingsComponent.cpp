@@ -385,6 +385,13 @@ MidiSettingsComponent::MidiSettingsComponent ()
 
     juce__groupComponent->setBounds (0, 0, 576, 496);
 
+    _buttonInvertSpeaker.reset (new juce::ToggleButton ("invert speaker rotation button"));
+    addAndMakeVisible (_buttonInvertSpeaker.get());
+    _buttonInvertSpeaker->setButtonText (TRANS("invert speaker rotation"));
+    _buttonInvertSpeaker->addListener (this);
+
+    _buttonInvertSpeaker->setBounds (328, 60, 180, 24);
+
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -442,6 +449,7 @@ MidiSettingsComponent::~MidiSettingsComponent()
     _labelSpeakerPosRst = nullptr;
     _sliderSpeakerPosRst = nullptr;
     juce__groupComponent = nullptr;
+    _buttonInvertSpeaker = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -607,6 +615,22 @@ void MidiSettingsComponent::sliderValueChanged (juce::Slider* sliderThatWasMoved
     //[/UsersliderValueChanged_Post]
 }
 
+void MidiSettingsComponent::buttonClicked (juce::Button* buttonThatWasClicked)
+{
+    //[UserbuttonClicked_Pre]
+    //[/UserbuttonClicked_Pre]
+
+    if (buttonThatWasClicked == _buttonInvertSpeaker.get())
+    {
+        //[UserButtonCode__buttonInvertSpeaker] -- add your button handler code here..
+        _midiSettings->setInvertSpeakerRotation(_buttonInvertSpeaker->getToggleState());
+        //[/UserButtonCode__buttonInvertSpeaker]
+    }
+
+    //[UserbuttonClicked_Post]
+    //[/UserbuttonClicked_Post]
+}
+
 
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
@@ -619,6 +643,7 @@ void MidiSettingsComponent::setMidiSettings(rdd::MidiSettings* midiSettings) {
 
         _sliderChannel->setValue(_midiSettings->getChannel(), NotificationType::dontSendNotification);
         _sliderResend->setValue(_midiSettings->getNumResends(), NotificationType::dontSendNotification);
+        _buttonInvertSpeaker->setToggleState(_midiSettings->isSpeakerRotationInverted(), NotificationType::dontSendNotification);
 
         _sliderMoveForward->setValue(_midiSettings->getNote(rdd::MidiSettings::BotCommand::MOVE_FORWARD), NotificationType::dontSendNotification);
         _sliderMoveBack->setValue(_midiSettings->getNote(rdd::MidiSettings::BotCommand::MOVE_BACKWARD), NotificationType::dontSendNotification);
@@ -871,6 +896,9 @@ BEGIN_JUCER_METADATA
           textBoxWidth="40" textBoxHeight="40" skewFactor="1.0" needsCallback="1"/>
   <GROUPCOMPONENT name="new group" id="df94cfffa14b408d" memberName="juce__groupComponent"
                   virtualName="" explicitFocusOrder="0" pos="0 0 576 496" title="Midi Settings"/>
+  <TOGGLEBUTTON name="invert speaker rotation button" id="f00e402fd25a1531" memberName="_buttonInvertSpeaker"
+                virtualName="" explicitFocusOrder="0" pos="328 60 180 24" buttonText="invert speaker rotation"
+                connectedEdges="0" needsCallback="1" radioGroupId="0" state="0"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

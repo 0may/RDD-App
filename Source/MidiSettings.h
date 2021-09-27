@@ -61,10 +61,13 @@ namespace rdd {
 
 		int getNumResends() const { return _resend; }
 
+		bool isSpeakerRotationInverted(){ return _invertSpeakerRotation; }
+
 		bool setChannel(int channel);
 		bool setNote(BotCommand cmd, int note);
 		bool setCC(BotParameter param, int cc);
 		bool setNumResends(int resends);
+		void setInvertSpeakerRotation(bool invert);
 
 		String toString() const;
 
@@ -83,6 +86,8 @@ namespace rdd {
 		std::map<BotParameter, int>	_cc;
 
 		int _resend;
+
+		bool _invertSpeakerRotation;
 
 	};
 

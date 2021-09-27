@@ -477,15 +477,26 @@ void MidiController::changeListenerCallback(ChangeBroadcaster* source) {
 
 		else if (xyInput->getIdentifier() == "Speaker Rotation") {
 
-			if (xyInput->hasInput()) {
+			if (!RobotsManager::instance().getSelectedRobot()->midiSettings.isSpeakerRotationInverted()) {
 
-				auto input = xyInput->getMappedInput();
+				if (xyInput->hasInput()) {
 
-				if (input.y < 0.0f) {
-					startCommand(rdd::MidiSettings::SPEAKER_UP, (uint8)(abs(input.y)*127.0 + 0.5), RobotsManager::instance().getSelectedRobot()->midiSettings);
-				}
-				else if (input.y > 0.0f) {
-					startCommand(rdd::MidiSettings::SPEAKER_DOWN, (uint8)(input.y*127.0 + 0.5), RobotsManager::instance().getSelectedRobot()->midiSettings);
+					auto input = xyInput->getMappedInput();
+
+					if (input.y < 0.0f) {
+						startCommand(rdd::MidiSettings::SPEAKER_UP, (uint8)(abs(input.y) * 127.0 + 0.5), RobotsManager::instance().getSelectedRobot()->midiSettings);
+					}
+					else if (input.y > 0.0f) {
+						startCommand(rdd::MidiSettings::SPEAKER_DOWN, (uint8)(input.y * 127.0 + 0.5), RobotsManager::instance().getSelectedRobot()->midiSettings);
+					}
+					else {
+						auto inputPrev = xyInput->getMappedInputPrevious();
+
+						if (inputPrev.y < 0.0f)
+							stopCommand(rdd::MidiSettings::SPEAKER_UP, RobotsManager::instance().getSelectedRobot()->midiSettings);
+						else if (inputPrev.y > 0.0f)
+							stopCommand(rdd::MidiSettings::SPEAKER_DOWN, RobotsManager::instance().getSelectedRobot()->midiSettings);
+					}
 				}
 				else {
 					auto inputPrev = xyInput->getMappedInputPrevious();
@@ -497,12 +508,33 @@ void MidiController::changeListenerCallback(ChangeBroadcaster* source) {
 				}
 			}
 			else {
-				auto inputPrev = xyInput->getMappedInputPrevious();
+				if (xyInput->hasInput()) {
 
-				if (inputPrev.y < 0.0f)
-					stopCommand(rdd::MidiSettings::SPEAKER_UP, RobotsManager::instance().getSelectedRobot()->midiSettings);
-				else if (inputPrev.y > 0.0f)
-					stopCommand(rdd::MidiSettings::SPEAKER_DOWN, RobotsManager::instance().getSelectedRobot()->midiSettings);
+					auto input = xyInput->getMappedInput();
+
+					if (input.y < 0.0f) {
+						startCommand(rdd::MidiSettings::SPEAKER_DOWN, (uint8)(abs(input.y) * 127.0 + 0.5), RobotsManager::instance().getSelectedRobot()->midiSettings);
+					}
+					else if (input.y > 0.0f) {
+						startCommand(rdd::MidiSettings::SPEAKER_UP, (uint8)(input.y * 127.0 + 0.5), RobotsManager::instance().getSelectedRobot()->midiSettings);
+					}
+					else {
+						auto inputPrev = xyInput->getMappedInputPrevious();
+
+						if (inputPrev.y < 0.0f)
+							stopCommand(rdd::MidiSettings::SPEAKER_DOWN, RobotsManager::instance().getSelectedRobot()->midiSettings);
+						else if (inputPrev.y > 0.0f)
+							stopCommand(rdd::MidiSettings::SPEAKER_UP, RobotsManager::instance().getSelectedRobot()->midiSettings);
+					}
+				}
+				else {
+					auto inputPrev = xyInput->getMappedInputPrevious();
+
+					if (inputPrev.y < 0.0f)
+						stopCommand(rdd::MidiSettings::SPEAKER_DOWN, RobotsManager::instance().getSelectedRobot()->midiSettings);
+					else if (inputPrev.y > 0.0f)
+						stopCommand(rdd::MidiSettings::SPEAKER_UP, RobotsManager::instance().getSelectedRobot()->midiSettings);
+				}
 			}
 		}
 	}

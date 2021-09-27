@@ -49,6 +49,8 @@ namespace rdd {
 		MainManager & operator = (const MainManager&);
 
 
+		bool initAppSettings();
+
 
 
 	private:
@@ -59,6 +61,10 @@ namespace rdd {
 		ApplicationCommandManager _cmdManager;
 		Map _map;
 		File _projectDirectory;
+		File _appDataDir;
+
+		ValueTree _appSettings;
+		ValueTree _projectSettings;
 	};
 
 

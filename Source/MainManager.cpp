@@ -21,7 +21,7 @@ MainManager::MainManager() {
 
 	//File midiSettingsFile(File::getCurrentWorkingDirectory().getChildFile("../../midiconfig.json"));
 
-	setProjectDirectory(File::getCurrentWorkingDirectory().getChildFile("../../ExampleProject/"));
+	setProjectDirectory(File::getCurrentWorkingDirectory());//.getChildFile("../../ExampleProject/"));
 	//setAssetsDirectory("Assets/");
 
 
@@ -82,4 +82,28 @@ void MainManager::setProjectDirectory(String path) {
 
 void MainManager::setProjectDirectory(File path) {
 	_projectDirectory = path.getFullPathName();
+}
+
+bool MainManager::initAppSettings() {
+
+	static juce::Identifier idAppSettings("AppSettings");
+	static juce::Identifier idRecentProjects("RecentProjects");
+
+
+	_appDataDir = File::getSpecialLocation(File::SpecialLocationType::userApplicationDataDirectory).getChildFile("RDD-App");
+
+	if (!_appDataDir.isDirectory() && _appDataDir.createDirectory().failed())
+		return false;
+
+	File appSettingsFile = _appDataDir.getChildFile("app-settings.xml");
+
+	if (appSettingsFile.existsAsFile()) {
+		shared_ptr<XmlElement> e = parseXML(appSettingsFile);
+		_appSettings = ValueTree::fromXml(*e);
+	}
+	else {
+		_appSettings = ValueTree(idAppSettings);
+		_appSettings.addChild(ValueTree(idRecentProjects), -1, nullptr);
+	}
+
 }
